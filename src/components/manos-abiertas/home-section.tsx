@@ -10,6 +10,7 @@ import { getTranslation } from '@/i18n/translations';
 import { LANGUAGE_COUNT } from '@/i18n/languages';
 import { RESOURCES } from '@/data/resources';
 import { AI_COURSES } from '@/data/ai-courses';
+import { FAQSection, TestimonialsSection } from './faq-testimonials';
 
 export function HomeSection() {
   const { language, setActiveSection } = useAppStore();
@@ -298,6 +299,12 @@ export function HomeSection() {
           ))}
         </div>
       </section>
+
+      {/* TESTIMONIALS */}
+      <TestimonialsSection />
+
+      {/* FAQ */}
+      <FAQSection />
 
       {/* CTA */}
       <section className="container mx-auto max-w-7xl px-4 pb-4">

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAppStore, type SectionId } from '@/stores/app-store';
 import { useTheme } from 'next-themes';
 import { LanguageSelector } from './language-selector';
+import { CommandPalette } from './command-palette';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
 
@@ -116,6 +117,7 @@ export function NavBar() {
 
           {/* Right controls */}
           <div className="flex items-center gap-2">
+            <CommandPalette />
             <ThemeToggle />
             <LanguageSelector compact />
             <Button

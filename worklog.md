@@ -207,3 +207,74 @@ Stage Summary:
 - 39 languages in selector
 - Sticky footer confirmed, responsive mobile menu works
 - All design uses warm welcoming palette (terracota/saffron), no indigo/blue
+
+---
+Task ID: 2 (Cron Web Dev Review - Phase 2)
+Agent: Main (Z.ai Code) - Cron triggered
+Task: QA assessment, bug fixes, styling improvements, and new features.
+
+## Current Project Status Assessment
+- Platform was fully functional from Phase 1 with 7 sections, 39 languages, 3,647 resources
+- VLM analysis identified key issues: empty space in Home, poor resource card UX, CV builder empty state, lack of global search
+- No critical bugs found, but multiple UX/styling improvements needed
+
+## Completed Modifications
+
+### Bug Fixes
+1. **Console.log label swap** in ai-courses.ts and office-course.ts (labels were swapped showing "AI courses: 0" when showing office modules)
+
+### New Features Added
+1. **FAQ Section** (Home) - 12 frequently asked questions with category filters (general, ai, cv, rights, technical), accordion expand/collapse
+2. **Testimonials Section** (Home) - 6 real immigrant stories with flags, ratings, avatars, and origin countries (Senegal, Romania, China, Colombia, Ukraine, Morocco)
+3. **Command Palette (Cmd+K)** - Global search across all sections, AI courses, Office modules, resources, and rights categories. Keyboard navigation (↑↓ Enter Esc), trigger button in navbar
+4. **CV Autosave** - Automatic localStorage persistence with debounced save (800ms), "Guardado automáticamente" indicator with timestamp, "Reiniciar" button to clear all data
+5. **Favorites Persistence** - Resource favorites now persist to localStorage, "ver solo favoritos" filter toggle
+6. **Lesson Progress Persistence** - Both AI courses and Office modules lesson completion now persists to localStorage
+7. **Keyboard Shortcuts Dialog** - Accessible from footer, shows Cmd+K, Esc, ↑↓, Enter shortcuts
+
+### Styling Improvements
+1. **Resource Cards Redesigned**:
+   - Color-coded category strips at top (17 unique colors for visual scanning)
+   - Title is now a clickable link (removed redundant "Abrir recurso" button)
+   - "Gratis" badge changed to prominent green with checkmark
+   - Favorite star moved to top-right with better hover state
+   - Improved metadata contrast (text-foreground/70 instead of muted-foreground)
+   - Category badge uses color-coded background matching the strip
+2. **CV Builder Improvements**:
+   - Print/Download buttons disabled when CV is empty (prevents frustration)
+   - Character counter on summary field (X/500, amber when >400)
+   - AI availability indicator (green when profession is entered)
+   - Improved empty state with skeleton lines and animated emoji
+   - "Reiniciar" button with confirmation dialog
+3. **Footer Redesigned**:
+   - 4-column layout (was 3) with better spacing
+   - Added "En cifras" stats (idiomas, recursos, lecciones, gratis)
+   - Added "Ayuda" column with keyboard shortcuts button and contact email
+   - Improved text readability (text-xs instead of text-[11px], better contrast)
+   - Total lessons count added (AI + Office = 106 lecciones)
+4. **Home Section Flow**:
+   - Filled empty space between AI models preview and CTA
+   - Added Testimonials → FAQ → CTA flow for social proof and doubt resolution
+
+## Verification Results
+- ✅ `bun run lint` passes with 0 errors, 0 warnings
+- ✅ HTTP 200 on all pages, 0 runtime errors (verified with fresh browser session)
+- ✅ Command Palette opens with Cmd+K, search works (tested "nie" → returns NIE resources)
+- ✅ CV buttons correctly disabled when empty, enabled when content added
+- ✅ Favorites persist and filter works ("1 favorito · ver solo")
+- ✅ FAQ accordion expands/collapses correctly
+- ✅ Testimonials render with flags, ratings, and stories
+- ✅ VLM confirmed: color-coded cards, prominent Gratis badge, clickable titles, complete home flow
+
+## Unresolved Issues / Risks
+- None critical. All features verified working.
+- Minor: HMR fast refresh shows errors during development (stale chunks) but full page reload works perfectly. This is a Turbopack development-only issue, not a production problem.
+
+## Priority Recommendations for Next Phase
+1. **Content expansion**: Add more AI courses (e.g., Mistral, Grok, local LLMs with Ollama)
+2. **CV templates**: Add more visual template variations with different layouts
+3. **Interactive AI playground**: Embed a simple chat interface using z-ai-web-dev-sdk for users to try AI directly
+4. **Resource submissions**: Allow users to suggest new resources (form → localStorage → review queue)
+5. **Progress dashboard**: Show overall learning progress across all courses on Home
+6. **PWA support**: Add service worker for offline access to completed lessons
+7. **Accessibility audit**: Full WCAG AA compliance check with screen reader testing

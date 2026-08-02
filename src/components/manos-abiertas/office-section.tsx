@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, Clock, ChevronLeft, ChevronRight, CheckCircle2, Lightbulb, Target, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -17,7 +17,21 @@ export function OfficeSection() {
   const t = getTranslation(language);
   const [selectedModule, setSelectedModule] = useState<OfficeModule | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<OfficeLesson | null>(null);
-  const [completed, setCompleted] = useState<Set<string>>(new Set());
+  const [completed, setCompleted] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set();
+    try {
+      const stored = localStorage.getItem('manos-abiertas-office-progress');
+      if (stored) return new Set(JSON.parse(stored));
+    } catch { /* ignore */ }
+    return new Set();
+  });
+
+  // Persist completed lessons
+  useEffect(() => {
+    try {
+      localStorage.setItem('manos-abiertas-office-progress', JSON.stringify([...completed]));
+    } catch { /* ignore */ }
+  }, [completed]);
 
   if (selectedLesson && selectedModule) {
     const idx = selectedModule.lessons.findIndex((l) => l.id === selectedLesson.id);

@@ -4531,4 +4531,4 @@ export const OFFICE_MODULES: OfficeModule[] = [
   gmailModule,
 ];
 
-console.log('AI courses:', 0, 'Office modules:', OFFICE_MODULES.length);
+console.log('Office modules:', OFFICE_MODULES.length);

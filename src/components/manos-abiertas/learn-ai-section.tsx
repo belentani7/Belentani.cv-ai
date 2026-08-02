@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Clock, BookOpen, CheckCircle2, ExternalLink, ChevronRight, ChevronLeft, Lock, Smartphone, Globe, Lightbulb, Target } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,7 +17,21 @@ export function LearnAISection() {
   const t = getTranslation(language);
   const [selectedCourse, setSelectedCourse] = useState<AICourse | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
-  const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
+  const [completedLessons, setCompletedLessons] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set();
+    try {
+      const stored = localStorage.getItem('manos-abiertas-ai-progress');
+      if (stored) return new Set(JSON.parse(stored));
+    } catch { /* ignore */ }
+    return new Set();
+  });
+
+  // Persist completed lessons
+  useEffect(() => {
+    try {
+      localStorage.setItem('manos-abiertas-ai-progress', JSON.stringify([...completedLessons]));
+    } catch { /* ignore */ }
+  }, [completedLessons]);
 
   if (selectedLesson && selectedCourse) {
     return (

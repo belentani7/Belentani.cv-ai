@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Plus, Trash2, Sparkles, Download, Printer, Eye, User, Briefcase, GraduationCap, Award, Languages, Palette, Loader2, Check, Lightbulb } from 'lucide-react';
+import { FileText, Plus, Trash2, Sparkles, Download, Printer, Eye, User, Briefcase, GraduationCap, Award, Languages, Palette, Loader2, Check, Lightbulb, Save, RotateCcw } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,6 +51,46 @@ export function CVSection() {
   const [langInput, setLangInput] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [aiLoading, setAiLoading] = useState<'summary' | 'experience' | null>(null);
+  const [savedAt, setSavedAt] = useState<Date | null>(null);
+
+  // Autosave to localStorage (debounced via effect)
+  useEffect(() => {
+    const data = { template: template.id, fullName, profession, email, phone, address, summary, experiences, education, skills, languages };
+    const id = setTimeout(() => {
+      try {
+        localStorage.setItem('manos-abiertas-cv', JSON.stringify({ ...data, savedAt: new Date().toISOString() }));
+        setSavedAt(new Date());
+      } catch { /* ignore */ }
+    }, 800);
+    return () => clearTimeout(id);
+  }, [template, fullName, profession, email, phone, address, summary, experiences, education, skills, languages]);
+
+  // Load saved CV on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('manos-abiertas-cv');
+      if (stored) {
+        const data = JSON.parse(stored);
+        if (data.template) {
+          const tpl = CV_TEMPLATES.find((t) => t.id === data.template);
+          if (tpl) setTemplate(tpl);
+        }
+        if (data.fullName) setFullName(data.fullName);
+        if (data.profession) setProfession(data.profession);
+        if (data.email) setEmail(data.email);
+        if (data.phone) setPhone(data.phone);
+        if (data.address) setAddress(data.address);
+        if (data.summary) setSummary(data.summary);
+        if (data.experiences?.length) setExperiences(data.experiences);
+        if (data.education?.length) setEducation(data.education);
+        if (data.skills?.length) setSkills(data.skills);
+        if (data.languages?.length) setLanguages(data.languages);
+        if (data.savedAt) setSavedAt(new Date(data.savedAt));
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const hasContent = Boolean(fullName || profession || summary || email || experiences.some((e) => e.position || e.company) || education.some((e) => e.title) || skills.length || languages.length);
 
   function addExperience() {
     setExperiences([...experiences, { id: Date.now().toString(), position: '', company: '', startDate: '', endDate: '', description: '' }]);
@@ -205,12 +245,25 @@ export function CVSection() {
                       placeholder="Profesional con experiencia en... (la IA puede ayudarte)"
                       className="min-h-[100px] text-sm"
                     />
-                    {!profession && (
-                      <p className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1">
-                        <Lightbulb className="h-3 w-3" />
-                        Escribe tu profesión para activar la IA
-                      </p>
-                    )}
+                    <div className="flex items-center justify-between text-[11px]">
+                      {!profession ? (
+                        <span className="text-muted-foreground flex items-center gap-1">
+                          <Lightbulb className="h-3 w-3" />
+                          Escribe tu profesión para activar la IA
+                        </span>
+                      ) : (
+                        <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                          <Sparkles className="h-3 w-3" />
+                          IA disponible · pulsa «Generar»
+                        </span>
+                      )}
+                      <span className={cn(
+                        'tabular-nums',
+                        summary.length > 400 ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'
+                      )}>
+                        {summary.length}/500
+                      </span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -425,19 +478,49 @@ export function CVSection() {
           </Tabs>
 
           {/* Action bar */}
-          <div className="sticky bottom-4 flex gap-2 bg-card/80 backdrop-blur p-2 rounded-xl border border-border shadow-lg">
-            <Button onClick={() => setShowPreview(!showPreview)} variant="outline" className="flex-1 gap-1.5">
-              <Eye className="h-4 w-4" />
-              {showPreview ? 'Ocultar' : t.cv_preview}
-            </Button>
-            <Button onClick={handlePrint} variant="outline" className="flex-1 gap-1.5">
-              <Printer className="h-4 w-4" />
-              {t.print}
-            </Button>
-            <Button onClick={() => toast.success('Usa «Imprimir» → «Guardar como PDF»')} className="flex-1 gap-1.5">
-              <Download className="h-4 w-4" />
-              {t.download}
-            </Button>
+          <div className="sticky bottom-4 space-y-2">
+            {/* Saved indicator */}
+            {savedAt && (
+              <div className="flex items-center justify-center gap-2 text-[11px] text-muted-foreground bg-card/80 backdrop-blur px-3 py-1.5 rounded-lg border border-border">
+                <Save className="h-3 w-3 text-emerald-500" />
+                Guardado automáticamente · {savedAt.toLocaleTimeString()}
+                <button
+                  onClick={() => {
+                    if (confirm('¿Borrar todos los datos del CV? Esta acción no se puede deshacer.')) {
+                      localStorage.removeItem('manos-abiertas-cv');
+                      setFullName(''); setProfession(''); setEmail(''); setPhone(''); setAddress(''); setSummary('');
+                      setExperiences([{ id: '1', position: '', company: '', startDate: '', endDate: '', description: '' }]);
+                      setEducation([{ id: '1', title: '', institution: '', year: '', description: '' }]);
+                      setSkills([]); setLanguages([]);
+                      setSavedAt(null);
+                      toast.success('CV reiniciado');
+                    }
+                  }}
+                  className="ml-2 text-destructive hover:underline inline-flex items-center gap-0.5"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  Reiniciar
+                </button>
+              </div>
+            )}
+            <div className="flex gap-2 bg-card/80 backdrop-blur p-2 rounded-xl border border-border shadow-lg">
+              <Button onClick={() => setShowPreview(!showPreview)} variant="outline" className="flex-1 gap-1.5">
+                <Eye className="h-4 w-4" />
+                {showPreview ? 'Ocultar' : t.cv_preview}
+              </Button>
+              <Button onClick={handlePrint} variant="outline" disabled={!hasContent} className="flex-1 gap-1.5">
+                <Printer className="h-4 w-4" />
+                {t.print}
+              </Button>
+              <Button
+                onClick={() => hasContent ? toast.success('Usa «Imprimir» → «Guardar como PDF»') : toast.error('Rellena tu CV primero')}
+                disabled={!hasContent}
+                className="flex-1 gap-1.5"
+              >
+                <Download className="h-4 w-4" />
+                {t.download}
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -455,6 +538,7 @@ export function CVSection() {
             education={education.filter((e) => e.title || e.institution)}
             skills={skills}
             languages={languages}
+            hasContent={hasContent}
           />
         </div>
       </div>
@@ -463,11 +547,12 @@ export function CVSection() {
 }
 
 function CVPreview({
-  template, fullName, profession, email, phone, address, summary, experiences, education, skills, languages,
+  template, fullName, profession, email, phone, address, summary, experiences, education, skills, languages, hasContent,
 }: {
   template: typeof CV_TEMPLATES[0];
   fullName: string; profession: string; email: string; phone: string; address: string;
   summary: string; experiences: Experience[]; education: Education[]; skills: string[]; languages: string[];
+  hasContent: boolean;
 }) {
   return (
     <div className="bg-white text-black shadow-xl rounded-lg overflow-hidden print:shadow-none print:rounded-none min-h-[600px]">
@@ -555,10 +640,24 @@ function CVPreview({
           </div>
         )}
 
-        {!fullName && !profession && !summary && experiences.length === 0 && (
-          <div className="text-center py-12 text-gray-400">
-            <FileText className="h-12 w-12 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">Empieza a rellenar el formulario para ver tu CV aquí</p>
+        {!hasContent && (
+          <div className="text-center py-16 text-gray-400">
+            <div className="relative inline-block mb-4">
+              <FileText className="h-16 w-16 mx-auto opacity-30" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-4xl animate-pulse">📝</span>
+              </div>
+            </div>
+            <p className="text-sm font-medium text-gray-500 mb-1">Tu CV aparecerá aquí</p>
+            <p className="text-xs text-gray-400 max-w-xs mx-auto">
+              Empieza a rellenar el formulario de la izquierda. Verás los cambios en tiempo real.
+            </p>
+            <div className="mt-6 max-w-md mx-auto space-y-2 opacity-40">
+              <div className="h-3 bg-gray-200 rounded w-3/4 mx-auto" />
+              <div className="h-3 bg-gray-200 rounded w-1/2 mx-auto" />
+              <div className="h-3 bg-gray-200 rounded w-2/3 mx-auto mt-4" />
+              <div className="h-3 bg-gray-200 rounded w-1/3 mx-auto" />
+            </div>
           </div>
         )}
       </div>

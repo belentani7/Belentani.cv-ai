@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, ExternalLink, Filter, Database, Tag, MapPin, Star, X } from 'lucide-react';
+import { Search, ExternalLink, Filter, Database, Tag, MapPin, Star, X, Heart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,16 @@ import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
 
 const PAGE_SIZE = 24;
+const FAV_STORAGE_KEY = 'manos-abiertas-favorites';
+
+function loadFavorites(): Set<string> {
+  if (typeof window === 'undefined') return new Set();
+  try {
+    const stored = localStorage.getItem(FAV_STORAGE_KEY);
+    if (stored) return new Set(JSON.parse(stored));
+  } catch { /* ignore */ }
+  return new Set();
+}
 
 export function ResourcesSection() {
   const { language } = useAppStore();
@@ -23,11 +33,33 @@ export function ResourcesSection() {
   const [category, setCategory] = useState<ResourceCategory | 'all'>('all');
   const [region, setRegion] = useState<ResourceRegion | 'all'>('all');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [favorites, setFavorites] = useState<Set<string>>(loadFavorites);
+
+  // Persist favorites whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(FAV_STORAGE_KEY, JSON.stringify([...favorites]));
+    } catch { /* ignore */ }
+  }, [favorites]);
+
+  function toggleFavorite(id: string) {
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
 
   const results = useMemo(() => {
-    return searchResources(query, { category, region });
-  }, [query, category, region]);
+    let r = searchResources(query, { category, region });
+    if (showFavoritesOnly) r = r.filter((x) => favorites.has(x.id));
+    return r;
+  }, [query, category, region, showFavoritesOnly, favorites]);
 
   const visibleResults = results.slice(0, visibleCount);
 
@@ -37,20 +69,11 @@ export function ResourcesSection() {
     return counts;
   }, []);
 
-  function toggleFavorite(id: string) {
-    const next = new Set(favorites);
-    if (next.has(id)) {
-      next.delete(id);
-    } else {
-      next.add(id);
-    }
-    setFavorites(next);
-  }
-
   function resetFilters() {
     setQuery('');
     setCategory('all');
     setRegion('all');
+    setShowFavoritesOnly(false);
     setVisibleCount(PAGE_SIZE);
   }
 
@@ -119,10 +142,19 @@ export function ResourcesSection() {
               )}
             </span>
             {favorites.size > 0 && (
-              <Badge variant="secondary" className="gap-1 text-[10px]">
-                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+              <button
+                onClick={() => { setShowFavoritesOnly(!showFavoritesOnly); setVisibleCount(PAGE_SIZE); }}
+                className={cn(
+                  'inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border transition-colors',
+                  showFavoritesOnly
+                    ? 'bg-amber-500 text-white border-amber-500'
+                    : 'border-amber-300 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+                )}
+              >
+                <Star className={cn('h-3 w-3', showFavoritesOnly && 'fill-white')} />
                 {favorites.size} favorito{favorites.size !== 1 ? 's' : ''}
-              </Badge>
+                {showFavoritesOnly && ' · ver solo'}
+              </button>
             )}
           </div>
         </CardContent>
@@ -168,9 +200,31 @@ export function ResourcesSection() {
   );
 }
 
+// Color mapping for categories - allows visual scanning
+const CATEGORY_COLORS: Record<ResourceCategory, { bg: string; text: string; border: string; dot: string }> = {
+  legal: { bg: 'bg-rose-50 dark:bg-rose-950/30', text: 'text-rose-700 dark:text-rose-300', border: 'border-rose-200 dark:border-rose-900', dot: 'bg-rose-500' },
+  documentation: { bg: 'bg-amber-50 dark:bg-amber-950/30', text: 'text-amber-700 dark:text-amber-300', border: 'border-amber-200 dark:border-amber-900', dot: 'bg-amber-500' },
+  health: { bg: 'bg-emerald-50 dark:bg-emerald-950/30', text: 'text-emerald-700 dark:text-emerald-300', border: 'border-emerald-200 dark:border-emerald-900', dot: 'bg-emerald-500' },
+  housing: { bg: 'bg-orange-50 dark:bg-orange-950/30', text: 'text-orange-700 dark:text-orange-300', border: 'border-orange-200 dark:border-orange-900', dot: 'bg-orange-500' },
+  work: { bg: 'bg-blue-50 dark:bg-blue-950/30', text: 'text-blue-700 dark:text-blue-300', border: 'border-blue-200 dark:border-blue-900', dot: 'bg-blue-500' },
+  education: { bg: 'bg-violet-50 dark:bg-violet-950/30', text: 'text-violet-700 dark:text-violet-300', border: 'border-violet-200 dark:border-violet-900', dot: 'bg-violet-500' },
+  emergency: { bg: 'bg-red-50 dark:bg-red-950/30', text: 'text-red-700 dark:text-red-300', border: 'border-red-200 dark:border-red-900', dot: 'bg-red-600' },
+  banking: { bg: 'bg-teal-50 dark:bg-teal-950/30', text: 'text-teal-700 dark:text-teal-300', border: 'border-teal-200 dark:border-teal-900', dot: 'bg-teal-500' },
+  'ai-tools': { bg: 'bg-fuchsia-50 dark:bg-fuchsia-950/30', text: 'text-fuchsia-700 dark:text-fuchsia-300', border: 'border-fuchsia-200 dark:border-fuchsia-900', dot: 'bg-fuchsia-500' },
+  'office-learning': { bg: 'bg-indigo-50 dark:bg-indigo-950/30', text: 'text-indigo-700 dark:text-indigo-300', border: 'border-indigo-200 dark:border-indigo-900', dot: 'bg-indigo-500' },
+  'cv-tools': { bg: 'bg-cyan-50 dark:bg-cyan-950/30', text: 'text-cyan-700 dark:text-cyan-300', border: 'border-cyan-200 dark:border-cyan-900', dot: 'bg-cyan-500' },
+  ngos: { bg: 'bg-pink-50 dark:bg-pink-950/30', text: 'text-pink-700 dark:text-pink-300', border: 'border-pink-200 dark:border-pink-900', dot: 'bg-pink-500' },
+  government: { bg: 'bg-slate-50 dark:bg-slate-950/30', text: 'text-slate-700 dark:text-slate-300', border: 'border-slate-200 dark:border-slate-800', dot: 'bg-slate-500' },
+  'github-learning': { bg: 'bg-gray-50 dark:bg-gray-950/30', text: 'text-gray-700 dark:text-gray-300', border: 'border-gray-200 dark:border-gray-800', dot: 'bg-gray-600' },
+  transport: { bg: 'bg-lime-50 dark:bg-lime-950/30', text: 'text-lime-700 dark:text-lime-300', border: 'border-lime-200 dark:border-lime-900', dot: 'bg-lime-600' },
+  family: { bg: 'bg-purple-50 dark:bg-purple-950/30', text: 'text-purple-700 dark:text-purple-300', border: 'border-purple-200 dark:border-purple-900', dot: 'bg-purple-500' },
+  'language-learning': { bg: 'bg-green-50 dark:bg-green-950/30', text: 'text-green-700 dark:text-green-300', border: 'border-green-200 dark:border-green-900', dot: 'bg-green-600' },
+};
+
 function ResourceCard({ resource, isFavorite, onToggleFavorite, index }: { resource: Resource; isFavorite: boolean; onToggleFavorite: () => void; index: number }) {
   const cat = RESOURCE_CATEGORIES.find((c) => c.value === resource.category);
   const reg = REGIONS.find((r) => r.value === resource.region);
+  const colors = CATEGORY_COLORS[resource.category] || CATEGORY_COLORS.government;
 
   return (
     <motion.div
@@ -178,51 +232,63 @@ function ResourceCard({ resource, isFavorite, onToggleFavorite, index }: { resou
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.02, 0.4) }}
     >
-      <Card className="card-hover border-border/60 hover:border-primary/40 h-full overflow-hidden group">
+      <Card className="card-hover border-border/60 hover:border-primary/40 h-full overflow-hidden group relative">
+        {/* Color strip at top for category scanning */}
+        <div className={cn('h-1 w-full', colors.dot)} />
         <CardContent className="p-4 flex flex-col h-full">
           <div className="flex items-start justify-between gap-2 mb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">{cat?.icon}</span>
-              <Badge variant="outline" className="text-[10px] py-0">{cat?.label}</Badge>
-            </div>
+            <a
+              href={resource.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn('inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-medium transition-colors', colors.bg, colors.text, 'hover:opacity-80')}
+              title={cat?.label}
+            >
+              <span className="text-sm">{cat?.icon}</span>
+              {cat?.label}
+            </a>
             <button
               onClick={onToggleFavorite}
-              className={cn('text-muted-foreground hover:text-amber-400 transition-colors', isFavorite && 'text-amber-400')}
-              aria-label="Favorito"
+              className={cn(
+                'p-1 rounded-md transition-colors',
+                isFavorite ? 'text-amber-500 bg-amber-50 dark:bg-amber-950/40' : 'text-muted-foreground/60 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+              )}
+              aria-label={isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
             >
-              <Star className={cn('h-4 w-4', isFavorite && 'fill-amber-400')} />
+              <Star className={cn('h-4 w-4', isFavorite && 'fill-amber-500')} />
             </button>
           </div>
 
-          <h3 className="font-semibold text-sm leading-snug mb-1 line-clamp-2">{resource.title}</h3>
-          <p className="text-xs text-muted-foreground line-clamp-2 mb-2 flex-1">{resource.description}</p>
+          {/* Clickable title */}
+          <a
+            href={resource.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-sm leading-snug mb-1 line-clamp-2 hover:text-primary transition-colors group/title"
+          >
+            {resource.title}
+            <ExternalLink className="inline-block h-3 w-3 ml-1 opacity-0 group-hover/title:opacity-100 transition-opacity" />
+          </a>
+          <p className="text-xs text-muted-foreground/90 line-clamp-2 mb-2 flex-1">{resource.description}</p>
 
           <div className="flex flex-wrap items-center gap-1.5 mb-2 text-[10px]">
             {reg && (
-              <span className="inline-flex items-center gap-0.5 text-muted-foreground">
+              <span className="inline-flex items-center gap-0.5 text-muted-foreground font-medium">
                 <MapPin className="h-2.5 w-2.5" />
                 {reg.label}
               </span>
             )}
             {resource.free && (
-              <Badge variant="secondary" className="text-[9px] py-0 h-4">Gratis</Badge>
+              <Badge className="text-[9px] py-0 h-4 bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 hover:bg-emerald-200">
+                ✓ Gratis
+              </Badge>
             )}
           </div>
 
-          <div className="text-[10px] text-muted-foreground mb-2 truncate flex items-center gap-1">
-            <Tag className="h-2.5 w-2.5" />
+          <div className="text-[10px] text-foreground/70 mb-2 truncate flex items-center gap-1 font-medium">
+            <Tag className="h-2.5 w-2.5 text-primary" />
             {resource.source}
           </div>
-
-          <a
-            href={resource.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-auto inline-flex items-center justify-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors py-1.5 px-2 rounded-md bg-primary/5 hover:bg-primary/10"
-          >
-            <ExternalLink className="h-3 w-3" />
-            Abrir recurso
-          </a>
         </CardContent>
       </Card>
     </motion.div>
