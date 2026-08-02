@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Plus, Trash2, Sparkles, Download, Printer, Eye, User, Briefcase, GraduationCap, Award, Languages, Palette, Loader2, Check, Lightbulb, Save, RotateCcw } from 'lucide-react';
+import { FileText, Plus, Trash2, Sparkles, Download, Printer, Eye, User, Briefcase, GraduationCap, Award, Languages, Palette, Loader2, Check, Lightbulb, Save, RotateCcw, Mail } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { CV_TEMPLATES, CV_GUIDES, ACTION_VERBS, SKILL_SUGGESTIONS } from '@/data/cv-templates';
 import { TemplatePreview } from './template-preview';
+import { CoverLetterBuilder } from './cover-letter-builder';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
@@ -53,6 +54,7 @@ export function CVSection() {
   const [showPreview, setShowPreview] = useState(false);
   const [aiLoading, setAiLoading] = useState<'summary' | 'experience' | null>(null);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [activeTool, setActiveTool] = useState<'cv' | 'letter'>('cv');
 
   // Autosave to localStorage (debounced via effect)
   useEffect(() => {
@@ -165,9 +167,43 @@ export function CVSection() {
         </Badge>
         <h1 className="text-3xl md:text-4xl font-bold mb-2">{t.cv_title}</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">{t.cv_subtitle}</p>
+
+        {/* Tool toggle: CV vs Cover Letter */}
+        <div className="inline-flex p-1 bg-muted rounded-lg mt-4">
+          <button
+            onClick={() => setActiveTool('cv')}
+            className={cn(
+              'px-4 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5',
+              activeTool === 'cv' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'
+            )}
+          >
+            <FileText className="h-3.5 w-3.5" />
+            Currículum
+          </button>
+          <button
+            onClick={() => setActiveTool('letter')}
+            className={cn(
+              'px-4 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5',
+              activeTool === 'letter' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'
+            )}
+          >
+            <Mail className="h-3.5 w-3.5" />
+            Carta de presentación
+            <Badge variant="secondary" className="text-[9px] py-0 h-4">Nuevo</Badge>
+          </button>
+        </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6 print:grid-cols-1 print:gap-0">
+      {/* Cover Letter Builder */}
+      {activeTool === 'letter' && (
+        <div className="max-w-3xl mx-auto">
+          <CoverLetterBuilder />
+        </div>
+      )}
+
+      {/* CV Builder */}
+      {activeTool === 'cv' && (
+        <div className="grid lg:grid-cols-2 gap-6 print:grid-cols-1 print:gap-0">
         {/* EDITOR */}
         <div className="space-y-4 print:hidden">
           <Tabs defaultValue="personal">
@@ -567,6 +603,7 @@ export function CVSection() {
           />
         </div>
       </div>
+      )}
     </div>
   );
 }

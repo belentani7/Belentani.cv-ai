@@ -11,6 +11,7 @@ import { AI_COURSES, type AICourse, type Lesson } from '@/data/ai-courses';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { SimpleMarkdown } from './simple-markdown';
+import { AIPlayground } from './ai-playground';
 import { cn } from '@/lib/utils';
 
 export function LearnAISection() {
@@ -41,6 +42,10 @@ export function LearnAISection() {
         lesson={selectedLesson}
         isCompleted={completedLessons.has(`${selectedCourse.id}-${selectedLesson.id}`)}
         onBack={() => setSelectedLesson(null)}
+        onSelectLesson={(lessonId) => {
+          const lesson = selectedCourse.lessons.find((l) => l.id === lessonId);
+          if (lesson) setSelectedLesson(lesson);
+        }}
         onComplete={() => {
           const id = `${selectedCourse.id}-${selectedLesson.id}`;
           setCompletedLessons((prev) => new Set([...prev, id]));
@@ -249,6 +254,7 @@ function LessonViewer({
   lesson,
   isCompleted,
   onBack,
+  onSelectLesson,
   onComplete,
   onNext,
   onPrev,
@@ -259,6 +265,7 @@ function LessonViewer({
   lesson: Lesson;
   isCompleted: boolean;
   onBack: () => void;
+  onSelectLesson: (lessonId: string) => void;
   onComplete: () => void;
   onNext: () => void;
   onPrev: () => void;
@@ -295,15 +302,18 @@ function LessonViewer({
               </div>
               <span className="text-[10px] opacity-90 tabular-nums">{Math.round(((idx + 1) / course.lessons.length) * 100)}%</span>
             </div>
-            {/* Lesson dots */}
+            {/* Lesson dots - clickable to jump between lessons */}
             <div className="mt-1.5 flex items-center gap-1">
               {course.lessons.map((l, i) => (
-                <span
+                <button
                   key={l.id}
+                  onClick={() => onSelectLesson(l.id)}
                   className={cn(
-                    'h-1 flex-1 rounded-full transition-colors',
-                    i < idx ? 'bg-white/80' : i === idx ? 'bg-white' : 'bg-white/20'
+                    'h-1.5 flex-1 rounded-full transition-all hover:h-2.5',
+                    i < idx ? 'bg-white/80 hover:bg-white' : i === idx ? 'bg-white' : 'bg-white/20 hover:bg-white/40'
                   )}
+                  title={`Lección ${i + 1}: ${l.title}`}
+                  aria-label={`Ir a lección ${i + 1}: ${l.title}`}
                 />
               ))}
             </div>
@@ -344,6 +354,15 @@ function LessonViewer({
                 <p className="text-sm">{lesson.exercise}</p>
               </div>
             )}
+
+            {/* AI Playground - only for lessons that involve prompts/practice */}
+            {(lesson.exercise || lesson.content.toLowerCase().includes('prompt')) && (
+              <AIPlayground
+                title={`Prueba con ${course.model}`}
+                suggestedPrompts={getSuggestedPrompts(course.model)}
+                contextPrompt={`El usuario está aprendiendo a usar ${course.model} (${course.provider}). Está en la lección "${lesson.title}". Ayúdalo a practicar con esta IA.`}
+              />
+            )}
           </ScrollArea>
 
           <div className="mt-5 pt-4 border-t border-border flex items-center justify-between gap-2">
@@ -372,3 +391,58 @@ function LessonViewer({
 }
 
 // Simple markdown renderer moved to shared component: SimpleMarkdown
+
+// Suggested prompts for AI Playground based on the AI model
+function getSuggestedPrompts(model: string): string[] {
+  const basePrompts: Record<string, string[]> = {
+    ChatGPT: [
+      'Ayúdame a escribir un correo formal a mi casero para pedir que arregle la caldera',
+      'Escribe un resumen profesional para mi CV. Soy cocinero con 5 años de experiencia',
+      'Traduce al inglés: "Necesito solicitar una cita para renovar mi NIE"',
+      'Explícame qué es el empadronamiento y por qué lo necesito',
+    ],
+    Gemini: [
+      'Resume las novedades de las leyes de extranjería en España 2024',
+      'Ayúdame a preparar una entrevista de trabajo para un puesto de cuidadora',
+      '¿Qué documentos necesito para solicitar la nacionalidad española?',
+      'Crea un plan de estudio de español para 4 semanas',
+    ],
+    Copilot: [
+      'Escribe un correo para solicitar un certificado de empadronamiento',
+      'Ayúdame a redactar una carta de presentación para InfoJobs',
+      '¿Cómo hago un presupuesto familiar mensual? Dame una plantilla',
+      'Resume los derechos laborales básicos en España',
+    ],
+    Claude: [
+      'Revisa mi CV y dame sugerencias de mejora',
+      'Ayúdame a escribir una carta de motivación para un curso de FP',
+      'Explica la diferencia entre NIE y TIE de forma sencilla',
+      'Redacta un correo para reclamar un pago retrasado',
+    ],
+    DeepSeek: [
+      'Paso a paso: ¿cómo solicito la reagrupación familiar?',
+      'Compara las condiciones del paro y el RAI',
+      'Calcula cuánto cobraría de prestación por desempleo con 2 años cotizados',
+      'Resume los requisitos del arraigo social en 2024',
+    ],
+    Qwen: [
+      'Traduce al chino: "Necesito ayuda con los papeles del NIE"',
+      'Explícame el sistema sanitario español en chino',
+      'Escribe un correo en español y chino para mi jefe',
+      '¿Cómo encuentro un piso de alquiler en Madrid?',
+    ],
+    Perplexity: [
+      '¿Cuál es el salario mínimo en España en 2024?',
+      'Busca las últimas noticias sobre reformas de extranjería',
+      '¿Qué ONGs ayudan a inmigrantes en Barcelona?',
+      'Compara las mejores apps para aprender español',
+    ],
+    'Meta AI': [
+      'Escribe una historia corta sobre un inmigrante que consigue su primer empleo',
+      'Crea un mensaje motivacional para empezar el día',
+      'Dame ideas para ahorrar dinero en la compra semanal',
+      'Escribe una receta típica española paso a paso',
+    ],
+  };
+  return basePrompts[model] || basePrompts.ChatGPT;
+}

@@ -532,3 +532,97 @@ Task: QA assessment, resource submission form, sort/view toggle, print styles, o
 5. **Advanced CV features**: Cover letter builder, multiple CV versions
 6. **Search analytics**: Track popular searches to improve resource ordering
 7. **Multi-language content**: Translate more UI strings and lesson content
+
+---
+Task ID: 6 (Cron Web Dev Review - Phase 6)
+Agent: Main (Z.ai Code) - Cron triggered
+Task: QA assessment, AI Playground in lessons, Cover Letter Builder, favorites export, lesson nav dots, accessibility.
+
+## Current Project Status Assessment
+- Phase 5 complete: Resource submission form, sort/view toggle, print styles, onboarding wizard
+- Platform stable with 0 errors, lint clean
+- VLM analysis identified: lessons need interactive AI practice, no cover letter tool, no favorites export
+- Worklog recommendations: AI Playground, advanced CV features (cover letter), accessibility audit
+
+## Completed Modifications
+
+### New Features Added
+1. **AI Playground** (`src/components/manos-abiertas/ai-playground.tsx`)
+   - Embedded mini-chat inside AI course lessons
+   - Appears only on lessons with exercises or "prompt" content
+   - Collapsible section with "Prueba con [Model]" header
+   - 4 suggested prompts per AI model (ChatGPT, Gemini, Copilot, Claude, DeepSeek, Qwen, Perplexity, Meta AI)
+   - Context-aware: system prompt includes lesson title and AI model info
+   - Message bubbles, typing animation, Enter to send
+   - Uses existing /api/chat endpoint
+   - Reset/clear conversation button
+
+2. **Cover Letter Builder** (`src/components/manos-abiertas/cover-letter-builder.tsx`)
+   - New tool accessible via toggle in CV section ("Currículum" / "Carta de presentación")
+   - Form fields: name, profession, company, job title, experience, skills, tone
+   - 3 tone options: Formal (🎩), Cercano (🤝), Directo (⚡)
+   - AI generates 3-paragraph professional letter (250-350 words)
+   - Two tabs: "Datos" (form) and "Carta" (preview)
+   - Copy to clipboard, Print buttons
+   - Autosaves to localStorage with timestamp
+   - Reset button with confirmation
+   - API endpoint: POST /api/cover-letter using z-ai-web-dev-sdk
+   - Multilingual support (10 languages mapped)
+
+3. **Favorites Export** (Resources section)
+   - "Exportar" button appears when user has favorites
+   - Downloads favorites as styled HTML file (openable in any browser)
+   - HTML includes: title, description, URL (clickable), category badge, region, free status, source
+   - Branded with Manos Abiertas styling (terracota color scheme)
+   - Filename: manos-abiertas-favoritos-YYYY-MM-DD.html
+   - Uses Blob + URL.createObjectURL for client-side download
+
+4. **Clickable Lesson Navigation Dots** (learn-ai-section)
+   - Lesson progress dots are now clickable buttons
+   - Each dot has title and aria-label ("Ir a lección N: [title]")
+   - Hover effect: dots grow taller (h-1.5 → h-2.5)
+   - Current lesson dot is solid white, completed are semi-transparent, upcoming are faint
+   - Allows jumping directly to any lesson in the course
+
+5. **Accessibility Improvements**
+   - Skip to content link ("Saltar al contenido principal") for screen readers
+   - Visually hidden but appears on focus with high contrast
+   - Enhanced focus-visible styles: 2px outline with offset, primary color
+   - Removed focus outline for mouse users (focus:not(:focus-visible))
+   - Proper sr-only class definition
+   - prefers-reduced-motion support: disables animations for users who prefer reduced motion
+   - main element has id="main-content" as skip link target
+
+### API Endpoints
+- `POST /api/cover-letter` - AI-powered cover letter generation with tone selection, multilingual
+
+### Styling Improvements
+1. **CV section**: Toggle between CV Builder and Cover Letter Builder with "Nuevo" badge
+2. **Lessons**: AI Playground adds interactive element with gradient header
+3. **Resources**: Export button with primary color styling
+4. **Global**: Focus-visible outlines, reduced motion support, skip link
+
+## Verification Results
+- ✅ `bun run lint` passes with 0 errors, 0 warnings
+- ✅ HTTP 200 on all pages, 0 runtime errors (fresh browser session)
+- ✅ AI Playground: tested in lesson 3 (Escribir tu CV con ChatGPT) - expanded, showed 4 suggested prompts, sent prompt about landlord/boiler, received complete formal email template
+- ✅ Cover Letter Builder: filled form (María González, Cuidadora, Residencia La Paz), generated complete 3-paragraph letter with formal greeting and closing
+- ✅ VLM confirmed cover letter: "Sí, sí y sí" (visible, professional format, copy/print buttons)
+- ✅ Favorites export: button appeared after adding favorite, download triggered
+- ✅ Lesson nav dots: clickable, with "Ir a lección N" labels visible in snapshot
+- ✅ Skip link: "Saltar al contenido principal" present in DOM
+- ✅ Focus styles: enhanced focus-visible with primary outline
+
+## Unresolved Issues / Risks
+- None critical. All features verified working.
+- Minor: AI Playground only shows on lessons with exercises or "prompt" keyword - could be expanded to more lessons
+- Minor: Cover letter print uses general print styles - could have letter-specific print optimization
+
+## Priority Recommendations for Next Phase
+1. **PWA support**: Service worker for offline access to completed lessons
+2. **Multi-language content**: Translate more UI strings and lesson content to all 39 languages
+3. **Search analytics**: Track popular searches to improve resource ordering
+4. **Advanced CV features**: Multiple CV versions, ATS optimization checker
+5. **Resource import**: Allow users to import bookmarks HTML file
+6. **Video tutorials**: Embed YouTube tutorials for key lessons
+7. **Community features**: Comments/ratings on resources

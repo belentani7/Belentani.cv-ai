@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, ExternalLink, Filter, Database, Tag, MapPin, Star, X, Heart, ArrowUpDown, LayoutGrid, List as ListIcon } from 'lucide-react';
+import { Search, ExternalLink, Filter, Database, Tag, MapPin, Star, X, Heart, ArrowUpDown, LayoutGrid, List as ListIcon, Download } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,6 +56,64 @@ export function ResourcesSection() {
       }
       return next;
     });
+  }
+
+  function exportFavorites() {
+    const favResources = RESOURCES.filter((r) => favorites.has(r.id));
+    if (favResources.length === 0) return;
+
+    // Export as HTML (openable in any browser)
+    const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mis recursos favoritos - Manos Abiertas</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; }
+h1 { color: #c2410c; border-bottom: 2px solid #c2410c; padding-bottom: 10px; }
+.resource { background: #f9fafb; border-left: 4px solid #c2410c; padding: 12px 16px; margin: 12px 0; border-radius: 4px; }
+.resource h3 { margin: 0 0 4px 0; }
+.resource a { color: #c2410c; text-decoration: none; }
+.resource a:hover { text-decoration: underline; }
+.meta { font-size: 12px; color: #6b7280; margin-top: 4px; }
+.badge { display: inline-block; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-right: 4px; }
+.footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280; text-align: center; }
+</style>
+</head>
+<body>
+<h1>⭐ Mis recursos favoritos - Manos Abiertas</h1>
+<p>Total: ${favResources.length} recursos guardados el ${new Date().toLocaleDateString('es')}</p>
+${favResources.map((r) => {
+  const cat = RESOURCE_CATEGORIES.find((c) => c.value === r.category);
+  const reg = REGIONS.find((rr) => rr.value === r.region);
+  return `<div class="resource">
+<h3>${cat?.icon || '🔗'} ${r.title}</h3>
+<p>${r.description}</p>
+<p><a href="${r.url}" target="_blank">${r.url}</a></p>
+<div class="meta">
+<span class="badge">${cat?.label || r.category}</span>
+${reg ? `<span class="badge">${reg.label}</span>` : ''}
+${r.free ? '<span class="badge">✓ Gratis</span>' : ''}
+Fuente: ${r.source}
+</div>
+</div>`;
+}).join('')}
+<div class="footer">
+Generado por Manos Abiertas · ${new Date().toLocaleDateString('es')}<br>
+Plataforma gratuita para personas inmigrantes en España
+</div>
+</body>
+</html>`;
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `manos-abiertas-favoritos-${new Date().toISOString().slice(0, 10)}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   const results = useMemo(() => {
@@ -170,6 +228,17 @@ export function ResourcesSection() {
                   <Star className={cn('h-3 w-3', showFavoritesOnly && 'fill-white')} />
                   {favorites.size} favorito{favorites.size !== 1 ? 's' : ''}
                   {showFavoritesOnly && ' · ver solo'}
+                </button>
+              )}
+              {/* Export favorites button */}
+              {favorites.size > 0 && (
+                <button
+                  onClick={exportFavorites}
+                  className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
+                  title="Exportar favoritos como HTML"
+                >
+                  <Download className="h-3 w-3" />
+                  Exportar
                 </button>
               )}
               {/* Sort dropdown */}
