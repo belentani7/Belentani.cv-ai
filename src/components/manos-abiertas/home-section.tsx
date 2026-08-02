@@ -14,6 +14,7 @@ import { FAQSection, TestimonialsSection } from './faq-testimonials';
 import { ProgressDashboard } from './progress-dashboard';
 import { FirstSteps } from './first-steps';
 import { AnimatedCounter } from './animated-counter';
+import { RecentlyViewed } from './recently-viewed';
 
 export function HomeSection() {
   const { language, setActiveSection } = useAppStore();
@@ -286,6 +287,9 @@ export function HomeSection() {
 
       {/* PROGRESS DASHBOARD - only shows if user has progress */}
       <ProgressDashboard />
+
+      {/* RECENTLY VIEWED - horizontal scroll of recent items */}
+      <RecentlyViewed />
 
       {/* QUICK ACCESS */}
       <section className="container mx-auto max-w-7xl px-4">
