@@ -12,6 +12,7 @@ import { ResourcesSection } from './resources-section';
 import { RightsSection } from './rights-section';
 import { ContactsSection } from './contacts-section';
 import { AIAssistant } from './ai-assistant';
+import { OnboardingWizard } from './onboarding-wizard';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -74,6 +75,9 @@ export function ManosAbiertasApp() {
 
       {/* AI Assistant - floating chat widget */}
       <AIAssistant />
+
+      {/* Onboarding wizard - shows on first visit */}
+      <OnboardingWizard />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, ExternalLink, Filter, Database, Tag, MapPin, Star, X, Heart } from 'lucide-react';
+import { Search, ExternalLink, Filter, Database, Tag, MapPin, Star, X, Heart, ArrowUpDown, LayoutGrid, List as ListIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { RESOURCES, RESOURCE_CATEGORIES, REGIONS, searchResources, type Resource, type ResourceCategory, type ResourceRegion } from '@/data/resources';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
+import { ResourceSubmissionForm } from './resource-submission-form';
 import { cn } from '@/lib/utils';
 
 const PAGE_SIZE = 24;
@@ -35,6 +36,8 @@ export function ResourcesSection() {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(loadFavorites);
+  const [sortBy, setSortBy] = useState<'relevance' | 'az' | 'category'>('relevance');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Persist favorites whenever they change
   useEffect(() => {
@@ -58,8 +61,18 @@ export function ResourcesSection() {
   const results = useMemo(() => {
     let r = searchResources(query, { category, region });
     if (showFavoritesOnly) r = r.filter((x) => favorites.has(x.id));
+    // Apply sorting
+    if (sortBy === 'az') {
+      r = [...r].sort((a, b) => a.title.localeCompare(b.title, 'es'));
+    } else if (sortBy === 'category') {
+      r = [...r].sort((a, b) => {
+        const catCompare = a.category.localeCompare(b.category);
+        return catCompare !== 0 ? catCompare : a.title.localeCompare(b.title, 'es');
+      });
+    }
+    // 'relevance' keeps default order (which prioritizes official resources)
     return r;
-  }, [query, category, region, showFavoritesOnly, favorites]);
+  }, [query, category, region, showFavoritesOnly, favorites, sortBy]);
 
   const visibleResults = results.slice(0, visibleCount);
 
@@ -74,6 +87,7 @@ export function ResourcesSection() {
     setCategory('all');
     setRegion('all');
     setShowFavoritesOnly(false);
+    setSortBy('relevance');
     setVisibleCount(PAGE_SIZE);
   }
 
@@ -85,7 +99,8 @@ export function ResourcesSection() {
           {RESOURCES.length.toLocaleString()} {t.resources_total}
         </Badge>
         <h1 className="text-3xl md:text-4xl font-bold mb-2">{t.resources_title}</h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">{t.resources_subtitle}</p>
+        <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base mb-3">{t.resources_subtitle}</p>
+        <ResourceSubmissionForm />
       </div>
 
       {/* Search & filters */}
@@ -134,28 +149,61 @@ export function ResourcesSection() {
             </Select>
           </div>
 
-          <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
             <span>
               {results.length.toLocaleString()} resultado{results.length !== 1 ? 's' : ''}
               {(category !== 'all' || region !== 'all' || query) && (
                 <button onClick={resetFilters} className="ml-2 text-primary hover:underline">Limpiar filtros</button>
               )}
             </span>
-            {favorites.size > 0 && (
-              <button
-                onClick={() => { setShowFavoritesOnly(!showFavoritesOnly); setVisibleCount(PAGE_SIZE); }}
-                className={cn(
-                  'inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border transition-colors',
-                  showFavoritesOnly
-                    ? 'bg-amber-500 text-white border-amber-500'
-                    : 'border-amber-300 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40'
-                )}
-              >
-                <Star className={cn('h-3 w-3', showFavoritesOnly && 'fill-white')} />
-                {favorites.size} favorito{favorites.size !== 1 ? 's' : ''}
-                {showFavoritesOnly && ' · ver solo'}
-              </button>
-            )}
+            <div className="flex items-center gap-2">
+              {favorites.size > 0 && (
+                <button
+                  onClick={() => { setShowFavoritesOnly(!showFavoritesOnly); setVisibleCount(PAGE_SIZE); }}
+                  className={cn(
+                    'inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border transition-colors',
+                    showFavoritesOnly
+                      ? 'bg-amber-500 text-white border-amber-500'
+                      : 'border-amber-300 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+                  )}
+                >
+                  <Star className={cn('h-3 w-3', showFavoritesOnly && 'fill-white')} />
+                  {favorites.size} favorito{favorites.size !== 1 ? 's' : ''}
+                  {showFavoritesOnly && ' · ver solo'}
+                </button>
+              )}
+              {/* Sort dropdown */}
+              <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+                <SelectTrigger className="h-7 w-auto text-[11px] gap-1 border-border/60">
+                  <ArrowUpDown className="h-3 w-3" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="relevance" className="text-xs">Relevancia</SelectItem>
+                  <SelectItem value="az" className="text-xs">Nombre (A-Z)</SelectItem>
+                  <SelectItem value="category" className="text-xs">Por categoría</SelectItem>
+                </SelectContent>
+              </Select>
+              {/* View toggle */}
+              <div className="flex items-center border border-border/60 rounded-md overflow-hidden">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={cn('p-1 transition-colors', viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'hover:bg-accent')}
+                  aria-label="Vista de cuadrícula"
+                  title="Vista de tarjetas"
+                >
+                  <LayoutGrid className="h-3 w-3" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={cn('p-1 transition-colors', viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'hover:bg-accent')}
+                  aria-label="Vista de lista"
+                  title="Vista compacta"
+                >
+                  <ListIcon className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -171,7 +219,11 @@ export function ResourcesSection() {
         </Card>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className={cn(
+            viewMode === 'grid'
+              ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'
+              : 'flex flex-col gap-1.5'
+          )}>
             {visibleResults.map((resource, i) => (
               <ResourceCard
                 key={resource.id}
@@ -179,6 +231,7 @@ export function ResourcesSection() {
                 isFavorite={favorites.has(resource.id)}
                 onToggleFavorite={() => toggleFavorite(resource.id)}
                 index={i}
+                viewMode={viewMode}
               />
             ))}
           </div>
@@ -221,11 +274,64 @@ const CATEGORY_COLORS: Record<ResourceCategory, { bg: string; text: string; bord
   'language-learning': { bg: 'bg-green-50 dark:bg-green-950/30', text: 'text-green-700 dark:text-green-300', border: 'border-green-200 dark:border-green-900', dot: 'bg-green-600' },
 };
 
-function ResourceCard({ resource, isFavorite, onToggleFavorite, index }: { resource: Resource; isFavorite: boolean; onToggleFavorite: () => void; index: number }) {
+function ResourceCard({ resource, isFavorite, onToggleFavorite, index, viewMode = 'grid' }: { resource: Resource; isFavorite: boolean; onToggleFavorite: () => void; index: number; viewMode?: 'grid' | 'list' }) {
   const cat = RESOURCE_CATEGORIES.find((c) => c.value === resource.category);
   const reg = REGIONS.find((r) => r.value === resource.region);
   const colors = CATEGORY_COLORS[resource.category] || CATEGORY_COLORS.government;
 
+  // List view: compact horizontal layout
+  if (viewMode === 'list') {
+    return (
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: Math.min(index * 0.01, 0.2) }}
+      >
+        <div className="group flex items-center gap-3 p-2.5 rounded-lg border border-border/60 hover:border-primary/40 hover:bg-accent/20 transition-all relative overflow-hidden">
+          {/* Left color bar */}
+          <div className={cn('absolute left-0 top-0 bottom-0 w-1', colors.dot)} />
+          <span className="text-lg flex-shrink-0 ml-1.5">{cat?.icon}</span>
+          <div className="flex-1 min-w-0">
+            <a
+              href={resource.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-sm hover:text-primary transition-colors line-clamp-1 flex items-center gap-1"
+            >
+              {resource.title}
+            </a>
+            <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
+              <span className={cn('px-1.5 py-0 rounded-full', colors.bg, colors.text)}>{cat?.label}</span>
+              {reg && <span className="flex items-center gap-0.5"><MapPin className="h-2.5 w-2.5" />{reg.label}</span>}
+              <span className="truncate">{resource.source}</span>
+              {resource.free && <span className="text-emerald-600 dark:text-emerald-400 font-medium">✓ Gratis</span>}
+            </div>
+          </div>
+          <button
+            onClick={onToggleFavorite}
+            className={cn(
+              'p-1 rounded transition-colors flex-shrink-0',
+              isFavorite ? 'text-amber-500' : 'text-muted-foreground/40 hover:text-amber-500'
+            )}
+            aria-label={isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+          >
+            <Star className={cn('h-3.5 w-3.5', isFavorite && 'fill-amber-500')} />
+          </button>
+          <a
+            href={resource.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-primary flex-shrink-0"
+            aria-label="Abrir recurso"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        </div>
+      </motion.div>
+    );
+  }
+
+  // Grid view: full card (default)
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}

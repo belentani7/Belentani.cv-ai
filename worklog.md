@@ -441,3 +441,94 @@ Task: QA assessment, CV template visual previews, hero visual mockup, animated c
 5. **Onboarding wizard**: 3-question survey on first visit (language, situation, goal) to personalize
 6. **AI Playground in lessons**: Embed interactive mini-chat inside AI course lessons
 7. **Dark mode for CV preview**: Currently CV preview is always white (for printing), could add dark mode toggle
+
+---
+Task ID: 5 (Cron Web Dev Review - Phase 5)
+Agent: Main (Z.ai Code) - Cron triggered
+Task: QA assessment, resource submission form, sort/view toggle, print styles, onboarding wizard.
+
+## Current Project Status Assessment
+- Phase 4 complete: CV template visual previews, hero mockup, animated counters, 7 templates
+- Platform stable with 0 errors, lint clean
+- VLM analysis identified: no resource submission form, no sort options, no view toggle, no print optimization, no onboarding
+- Worklog recommendations: Resource submission, print-optimized CV, onboarding wizard
+
+## Completed Modifications
+
+### New Features Added
+1. **Resource Submission Form** (`src/components/manos-abiertas/resource-submission-form.tsx`)
+   - "Sugerir recurso" button in Resources header
+   - Modal dialog with form: title, URL, description, category, source
+   - URL validation (auto-prepends https:// if missing)
+   - Suggestions persist to localStorage
+   - "Mis sugerencias" tab shows submitted suggestions with delete option
+   - Badge count shows total suggestions
+   - Toast confirmation "¡Gracias! Tu sugerencia fue guardada ✨"
+
+2. **Sort Dropdown** (Resources section)
+   - 3 sort options: Relevancia (default), Nombre (A-Z), Por categoría
+   - Applied via useMemo with localeCompare for Spanish
+   - Category sort groups by category then alphabetically within
+   - Compact dropdown in the results counter row
+
+3. **Grid/List View Toggle** (Resources section)
+   - Two view modes: Grid (cards) and List (compact rows)
+   - Grid: 3-column responsive cards with color strips, badges
+   - List: compact horizontal rows with left color bar, icon, title, metadata
+   - List view shows ~3x more resources per screen for scanning
+   - Toggle buttons with active state (primary color)
+   - Persisted view mode during session
+
+4. **Print-Optimized CV Stylesheet** (globals.css)
+   - @page A4 size with 15mm/12mm margins
+   - Hides all non-CV elements (nav, footer, buttons, editor)
+   - Shows only `.print:block` CV preview at full width
+   - Force color printing (print-color-adjust: exact)
+   - Avoids page breaks inside headings, list items, paragraphs
+   - 11pt base font, 1.4 line height for print
+   - `.print-only` and `.screen-only` helper classes
+
+5. **Onboarding Wizard** (`src/components/manos-abiertas/onboarding-wizard.tsx`)
+   - Shows automatically on first visit (localStorage check)
+   - 4-step guided setup:
+     - Step 1: Welcome with platform stats (39 idiomas, 8 cursos, 3,647 recursos)
+     - Step 2: Language selection (18 main languages shown)
+     - Step 3: Situation (Recién llegado, Regularizando, Buscando empleo, Aprendiendo, Instalado)
+     - Step 4: Goal (Aprender IA, Crear CV, Office, Recursos, Derechos)
+   - Gradient header with progress dots
+   - Animated transitions between steps
+   - "Saltar introducción" skip option
+   - On finish: sets language, navigates to chosen section, shows toast
+   - Persists "onboarded" flag to prevent re-showing
+
+### Styling Improvements
+1. **Resources header**: "Sugerir recurso" button adds community engagement
+2. **Resources controls**: Sort + view toggle in compact row with favorites filter
+3. **List view**: Compact horizontal cards with left color bar for quick scanning
+4. **Print**: Professional A4 output with proper margins and page breaks
+5. **Onboarding**: Welcoming gradient dialog with smooth animations
+
+## Verification Results
+- ✅ `bun run lint` passes with 0 errors, 0 warnings
+- ✅ HTTP 200 on all pages, 0 runtime errors (fresh browser session)
+- ✅ Onboarding wizard: tested full flow (4 steps → finish → navigated to CV section → toast appeared)
+- ✅ Onboarding persists: doesn't reappear after completion
+- ✅ Resource submission: form validated, suggestion saved, "Mis sugerencias 1" badge appeared
+- ✅ Sort dropdown: 3 options visible, A-Z sort confirmed (numbers first)
+- ✅ List view: VLM confirmed compact horizontal format with left color bar, icon+title+metadata in row
+- ✅ Print styles: CSS added with @page A4, color adjust, page break rules
+- ✅ All previous features still working (AI Assistant, Command Palette, Progress Dashboard)
+
+## Unresolved Issues / Risks
+- None critical. All features verified working.
+- Minor: Onboarding wizard only shows once (by design). To re-test, must clear localStorage.
+- Minor: Print styles couldn't be fully tested in headless browser (would need physical print preview), but CSS is correctly structured.
+
+## Priority Recommendations for Next Phase
+1. **Accessibility audit**: Full WCAG AA compliance, screen reader testing, keyboard-only navigation
+2. **PWA support**: Service worker for offline access to completed lessons
+3. **AI Playground in lessons**: Embed interactive mini-chat inside AI course lessons
+4. **Resource import/export**: Allow users to export their favorites as JSON
+5. **Advanced CV features**: Cover letter builder, multiple CV versions
+6. **Search analytics**: Track popular searches to improve resource ordering
+7. **Multi-language content**: Translate more UI strings and lesson content
