@@ -11,6 +11,7 @@ import { OfficeSection } from './office-section';
 import { ResourcesSection } from './resources-section';
 import { RightsSection } from './rights-section';
 import { ContactsSection } from './contacts-section';
+import { AIAssistant } from './ai-assistant';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -49,17 +50,30 @@ export function ManosAbiertasApp() {
       </main>
       <Footer />
 
-      {/* Back to top */}
-      {showTop && (
-        <Button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          size="icon"
-          className="fixed bottom-4 right-4 z-30 rounded-full shadow-lg h-10 w-10 print:hidden"
-          aria-label="Volver arriba"
-        >
-          <ArrowUp className="h-4 w-4" />
-        </Button>
-      )}
+      {/* Back to top - positioned to not collide with AI assistant */}
+      <AnimatePresence>
+        {showTop && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            className="fixed bottom-20 right-4 z-30 print:hidden"
+          >
+            <Button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              size="icon"
+              variant="outline"
+              className="rounded-full shadow-lg h-10 w-10 bg-card/90 backdrop-blur"
+              aria-label="Volver arriba"
+            >
+              <ArrowUp className="h-4 w-4" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* AI Assistant - floating chat widget */}
+      <AIAssistant />
     </div>
   );
 }

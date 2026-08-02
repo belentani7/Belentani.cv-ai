@@ -11,6 +11,8 @@ import { LANGUAGE_COUNT } from '@/i18n/languages';
 import { RESOURCES } from '@/data/resources';
 import { AI_COURSES } from '@/data/ai-courses';
 import { FAQSection, TestimonialsSection } from './faq-testimonials';
+import { ProgressDashboard } from './progress-dashboard';
+import { FirstSteps } from './first-steps';
 
 export function HomeSection() {
   const { language, setActiveSection } = useAppStore();
@@ -167,6 +169,9 @@ export function HomeSection() {
         </div>
       </section>
 
+      {/* PROGRESS DASHBOARD - only shows if user has progress */}
+      <ProgressDashboard />
+
       {/* QUICK ACCESS */}
       <section className="container mx-auto max-w-7xl px-4">
         <div className="text-center mb-8">
@@ -207,6 +212,9 @@ export function HomeSection() {
           })}
         </div>
       </section>
+
+      {/* FIRST STEPS - guided checklist */}
+      <FirstSteps />
 
       {/* MISSION */}
       <section className="container mx-auto max-w-7xl px-4">

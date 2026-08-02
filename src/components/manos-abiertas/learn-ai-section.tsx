@@ -10,6 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { AI_COURSES, type AICourse, type Lesson } from '@/data/ai-courses';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
+import { SimpleMarkdown } from './simple-markdown';
 import { cn } from '@/lib/utils';
 
 export function LearnAISection() {
@@ -281,9 +282,31 @@ function LessonViewer({
       <div className={cn('rounded-2xl p-5 mb-5 bg-gradient-to-br', course.color)}>
         <div className="flex items-center gap-3 text-white">
           <div className="text-3xl">{course.logo}</div>
-          <div>
+          <div className="flex-1 min-w-0">
             <div className="text-xs opacity-90">{course.model} · {t.lesson} {idx + 1} {t.of} {course.lessons.length}</div>
             <h1 className="text-xl md:text-2xl font-bold">{lesson.title}</h1>
+            {/* Lesson progress bar */}
+            <div className="mt-2 flex items-center gap-2">
+              <div className="flex-1 h-1.5 bg-white/25 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-white rounded-full transition-all duration-300"
+                  style={{ width: `${((idx + 1) / course.lessons.length) * 100}%` }}
+                />
+              </div>
+              <span className="text-[10px] opacity-90 tabular-nums">{Math.round(((idx + 1) / course.lessons.length) * 100)}%</span>
+            </div>
+            {/* Lesson dots */}
+            <div className="mt-1.5 flex items-center gap-1">
+              {course.lessons.map((l, i) => (
+                <span
+                  key={l.id}
+                  className={cn(
+                    'h-1 flex-1 rounded-full transition-colors',
+                    i < idx ? 'bg-white/80' : i === idx ? 'bg-white' : 'bg-white/20'
+                  )}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -292,7 +315,7 @@ function LessonViewer({
         <CardContent className="p-6">
           <ScrollArea className="h-[55vh] pr-4">
             <article className="prose prose-sm dark:prose-invert max-w-none">
-              <MarkdownContent content={lesson.content} />
+              <SimpleMarkdown content={lesson.content} />
             </article>
 
             {lesson.tips && lesson.tips.length > 0 && (
@@ -348,18 +371,4 @@ function LessonViewer({
   );
 }
 
-// Simple markdown renderer for lesson content
-function MarkdownContent({ content }: { content: string }) {
-  const blocks = content.split('\n').map((line, i) => {
-    const trimmed = line.trim();
-    if (!trimmed) return <div key={i} className="h-3" />;
-    if (trimmed.startsWith('### ')) return <h3 key={i} className="text-base font-semibold mt-4 mb-2 text-foreground">{trimmed.slice(4)}</h3>;
-    if (trimmed.startsWith('## ')) return <h2 key={i} className="text-lg font-bold mt-5 mb-2 text-foreground">{trimmed.slice(3)}</h2>;
-    if (trimmed.startsWith('# ')) return <h1 key={i} className="text-xl font-bold mt-5 mb-3 text-foreground">{trimmed.slice(2)}</h1>;
-    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) return <li key={i} className="ml-5 text-sm text-foreground/90 list-disc">{trimmed.slice(2)}</li>;
-    if (trimmed.startsWith('> ')) return <blockquote key={i} className="border-l-4 border-primary/40 pl-3 my-2 text-sm italic text-muted-foreground">{trimmed.slice(2)}</blockquote>;
-    if (trimmed.startsWith('**') && trimmed.endsWith('**')) return <p key={i} className="font-semibold text-sm my-1">{trimmed.slice(2, -2)}</p>;
-    return <p key={i} className="text-sm text-foreground/90 my-1.5 leading-relaxed">{trimmed}</p>;
-  });
-  return <div>{blocks}</div>;
-}
+// Simple markdown renderer moved to shared component: SimpleMarkdown

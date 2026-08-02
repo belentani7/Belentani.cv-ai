@@ -10,6 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { OFFICE_MODULES, type OfficeModule, type OfficeLesson } from '@/data/office-course';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
+import { SimpleMarkdown as SharedMarkdown } from './simple-markdown';
 import { cn } from '@/lib/utils';
 
 export function OfficeSection() {
@@ -62,7 +63,7 @@ export function OfficeSection() {
           <CardContent className="p-6">
             <ScrollArea className="h-[55vh] pr-4">
               <article className="prose prose-sm dark:prose-invert max-w-none">
-                <SimpleMarkdown content={selectedLesson.content} />
+                <SharedMarkdown content={selectedLesson.content} />
               </article>
 
               {selectedLesson.steps && selectedLesson.steps.length > 0 && (
@@ -269,16 +270,4 @@ export function OfficeSection() {
   );
 }
 
-function SimpleMarkdown({ content }: { content: string }) {
-  const blocks = content.split('\n').map((line, i) => {
-    const trimmed = line.trim();
-    if (!trimmed) return <div key={i} className="h-2" />;
-    if (trimmed.startsWith('### ')) return <h3 key={i} className="text-base font-semibold mt-3 mb-1.5">{trimmed.slice(4)}</h3>;
-    if (trimmed.startsWith('## ')) return <h2 key={i} className="text-lg font-bold mt-4 mb-2">{trimmed.slice(3)}</h2>;
-    if (trimmed.startsWith('# ')) return <h1 key={i} className="text-xl font-bold mt-4 mb-2">{trimmed.slice(2)}</h1>;
-    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) return <li key={i} className="ml-5 text-sm list-disc">{trimmed.slice(2)}</li>;
-    if (trimmed.startsWith('> ')) return <blockquote key={i} className="border-l-4 border-primary/40 pl-3 my-2 text-sm italic text-muted-foreground">{trimmed.slice(2)}</blockquote>;
-    return <p key={i} className="text-sm my-1.5 leading-relaxed">{trimmed}</p>;
-  });
-  return <div>{blocks}</div>;
-}
+// SimpleMarkdown now uses the shared component from './simple-markdown'

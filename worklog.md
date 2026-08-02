@@ -278,3 +278,91 @@ Task: QA assessment, bug fixes, styling improvements, and new features.
 5. **Progress dashboard**: Show overall learning progress across all courses on Home
 6. **PWA support**: Add service worker for offline access to completed lessons
 7. **Accessibility audit**: Full WCAG AA compliance check with screen reader testing
+
+---
+Task ID: 3 (Cron Web Dev Review - Phase 3)
+Agent: Main (Z.ai Code) - Cron triggered
+Task: QA assessment, AI Assistant chat widget, Progress Dashboard, lesson rendering improvements.
+
+## Current Project Status Assessment
+- Phase 2 complete: FAQ, Testimonials, Command Palette, CV autosave, favorites persistence, resource card redesign
+- Platform stable with 0 errors, lint clean
+- VLM analysis identified: no interactive AI, no progress dashboard, lesson content needs better rendering, no guided onboarding
+- Worklog recommendations: Interactive AI playground, Progress dashboard, more CV templates
+
+## Completed Modifications
+
+### New Features Added
+1. **AI Assistant Chat Widget** (`src/components/manos-abiertas/ai-assistant.tsx`)
+   - Floating button bottom-right (gradient brand, pulse indicator)
+   - Full chat interface with message bubbles, typing animation, suggestions
+   - 6 quick-suggestion buttons (ChatGPT, CV, NIE, housing, SMI, Spanish)
+   - Chat history persists to localStorage (last 20 messages)
+   - Multilingual: responds in user's selected language (28 languages mapped)
+   - System prompt tailored for immigrants: warm, simple, references platform sections
+   - API endpoint: `POST /api/chat` using z-ai-web-dev-sdk
+   - Clear conversation button, keyboard support (Enter to send, Shift+Enter for newline)
+
+2. **Progress Dashboard** (`src/components/manos-abiertas/progress-dashboard.tsx`)
+   - Only shows when user has any progress (doesn't clutter first-time visits)
+   - Overall progress bar with percentage and lesson count
+   - 4 stat cards: Cursos IA, Office Pack, Tu CV, Logros (clickable to navigate)
+   - Each card shows X/Y, percentage, mini progress bar
+   - 5 achievements with emojis: 👣 Primer paso, 🤖 Explorador IA, 📝 CV Creado, 🎓 Maestro IA, 🏆 Office Pro
+   - "Continuar IA" / "Continuar Office" CTA buttons
+   - Uses shared `useProgress` hook that reads from localStorage
+
+3. **First Steps Guided Checklist** (`src/components/manos-abiertas/first-steps.tsx`)
+   - "Tu ruta en España" - 5-step onboarding checklist
+   - Steps: Conoce plataforma → Aprende IA → Crea CV → Aprende Office → Conoce derechos
+   - Visual progress with connector lines between steps
+   - Auto-checks completion based on progress stats
+   - "Empezar" button on each incomplete step
+   - Hides when user completes 4+ steps (graduated)
+
+4. **Shared Markdown Renderer** (`src/components/manos-abiertas/simple-markdown.tsx`)
+   - Replaces 3 duplicate local renderers (learn-ai, office, rights)
+   - Supports: headings, **bold**, *italic*, `inline code`, [links](url), ordered/unordered lists, blockquotes, horizontal rules
+   - Smart blockquotes: detects "importante/atención" → amber warning, "consejo/recuerda" → emerald tip, "hecho/✓" → teal success
+   - Links open in new tab with external icon
+   - Better spacing, section dividers, colored list markers
+
+5. **useProgress Hook** (`src/hooks/use-progress.ts`)
+   - Centralized progress calculation from localStorage
+   - Aggregates AI courses + Office modules + CV status
+   - Returns: aiCompleted, aiTotal, officeCompleted, officeTotal, percentages, coursesStarted/Completed, modulesStarted/Completed, hasCV
+   - Auto-refreshes every 2s + on storage events (cross-tab sync)
+
+### Styling Improvements
+1. **Lesson Viewer** (learn-ai-section):
+   - Added lesson progress bar in header (X% with dots for each lesson)
+   - Progress dots show completed (white), current (white), upcoming (white/20)
+   - Better content rendering with shared SimpleMarkdown
+2. **Back to Top button**: Repositioned to bottom-20 to avoid collision with AI Assistant
+3. **Home flow**: Hero → Progress Dashboard (if any) → Quick Access → First Steps → Mission → AI Models → Testimonials → FAQ → CTA
+
+### API Endpoints
+- `POST /api/chat` - AI Assistant chat with conversation history, multilingual, Manos Abiertas context
+
+## Verification Results
+- ✅ `bun run lint` passes with 0 errors, 0 warnings
+- ✅ HTTP 200 on all pages, 0 runtime errors (fresh browser session)
+- ✅ AI Assistant: tested "¿Qué es el NIE?" and "¿Cómo empiezo con ChatGPT?" - both returned contextual, helpful responses referencing platform sections
+- ✅ Chat API: direct curl test returns accurate SMI 2024 data (1.134€/14 pagas)
+- ✅ Progress Dashboard: appears after completing 1 lesson, shows "1% completado", "Logros 2/5 40%", achievement emojis
+- ✅ First Steps: visible on home, 5 steps with "Empezar" buttons
+- ✅ Lesson rendering: VLM confirmed progress bar (13%), inline code formatting, better spacing, warning boxes with icons
+- ✅ VLM verified dashboard: total %, per-category bars, achievements with emojis, interactive cards
+
+## Unresolved Issues / Risks
+- None critical. All features verified working.
+- Minor: AI Assistant chat history only persists per-device (localStorage). No cross-device sync (would need backend accounts).
+
+## Priority Recommendations for Next Phase
+1. **AI Playground**: Embed interactive mini-chat inside AI course lessons (try prompts without leaving platform)
+2. **More CV templates**: Add visual template variations (2-column, sidebar, photo)
+3. **Resource submission form**: Let users suggest new resources (localStorage queue)
+4. **Accessibility audit**: Full WCAG AA compliance, screen reader testing, keyboard-only navigation
+5. **PWA support**: Service worker for offline access to completed lessons
+6. **Print-optimized CV**: Better print stylesheet with A4 page breaks
+7. **Onboarding survey**: 3-question wizard on first visit ("¿Idioma? ¿Situación? ¿Objetivo?") to personalize
