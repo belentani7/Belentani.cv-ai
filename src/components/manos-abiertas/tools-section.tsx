@@ -2,22 +2,26 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Wrench, FolderOpen, Calculator, Coins, Trophy } from 'lucide-react';
+import { Wrench, FolderOpen, Calculator, Coins, Trophy, MapPin, Bell } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAppStore } from '@/stores/app-store';
 import { DocumentChecklist } from './document-checklist';
 import { CostOfLifeTools } from './cost-of-life-tools';
+import { ProcessInfographics } from './process-infographics';
+import { SmartReminders } from './smart-reminders';
 import { GAMIFICATION_BADGES } from '@/data/tools-data';
 import { useProgress } from '@/hooks/use-progress';
 import { cn } from '@/lib/utils';
 
-type ToolTab = 'documents' | 'cost' | 'badges';
+type ToolTab = 'documents' | 'cost' | 'processes' | 'reminders' | 'badges';
 
 const TOOLS: { id: ToolTab; emoji: string; icon: typeof FolderOpen; title: string; desc: string; color: string }[] = [
   { id: 'documents', emoji: '📋', icon: FolderOpen, title: 'Checklist de documentos', desc: 'Trámites esenciales para regularizarte', color: 'from-amber-400 to-orange-500' },
+  { id: 'processes', emoji: '🗺️', icon: MapPin, title: 'Guías visuales', desc: 'Procesos paso a paso con diagramas', color: 'from-blue-400 to-cyan-500' },
   { id: 'cost', emoji: '💰', icon: Calculator, title: 'Coste de vida y moneda', desc: 'Calcula gastos y convierte divisas', color: 'from-emerald-400 to-teal-500' },
+  { id: 'reminders', emoji: '🔔', icon: Bell, title: 'Recordatorios', desc: 'No pierdas plazos importantes', color: 'from-rose-400 to-pink-500' },
   { id: 'badges', emoji: '🏆', icon: Trophy, title: 'Tus logros', desc: 'Insignias desbloqueadas', color: 'from-violet-400 to-purple-500' },
 ];
 
@@ -38,7 +42,7 @@ export function ToolsSection() {
       </div>
 
       {/* Tool selector */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
         {TOOLS.map((tool, i) => {
           const Icon = tool.icon;
           const active = activeTool === tool.id;
@@ -84,7 +88,9 @@ export function ToolsSection() {
         transition={{ duration: 0.2 }}
       >
         {activeTool === 'documents' && <DocumentChecklist />}
+        {activeTool === 'processes' && <ProcessInfographics />}
         {activeTool === 'cost' && <CostOfLifeTools />}
+        {activeTool === 'reminders' && <SmartReminders />}
         {activeTool === 'badges' && <BadgesDisplay />}
       </motion.div>
     </div>
