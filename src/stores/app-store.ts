@@ -11,7 +11,8 @@ export type SectionId =
   | 'office'
   | 'resources'
   | 'rights'
-  | 'contacts';
+  | 'contacts'
+  | 'tools';
 
 interface AppState {
   // Language

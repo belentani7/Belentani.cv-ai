@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, FileText, BookOpen, Database, Shield, Phone, Globe, Heart, Users, GraduationCap, ChevronRight, Star } from 'lucide-react';
+import { ArrowRight, Sparkles, FileText, BookOpen, Database, Shield, Phone, Globe, Heart, Users, GraduationCap, ChevronRight, Star, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -59,6 +59,14 @@ export function HomeSection() {
       title: t.nav_rights,
       desc: 'Derechos, ayudas y supervivencia',
       gradient: 'from-rose-400 to-pink-500',
+    },
+    {
+      id: 'tools',
+      emoji: '🛠️',
+      icon: Wrench,
+      title: 'Herramientas',
+      desc: 'Checklist trámites, coste de vida, conversor',
+      gradient: 'from-cyan-400 to-blue-500',
     },
     {
       id: 'contacts',
