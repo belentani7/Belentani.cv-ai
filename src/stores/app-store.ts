@@ -12,7 +12,8 @@ export type SectionId =
   | 'resources'
   | 'rights'
   | 'contacts'
-  | 'tools';
+  | 'tools'
+  | 'events';
 
 interface AppState {
   // Language

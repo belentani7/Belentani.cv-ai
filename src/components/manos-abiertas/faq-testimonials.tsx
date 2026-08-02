@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, HelpCircle, Star, Quote, Heart } from 'lucide-react';
+import { ChevronDown, HelpCircle, Star, Quote, Heart, CheckCircle2, Clock } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FAQ_ITEMS, TESTIMONIALS } from '@/data/home-content';
@@ -153,8 +153,32 @@ export function TestimonialsSection() {
                   ))}
                 </div>
                 <p className="text-sm text-foreground/80 leading-relaxed italic">"{t.story}"</p>
-                <div className="mt-3 pt-3 border-t border-border text-xs text-muted-foreground">
-                  Desde <span className="font-medium">{t.origin}</span> · ahora en España
+
+                {/* Outcome badge */}
+                {t.outcome && (
+                  <div className="mt-3 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
+                    <div className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400">
+                      <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
+                      <span className="font-medium">{t.outcome}</span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Desde <span className="font-medium">{t.origin}</span></span>
+                  <div className="flex items-center gap-2">
+                    {t.timeline && (
+                      <span className="flex items-center gap-0.5">
+                        <Clock className="h-3 w-3" />
+                        {t.timeline}
+                      </span>
+                    )}
+                    {t.section && (
+                      <Badge variant="outline" className="text-[9px] py-0 h-4">
+                        {t.section}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>

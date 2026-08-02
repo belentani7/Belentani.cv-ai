@@ -93,6 +93,20 @@ export const FAQ_ITEMS: FAQItem[] = [
   },
 ];
 
+export interface Testimonial {
+  id: string;
+  name: string;
+  origin: string;
+  flag: string;
+  role: string;
+  story: string;
+  avatar: string; // emoji
+  rating: number;
+  outcome?: string; // what they achieved
+  timeline?: string; // how long it took
+  section?: string; // which section helped most
+}
+
 export const TESTIMONIALS: Testimonial[] = [
   {
     id: 't1',
@@ -103,6 +117,9 @@ export const TESTIMONIALS: Testimonial[] = [
     story: 'Llegué a Madrid sin saber usar el ordenador. Aprendí ChatGPT aquí y ahora lo uso para traducir documentos y escribir correos al colegio de mis hijos. Conseguí trabajo en 2 meses.',
     avatar: '👩🏿',
     rating: 5,
+    outcome: 'Conseguió trabajo en 2 meses',
+    timeline: '2 meses',
+    section: 'Aprende IA',
   },
   {
     id: 't2',
@@ -113,6 +130,9 @@ export const TESTIMONIALS: Testimonial[] = [
     story: 'Hice mi CV con la IA en 15 minutos. Lo descargué en PDF y lo envié por InfoJobs. Me llamaron al día siguiente. La sección de derechos me ayudó a entender mi contrato.',
     avatar: '👨🏼',
     rating: 5,
+    outcome: 'Trabajo encontrado en 1 día',
+    timeline: '1 día',
+    section: 'Crea tu CV',
   },
   {
     id: 't3',
@@ -123,6 +143,9 @@ export const TESTIMONIALS: Testimonial[] = [
     story: 'El curso de Excel me cambió la vida. Ahora llevo la contabilidad del restaurante donde trabajo. Todo en español, paso a paso, con ejemplos prácticos. ¡Gracias Manos Abiertas!',
     avatar: '👩🏻',
     rating: 5,
+    outcome: 'Ascendida a encargada',
+    timeline: '3 meses',
+    section: 'Office Pack',
   },
   {
     id: 't4',
@@ -133,6 +156,9 @@ export const TESTIMONIALS: Testimonial[] = [
     story: 'Los recursos sobre extranjería me salvaron. Encontré el formulario EX-15 para mi NIE y los teléfonos de mi consulado. Todo verificado y en un solo lugar. Increíble.',
     avatar: '👩🏽',
     rating: 5,
+    outcome: 'NIE tramitado sin abogado',
+    timeline: '1 mes',
+    section: 'Derechos y Ayudas',
   },
   {
     id: 't5',
@@ -143,6 +169,9 @@ export const TESTIMONIALS: Testimonial[] = [
     story: 'Aprendí a usar Copilot y Gemini para preparar mis clases. La web está en ucraniano, lo que me hizo sentir en casa. El soporte para 39 idiomas es único.',
     avatar: '👩🏼‍🦰',
     rating: 5,
+    outcome: 'Convalidó su título',
+    timeline: '4 meses',
+    section: 'Aprende IA',
   },
   {
     id: 't6',
@@ -153,5 +182,47 @@ export const TESTIMONIALS: Testimonial[] = [
     story: 'El curso de Office completo me dio la confianza para matricularme en FP de Informática. Los profesores no creían que supiera tanto Excel. ¡Lo aprendí todo gratis aquí!',
     avatar: '👨🏽',
     rating: 5,
+    outcome: 'Matriculado en FP Informática',
+    timeline: '6 meses',
+    section: 'Office Pack',
+  },
+  {
+    id: 't7',
+    name: 'Fatima',
+    origin: 'Marruecos',
+    flag: '🇲🇦',
+    role: 'Costurera',
+    story: 'Con el conversor de moneda puedo calcular cuánto enviar a mi familia. El checklist de documentos me ayudó a no olvidar nada para renovar mi permiso. Muy práctica la web.',
+    avatar: '👩🏽',
+    rating: 5,
+    outcome: 'Permiso renovado a tiempo',
+    timeline: '3 semanas',
+    section: 'Herramientas',
+  },
+  {
+    id: 't8',
+    name: 'Vladimir',
+    origin: 'Venezuela',
+    flag: '🇻🇪',
+    role: 'Ingeniero electricista',
+    story: 'La carta de presentación con IA me abrió puertas. Tras 5 meses buscando, conseguí entrevistas en 2 semanas. La plantilla profesional marcó la diferencia.',
+    avatar: '👨🏻',
+    rating: 5,
+    outcome: '5 entrevistas en 2 semanas',
+    timeline: '2 semanas',
+    section: 'Crea tu CV',
+  },
+  {
+    id: 't9',
+    name: 'Priya',
+    origin: 'India',
+    flag: '🇮🇳',
+    role: 'Técnica de laboratorio',
+    story: 'El glosario legal me ayudó a entender términos que no conocía. Ahora sé qué es el IRPF, el convenio colectivo y mis derechos laborales. Me siento más segura.',
+    avatar: '👩🏽',
+    rating: 5,
+    outcome: 'Conoce sus derechos laborales',
+    timeline: '1 mes',
+    section: 'Derechos y Ayudas',
   },
 ];

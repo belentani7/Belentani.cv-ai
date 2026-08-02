@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, FileText, BookOpen, Database, Shield, Phone, Globe, Heart, Users, GraduationCap, ChevronRight, Star, Wrench } from 'lucide-react';
+import { ArrowRight, Sparkles, FileText, BookOpen, Database, Shield, Phone, Globe, Heart, Users, GraduationCap, ChevronRight, Star, Wrench, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -67,6 +67,14 @@ export function HomeSection() {
       title: 'Herramientas',
       desc: 'Checklist trámites, coste de vida, conversor',
       gradient: 'from-cyan-400 to-blue-500',
+    },
+    {
+      id: 'events',
+      emoji: '📅',
+      icon: Calendar,
+      title: 'Eventos',
+      desc: 'Ferias de empleo, jornadas, cursos',
+      gradient: 'from-pink-400 to-rose-500',
     },
     {
       id: 'contacts',
