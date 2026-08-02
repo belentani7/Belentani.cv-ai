@@ -13,6 +13,7 @@ import { AI_COURSES } from '@/data/ai-courses';
 import { FAQSection, TestimonialsSection } from './faq-testimonials';
 import { ProgressDashboard } from './progress-dashboard';
 import { FirstSteps } from './first-steps';
+import { AnimatedCounter } from './animated-counter';
 
 export function HomeSection() {
   const { language, setActiveSection } = useAppStore();
@@ -70,10 +71,10 @@ export function HomeSection() {
   ];
 
   const stats = [
-    { value: `${LANGUAGE_COUNT}`, label: 'Idiomas', icon: Globe },
-    { value: `${RESOURCES.length.toLocaleString()}+`, label: 'Recursos', icon: Database },
-    { value: `${AI_COURSES.length}`, label: 'Cursos IA', icon: Sparkles },
-    { value: '100%', label: 'Gratis', icon: Heart },
+    { value: LANGUAGE_COUNT, suffix: '', label: 'Idiomas', icon: Globe },
+    { value: RESOURCES.length, suffix: '+', label: 'Recursos', icon: Database },
+    { value: AI_COURSES.length, suffix: '', label: 'Cursos IA', icon: Sparkles },
+    { value: 100, suffix: '%', label: 'Gratis', icon: Heart },
   ];
 
   return (
@@ -128,21 +129,114 @@ export function HomeSection() {
               </Button>
             </div>
 
-            {/* Floating AI emojis */}
-            <div className="mt-10 flex justify-center gap-2 flex-wrap max-w-xl mx-auto">
-              {['🤖', '✨', '📝', '📊', '🌍', '⚖️', '🤝', '💬'].map((emoji, i) => (
+            {/* Visual mockup - CV preview + AI chat */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+              className="mt-12 relative max-w-4xl mx-auto"
+            >
+              <div className="grid sm:grid-cols-2 gap-4 items-end">
+                {/* Mini CV preview */}
                 <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 + i * 0.08 }}
-                  className="w-12 h-12 rounded-xl bg-card border border-border shadow-sm flex items-center justify-center text-2xl animate-float"
-                  style={{ animationDelay: `${i * 0.3}s` }}
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                  className="bg-white rounded-xl shadow-2xl border border-border p-4 text-left transform sm:rotate-[-2deg] hover:rotate-0 transition-transform"
                 >
-                  {emoji}
+                  <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-200">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-warm to-brand-saffron" />
+                    <div className="flex-1 min-w-0">
+                      <div className="h-2.5 w-20 bg-slate-800 rounded-full mb-1" />
+                      <div className="h-1.5 w-16 bg-brand-warm rounded-full" />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="h-1.5 w-full bg-slate-200 rounded-full" />
+                    <div className="h-1.5 w-full bg-slate-200 rounded-full" />
+                    <div className="h-1.5 w-3/4 bg-slate-200 rounded-full" />
+                  </div>
+                  <div className="mt-2.5 h-2 w-12 bg-brand-warm/40 rounded-full" />
+                  <div className="mt-1.5 space-y-1">
+                    <div className="h-1.5 w-full bg-slate-100 rounded-full" />
+                    <div className="h-1.5 w-full bg-slate-100 rounded-full" />
+                    <div className="h-1.5 w-2/3 bg-slate-100 rounded-full" />
+                  </div>
+                  <div className="mt-2 flex gap-1">
+                    <div className="h-3 w-12 bg-brand-saffron/30 rounded-full" />
+                    <div className="h-3 w-10 bg-brand-warm/30 rounded-full" />
+                    <div className="h-3 w-14 bg-brand-saffron/30 rounded-full" />
+                  </div>
+                  <div className="mt-2 flex items-center gap-1 text-[8px] text-slate-400">
+                    <Sparkles className="h-2 w-2" />
+                    Generado con IA
+                  </div>
                 </motion.div>
-              ))}
-            </div>
+
+                {/* Mini AI chat preview */}
+                <motion.div
+                  animate={{ y: [0, 6, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+                  className="bg-white rounded-xl shadow-2xl border border-border p-4 text-left transform sm:rotate-[2deg] hover:rotate-0 transition-transform"
+                >
+                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
+                    <div className="w-6 h-6 rounded-full gradient-brand flex items-center justify-center">
+                      <Sparkles className="h-3 w-3 text-white" />
+                    </div>
+                    <div className="text-[10px] font-semibold text-slate-700">Asistente IA</div>
+                    <div className="ml-auto flex gap-0.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    </div>
+                  </div>
+                  {/* Chat bubbles */}
+                  <div className="space-y-2">
+                    <div className="flex justify-end">
+                      <div className="bg-brand-warm/10 rounded-lg rounded-tr-sm px-2 py-1 max-w-[80%]">
+                        <div className="h-1.5 w-16 bg-brand-warm/40 rounded-full" />
+                      </div>
+                    </div>
+                    <div className="flex justify-start">
+                      <div className="bg-slate-100 rounded-lg rounded-tl-sm px-2 py-1.5 max-w-[90%] space-y-1">
+                        <div className="h-1.5 w-full bg-slate-300 rounded-full" />
+                        <div className="h-1.5 w-3/4 bg-slate-300 rounded-full" />
+                        <div className="h-1.5 w-1/2 bg-slate-300 rounded-full" />
+                      </div>
+                    </div>
+                    <div className="flex justify-end">
+                      <div className="bg-brand-warm/10 rounded-lg rounded-tr-sm px-2 py-1 max-w-[70%]">
+                        <div className="h-1.5 w-12 bg-brand-warm/40 rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Typing indicator */}
+                  <div className="mt-2 flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-1.5 h-1.5 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-1.5 h-1.5 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <span className="text-[8px] text-slate-400 ml-1">IA escribiendo...</span>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Floating badges */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1 }}
+                className="absolute -top-3 -left-3 bg-card border border-border rounded-lg shadow-lg px-3 py-1.5 text-xs font-medium flex items-center gap-1.5"
+              >
+                <span className="text-base">🤖</span>
+                8 IA disponibles
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.2 }}
+                className="absolute -bottom-3 -right-3 bg-card border border-border rounded-lg shadow-lg px-3 py-1.5 text-xs font-medium flex items-center gap-1.5"
+              >
+                <span className="text-base">📝</span>
+                CV en 5 minutos
+              </motion.div>
+            </motion.div>
           </motion.div>
 
           {/* Stats bar */}
@@ -160,7 +254,12 @@ export function HomeSection() {
                   className="rounded-2xl bg-card/80 backdrop-blur border border-border p-4 text-center card-hover"
                 >
                   <Icon className="h-5 w-5 mx-auto mb-1.5 text-primary" />
-                  <div className="text-2xl md:text-3xl font-bold gradient-text">{stat.value}</div>
+                  <div className="text-2xl md:text-3xl font-bold gradient-text tabular-nums">
+                    <AnimatedCounter
+                      value={stat.value}
+                      format={(n) => Math.round(n).toLocaleString() + stat.suffix}
+                    />
+                  </div>
                   <div className="text-xs text-muted-foreground">{stat.label}</div>
                 </div>
               );

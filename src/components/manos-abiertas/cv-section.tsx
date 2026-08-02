@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { CV_TEMPLATES, CV_GUIDES, ACTION_VERBS, SKILL_SUGGESTIONS } from '@/data/cv-templates';
+import { TemplatePreview } from './template-preview';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
@@ -412,20 +413,44 @@ export function CVSection() {
             <TabsContent value="design" className="space-y-3">
               <Card>
                 <CardContent className="p-4">
-                  <Label className="text-xs mb-2 block">{t.cv_template}</Label>
+                  <div className="flex items-center justify-between mb-3">
+                    <Label className="text-xs">{t.cv_template}</Label>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setFullName('María González Pérez');
+                        setProfession('Cuidadora de personas mayores');
+                        setEmail('maria.gonzalez@email.com');
+                        setPhone('+34 612 345 678');
+                        setAddress('Calle Mayor 15, 28013 Madrid');
+                        setSummary('Cuidadora con 5 años de experiencia en atención a personas mayores. Especializada en demencia, movilidad reducida y acompañamiento médico. Empática, responsable y con formación en primeros auxilios.');
+                        setExperiences([
+                          { id: '1', position: 'Cuidadora de personas mayores', company: 'Familia particular', startDate: 'Ene 2022', endDate: 'Actual', description: '• Atención integral a persona de 85 años con demencia\n• Administración de medicación y control de constantes\n• Acompañamiento a citas médicas y actividades\n• Preparación de comidas adaptadas a dieta especial' },
+                          { id: '2', position: 'Auxiliar de ayuda a domicilio', company: 'Cruz Roja Española', startDate: 'Sep 2020', endDate: 'Dic 2021', description: '• Atención a 15 familias con diferentes necesidades\n• Apoyo en tareas domésticas y compras\n• Companyamiento y apoyo emocional\n• Coordinación con trabajadores sociales' },
+                        ]);
+                        setEducation([
+                          { id: '1', title: 'Certificado de Profesionalidad - Atención Sociosanitaria', institution: 'IFTI Madrid', year: '2020', description: 'Formación profesional de grado 3' },
+                          { id: '2', title: 'Curso de Primeros Auxilios', institution: 'Cruz Roja', year: '2019', description: '' },
+                        ]);
+                        setSkills(['Cuidados de personas mayores', 'Administración de medicación', 'Primeros auxilios', 'Demencia y Alzheimer', 'Cocina adaptada', 'Empatía', 'Resolución de problemas', 'Español nativo']);
+                        setLanguages(['Español (nativo)', 'Inglés (básico)', 'Rumano (nativo)']);
+                        toast.success('Datos de ejemplo cargados ✨');
+                      }}
+                      className="h-7 gap-1 text-xs"
+                    >
+                      <Sparkles className="h-3 w-3 text-primary" />
+                      Ver ejemplo
+                    </Button>
+                  </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {CV_TEMPLATES.map((tpl) => (
-                      <button
+                      <TemplatePreview
                         key={tpl.id}
-                        onClick={() => setTemplate(tpl)}
-                        className={cn(
-                          'p-3 rounded-lg border-2 text-center transition-all',
-                          template.id === tpl.id ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'
-                        )}
-                      >
-                        <div className={cn('text-3xl mb-1', tpl.color)}>{tpl.preview}</div>
-                        <div className="text-xs font-medium">{tpl.name}</div>
-                      </button>
+                        template={tpl}
+                        selected={template.id === tpl.id}
+                        onSelect={() => setTemplate(tpl)}
+                      />
                     ))}
                   </div>
                 </CardContent>

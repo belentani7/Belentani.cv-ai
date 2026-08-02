@@ -69,6 +69,24 @@ export const CV_TEMPLATES: CVTemplate[] = [
     layout: 'professional',
     preview: '💼',
   },
+  {
+    id: 'sidebar-photo',
+    name: 'Sidebar con Foto',
+    description:
+      'Plantilla con barra lateral colored y espacio para foto. Ideal para hostelería, cuidados, comercio y atención al cliente. Destaca tu lado humano.',
+    color: 'from-teal-600 to-cyan-700',
+    layout: 'modern',
+    preview: '🧑',
+  },
+  {
+    id: 'two-column-tech',
+    name: 'Tech dos columnas',
+    description:
+      'Diseño de dos columnas para perfiles técnicos y de desarrollo. Secciones de proyectos, habilidades técnicas y lenguajes de programación.',
+    color: 'from-orange-700 to-red-800',
+    layout: 'creative',
+    preview: '💻',
+  },
 ];
 
 // ------------------------------------------------------------
