@@ -5,6 +5,7 @@ import { Heart, Globe, Shield, ExternalLink, Keyboard, Command, ArrowUp, Search 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
+import { ReadingModeToggle } from './reading-mode-toggle';
 import { LANGUAGE_COUNT } from '@/i18n/languages';
 import { RESOURCES } from '@/data/resources';
 import { AI_COURSES } from '@/data/ai-courses';
@@ -96,13 +97,16 @@ export function Footer() {
           {/* Help & shortcuts */}
           <div className="space-y-2 md:col-span-1">
             <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ayuda</div>
-            <button
-              onClick={() => setShowShortcuts(true)}
-              className="inline-flex items-center gap-1.5 text-[11px] bg-secondary/60 hover:bg-secondary rounded-full px-2 py-1 transition-colors"
-            >
-              <Keyboard className="h-3 w-3" />
-              Atajos de teclado
-            </button>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                onClick={() => setShowShortcuts(true)}
+                className="inline-flex items-center gap-1.5 text-[11px] bg-secondary/60 hover:bg-secondary rounded-full px-2 py-1 transition-colors"
+              >
+                <Keyboard className="h-3 w-3" />
+                Atajos
+              </button>
+              <ReadingModeToggle />
+            </div>
             <div className="text-[11px] text-muted-foreground/80 leading-relaxed">
               ¿Necesitas ayuda? Escribe a:<br />
               <a href="mailto:hola@manos-abiertas.es" className="text-primary hover:underline">hola@manos-abiertas.es</a>

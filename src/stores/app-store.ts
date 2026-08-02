@@ -28,6 +28,10 @@ interface AppState {
   setLanguageMenuOpen: (open: boolean) => void;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+
+  // Accessibility
+  readingMode: 'normal' | 'large' | 'high-contrast';
+  setReadingMode: (mode: 'normal' | 'large' | 'high-contrast') => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -46,10 +50,16 @@ export const useAppStore = create<AppState>()(
       setLanguageMenuOpen: (open) => set({ languageMenuOpen: open }),
       searchQuery: '',
       setSearchQuery: (q) => set({ searchQuery: q }),
+      readingMode: 'normal',
+      setReadingMode: (mode) => set({ readingMode: mode }),
     }),
     {
       name: 'manos-abiertas-store',
-      partialize: (state) => ({ language: state.language, activeSection: state.activeSection }),
+      partialize: (state) => ({
+        language: state.language,
+        activeSection: state.activeSection,
+        readingMode: state.readingMode,
+      }),
     }
   )
 );

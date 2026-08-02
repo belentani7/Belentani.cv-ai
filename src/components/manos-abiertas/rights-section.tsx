@@ -11,6 +11,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { RIGHTS_ARTICLES, EMERGENCY_CONTACTS, RIGHTS_CATEGORIES, type GuideArticle } from '@/data/rights-guide';
 import { useAppStore } from '@/stores/app-store';
 import { SimpleMarkdown as SharedMarkdown } from './simple-markdown';
+import { TTSButton, TTSPlayer } from './tts-button';
+import { LegalGlossary } from './legal-glossary';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
 
@@ -47,10 +49,14 @@ export function RightsSection() {
               <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center flex-shrink-0">
                 <Shield className="h-6 w-6 text-white" />
               </div>
-              <div>
+              <div className="flex-1">
                 <Badge variant="secondary" className="text-[10px] mb-1 capitalize">{selectedArticle.category}</Badge>
                 <h1 className="text-2xl font-bold">{selectedArticle.title}</h1>
                 <p className="text-sm text-muted-foreground mt-1">{selectedArticle.summary}</p>
+              </div>
+              <div className="flex flex-col gap-2 flex-shrink-0">
+                <TTSButton text={selectedArticle.content} label="Escuchar" size="sm" />
+                <LegalGlossary compact />
               </div>
             </div>
 
@@ -110,6 +116,7 @@ export function RightsSection() {
             </ScrollArea>
           </CardContent>
         </Card>
+        <TTSPlayer text={selectedArticle.content} title={selectedArticle.title} />
       </div>
     );
   }

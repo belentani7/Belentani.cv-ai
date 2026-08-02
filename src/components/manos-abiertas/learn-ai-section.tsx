@@ -12,6 +12,7 @@ import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { SimpleMarkdown } from './simple-markdown';
 import { AIPlayground } from './ai-playground';
+import { TTSButton, TTSPlayer } from './tts-button';
 import { cn } from '@/lib/utils';
 
 export function LearnAISection() {
@@ -365,25 +366,29 @@ function LessonViewer({
             )}
           </ScrollArea>
 
-          <div className="mt-5 pt-4 border-t border-border flex items-center justify-between gap-2">
+          <div className="mt-5 pt-4 border-t border-border flex items-center justify-between gap-2 flex-wrap">
             <Button variant="outline" size="sm" onClick={onPrev} disabled={!hasPrev} className="gap-1">
               <ChevronLeft className="h-4 w-4" />
               {t.previous}
             </Button>
-            <Button
-              size="sm"
-              variant={isCompleted ? 'secondary' : 'default'}
-              onClick={onComplete}
-              className="gap-1"
-            >
-              <CheckCircle2 className="h-4 w-4" />
-              {isCompleted ? 'Completado' : 'Marcar completado'}
-            </Button>
+            <div className="flex gap-2">
+              <TTSButton text={lesson.content} label="Escuchar" size="sm" />
+              <Button
+                size="sm"
+                variant={isCompleted ? 'secondary' : 'default'}
+                onClick={onComplete}
+                className="gap-1"
+              >
+                <CheckCircle2 className="h-4 w-4" />
+                {isCompleted ? 'Completado' : 'Marcar'}
+              </Button>
+            </div>
             <Button size="sm" onClick={onNext} disabled={!hasNext} className="gap-1">
               {t.next}
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
+          <TTSPlayer text={lesson.content} title={lesson.title} />
         </CardContent>
       </Card>
     </div>

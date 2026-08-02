@@ -19,7 +19,7 @@ import { ArrowUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export function ManosAbiertasApp() {
-  const { activeSection } = useAppStore();
+  const { activeSection, readingMode } = useAppStore();
   const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
@@ -27,6 +27,13 @@ export function ManosAbiertasApp() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Apply reading mode to document
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-reading-mode', readingMode);
+    }
+  }, [readingMode]);
 
   return (
     <div className="min-h-screen flex flex-col">

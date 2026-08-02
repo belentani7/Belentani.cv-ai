@@ -715,3 +715,88 @@ Task: QA assessment, new Tools section with Document Checklist, Cost Calculator,
 5. **Document generator**: Auto-fill EX-01, EX-15 forms with user data
 6. **Interactive map**: Geolocate offices, NGOs, health centers
 7. **Push notifications**: Alert when citas previas open
+
+---
+Task ID: 8 (Cron Web Dev Review - Phase 8)
+Agent: Main (Z.ai Code) - Cron triggered
+Task: QA assessment, Text-to-Speech accessibility, Legal Glossary, Reading Mode toggle.
+
+## Current Project Status Assessment
+- Phase 7 complete: Tools section (Document Checklist, Cost Calculator, Currency Converter, Gamification Badges)
+- Platform stable with 0 errors, lint clean
+- VLM analysis identified: critical need for accessibility (TTS, audio), legal glossary, reading modes
+- Focus on accessibility for low-literacy and visually impaired immigrants
+
+## Completed Modifications
+
+### New Features Added
+1. **Text-to-Speech (TTS)** (`src/hooks/use-speech.ts` + `src/components/manos-abiertas/tts-button.tsx`)
+   - Web Speech API integration (no external API needed, works offline)
+   - `useSpeech` hook with speak, stop, pause, resume functions
+   - Strips markdown from text before speaking (cleaner audio)
+   - Supports 28+ languages with BCP-47 mapping (es-ES, en-US, ar-SA, zh-CN, etc.)
+   - `TTSButton` component: compact button with play/pause/stop states
+   - `TTSPlayer` component: floating audio player with waveform animation for long content
+   - Animated sound bars when speaking
+   - Graceful fallback if browser doesn't support speech synthesis
+
+2. **Legal Glossary** (`src/data/glossary-data.ts` + `src/components/manos-abiertas/legal-glossary.tsx`)
+   - 24 legal/bureaucratic terms with simple explanations
+   - Categories: Documentation, Work, Housing, Taxes, Health, Legal
+   - Each term has: emoji, simple definition, example, related terms, category
+   - Includes: NIE, DNI, TIE, Empadronamiento, Arraigo, SMI, Paro, Finiquito, IRPF, Autónomo, Fianza, LAU, Bono Social, TSI, Asilo, Justicia Gratuita, Reagrupación, Nacionalidad, EX-15, EX-01, Convenio Colectivo, Certificado Digital, Centro de Salud, Contrato Indefinido
+   - Searchable with category filters
+   - Compact mode (button + dialog) for embedding in articles
+   - Full mode (grid + detail dialog) for standalone view
+   - TTS integration: "Escuchar definición" button in term detail
+   - Related terms displayed as badges
+
+3. **Reading Mode Toggle** (`src/components/manos-abiertas/reading-mode-toggle.tsx`)
+   - 3 modes: Normal, Texto grande (large), Alto contraste (high contrast)
+   - Large mode: increases all font sizes by ~15%, larger buttons (48px min height)
+   - High contrast mode: black background, white text, yellow links, strong borders
+   - Applied via `data-reading-mode` attribute on `<html>` element
+   - CSS uses `!important` to override theme variables
+   - Persists to localStorage via Zustand store
+   - Dropdown selector in footer
+
+### Integration
+- **Lesson Viewer**: TTSButton + TTSPlayer added (Escuchar lección completa)
+- **Rights Articles**: TTSButton + TTSPlayer + LegalGlossary (compact) in article header
+- **Footer**: ReadingModeToggle added next to keyboard shortcuts
+- **Store**: `readingMode` state added to Zustand with persistence
+
+### Data Files
+- `src/data/glossary-data.ts`: GLOSSARY_TERMS (24), GLOSSARY_CATEGORIES (6)
+- `src/hooks/use-speech.ts`: useSpeech hook + getSpeechLang helper
+
+### Styling Improvements
+1. **TTS buttons**: Gradient brand when speaking, animated sound bars
+2. **Glossary cards**: Hover effects, category color coding
+3. **Reading modes**: Large text increases all sizes proportionally, high contrast uses pure black/white
+4. **Floating TTS player**: Appears at bottom when speaking, with waveform visualization
+
+## Verification Results
+- ✅ `bun run lint` passes with 0 errors, 0 warnings
+- ✅ HTTP 200 on all pages, 0 runtime errors (fresh browser session)
+- ✅ TTS in lessons: "Escuchar en voz alta" button visible, TTSPlayer appears when speaking
+- ✅ TTS in rights articles: Both TTS and "Glosario legal 24" buttons visible
+- ✅ Legal Glossary: all 24 terms visible, search works, term detail shows definition + example + related terms + TTS
+- ✅ Reading mode - Large text: VLM confirmed "texto más grande (18-20px)", button shows "Grande"
+- ✅ Reading mode - High contrast: VLM confirmed "fondo negro con texto blanco", "altamente legible"
+- ✅ Reading mode persists across page reloads (localStorage)
+- ✅ Computed background color verified: rgb(0, 0, 0) in high contrast mode
+
+## Unresolved Issues / Risks
+- None critical. All features verified working.
+- Minor: TTS quality depends on browser/OS voices installed (some languages may not have native voices)
+- Minor: High contrast mode overrides all colors including brand colors (by design for accessibility)
+
+## Priority Recommendations for Next Phase
+1. **PWA support**: Service worker for offline access to tools and lessons
+2. **Video tutorials**: Embed YouTube tutorials for key lessons (screen recordings)
+3. **Community features**: Comments/ratings on resources, mentor system
+4. **Multi-language content**: Translate glossary and tool labels to all 39 languages
+5. **Voice navigation**: Speech-to-text for form filling (CV, cover letter)
+6. **Document generator**: Auto-fill EX-01, EX-15 forms with user data
+7. **Event calendar**: Ferias de empleo, jornadas de legalización, webinars
