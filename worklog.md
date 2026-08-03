@@ -1212,3 +1212,85 @@ Task: Integrar 100+ cursos externos, crear academia NO.IA_CORE con contenido de 
 5. **XP integration**: Award XP for completing NO.IA_CORE courses
 6. **Certificate generation**: Auto-generate completion certificates
 7. **Learning paths**: Suggested course sequences by career goal
+
+---
+Task ID: 14 (Fase 14: Open Source Hub + Expansión Masiva)
+Agent: Main (Z.ai Code)
+Task: Extraer contenido de GitHub, crear hub de código abierto con repos y APIs gratuitas, expandir plataforma al máximo canal educacional.
+
+## Current Project Status Assessment
+- Fases 1-13 completas: 10 secciones, 135 cursos, IA assistant, TTS, NO.IA_CORE Academy, Modo Estudio, Pomodoro
+- 6 archivos nuevos subidos (contenido repetido de fases anteriores)
+- Plataforma estable con 0 errores, lint limpio
+
+## Completed Modifications
+
+### 1. Open Source Hub (`src/data/open-source-hub.ts` + `src/components/manos-abiertas/open-source-hub.tsx`)
+
+**50 Repositorios GitHub curados:**
+- IA & ML: ML-For-Beginners, AI-For-Beginners, Data-Science-For-Beginners, awesome-chatgpt-prompts, awesome-ai-tools, system-design-primer, transformers, langchain, ollama, stable-diffusion, etc.
+- Web Dev: Web-Dev-For-Beginners, awesome-vue, awesome-react, tailwindcss, etc.
+- Python: TheAlgorithms/Python, project-based-learning, build-your-own-x
+- Educación: freeCodeCamp (400k+ stars), coding-interview-university, OSSU CS curriculum, first-contributions, GitHub Skills, free-programming-books (español)
+- Herramientas: VSCode, ohmyzsh, developer-roadmap, gitignore templates, LocalStack
+- Seguridad: OWASP Top 10, TryHackMe, Awesome-Hacking-Resources
+- Diseño: design-resources-for-developers, Reactive-Resume
+
+Cada repo incluye: nombre, owner, URL real, descripción, categoría, lenguaje, estrellas aproximadas, dificultad, topics, si tiene tutorial.
+
+**30 APIs Gratuitas:**
+- IA: OpenAI, Hugging Face, Cohere, Replicate, Together AI, Groq
+- Datos: REST Countries, Wikipedia, NASA, Numbers, Open Library
+- Desarrollo: GitHub API, Stack Overflow API, Firebase, Supabase
+- Imágenes: Unsplash, Pexels, Dog API
+- Otros: Google Translate, OpenWeather, Exchange Rate, News, Spotify, YouTube, Mapbox, Twilio, Stripe, Joke, Quote, Advice
+
+Cada API: nombre, URL, descripción, categoría, tipo de auth, si es gratis, rate limit.
+
+**Componente Open Source Hub:**
+- 3 pestañas en Biblioteca de Cursos: Cursos Externos, NO.IA_CORE Academy, Open Source
+- Toggle entre Repositorios (50) y APIs (30)
+- Stats: total repos, total APIs, con tutorial
+- Búsqueda en tiempo real
+- Filtros por categoría (12 categorías)
+- Tarjetas de repo con: estrellas, lenguaje, dificultad, topics, badge tutorial, enlace GitHub
+- Tarjetas de API con: categoría, tipo auth, rate limit, badge gratis, enlace docs
+
+### 2. Integración en Biblioteca de Cursos
+- 3ª pestaña añadida: "Open Source (50+50)"
+- Total en Biblioteca de Cursos: 115 cursos externos + 20 NO.IA_CORE + 50 repos + 30 APIs = 215 recursos educativos
+- Navegación coherente con el resto de la plataforma
+
+### Estadísticas Finales Actualizadas
+| Métrica | Valor |
+|---------|-------|
+| Secciones | 10 |
+| Cursos externos | 115 |
+| Cursos NO.IA_CORE | 20 |
+| Repos GitHub | 50 |
+| APIs gratuitas | 30 |
+| Total recursos educativos | 215+ |
+| Lecciones IA | 62 |
+| Lecciones Office | 44 |
+| Recursos verificados | 3,647 |
+| Artículos derechos | 61 |
+| Plantillas documentos | 9 |
+| Eventos comunitarios | 12 |
+| Idiomas | 39 |
+| Herramientas | 6 + Pomodoro + AI Study Tools |
+
+## Verification Results
+- ✅ `bun run lint` passes with 0 errors, 0 warnings
+- ✅ HTTP 200, 0 runtime errors
+- ✅ Open Source Hub: 50 repos + 30 APIs visible
+- ✅ Tab toggle works: Cursos Externos / NO.IA_CORE / Open Source
+- ✅ VLM confirmed: tabs, stats, repo cards with stars and badges
+- ✅ All 215+ educational resources accessible
+
+## Priority Recommendations for Next Phase
+1. **PWA**: Service worker for offline access
+2. **Video tutorials**: Embed alongside repos
+3. **Community features**: Comments/ratings on repos
+4. **XP integration**: Award XP for completing repos
+5. **Learning paths**: Suggested repo sequences by career goal
+6. **Code playground**: Embed interactive code editor

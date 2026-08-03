@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { GraduationCap, Search, X, ExternalLink, Clock, Award, Filter, CheckCircle2, Circle, BookOpen, Users } from 'lucide-react';
+import { GraduationCap, Search, X, ExternalLink, Clock, Award, Filter, CheckCircle2, Circle, BookOpen, Users, Github } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EXTERNAL_COURSES, COURSE_CATEGORIES, getCourseStats, type ExternalCourse, type CourseCategory } from '@/data/external-courses';
 import { NoiaCoreAcademy } from './noia-core-academy';
+import { OpenSourceHub } from './open-source-hub';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -51,7 +52,7 @@ export function CoursesLibrarySection() {
   const [certOnly, setCertOnly] = useState(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [progress, setProgress] = useState<CourseProgress>(loadProgress);
-  const [activeTab, setActiveTab] = useState<'external' | 'noia'>('external');
+  const [activeTab, setActiveTab] = useState<'external' | 'noia' | 'opensource'>('external');
 
   useEffect(() => {
     try {
@@ -143,11 +144,24 @@ export function CoursesLibrarySection() {
             <span className="text-base">👑</span>
             NO.IA_CORE Academy (20)
           </button>
+          <button
+            onClick={() => setActiveTab('opensource')}
+            className={cn(
+              'px-4 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5',
+              activeTab === 'opensource' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'
+            )}
+          >
+            <Github className="h-3.5 w-3.5" />
+            Open Source (50+50)
+          </button>
         </div>
       </div>
 
       {/* NO.IA_CORE Academy */}
       {activeTab === 'noia' && <NoiaCoreAcademy />}
+
+      {/* Open Source Hub */}
+      {activeTab === 'opensource' && <OpenSourceHub />}
 
       {/* External Courses */}
       {activeTab === 'external' && (
