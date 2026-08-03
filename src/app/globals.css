@@ -484,4 +484,84 @@ html[data-reading-mode='study'] mark {
   border-radius: 2px;
 }
 
+/* ============================================================
+   NO.IA_CORE PREMIUM AESTHETIC - Lujo Tecnológico
+   Obsidiana · Titanio · Ámbar Núcleo
+   ============================================================ */
+.noia-premium {
+  --noia-obsidian: #0a0a0c;
+  --noia-titanium: #3a3a42;
+  --noia-amber: #e8a838;
+  --noia-amber-hi: #ffc858;
+  --noia-cream: #f5f0e8;
+  --noia-silver: #c0c0c8;
+}
+
+.noia-gradient {
+  background: linear-gradient(135deg, #0a0a0c 0%, #1a1a20 50%, #0a0a0c 100%);
+}
+
+.noia-gradient-amber {
+  background: linear-gradient(135deg, #e8a838 0%, #ffc858 100%);
+}
+
+.noia-text-amber {
+  color: #e8a838;
+}
+
+.noia-text-gradient {
+  background: linear-gradient(135deg, #e8a838 0%, #ffc858 50%, #c0c0c8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.noia-border-amber {
+  border-color: rgba(232, 168, 56, 0.3);
+}
+
+.noia-card-premium {
+  background: linear-gradient(135deg, rgba(10,10,12,0.95) 0%, rgba(26,26,32,0.95) 100%);
+  border: 1px solid rgba(232, 168, 56, 0.15);
+  box-shadow: 0 8px 32px -8px rgba(232, 168, 56, 0.1), inset 0 1px 0 rgba(255,255,255,0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.noia-card-premium:hover {
+  border-color: rgba(232, 168, 56, 0.35);
+  box-shadow: 0 12px 40px -8px rgba(232, 168, 56, 0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+  transform: translateY(-2px);
+}
+
+.noia-badge-premium {
+  background: linear-gradient(135deg, rgba(232,168,56,0.15), rgba(232,168,56,0.05));
+  border: 1px solid rgba(232, 168, 56, 0.3);
+  color: #e8a838;
+}
+
+/* Golden ratio spacing utility */
+.noia-phi {
+  padding: calc(1rem * 1.618);
+}
+
+/* Monolithic shadow - quiet luxury */
+.noia-shadow-monolith {
+  box-shadow: 0 20px 60px -15px rgba(0,0,0,0.5), 0 0 0 1px rgba(232,168,56,0.08);
+}
+
+/* Claroscuro effect for premium cards */
+.noia-claroscuro {
+  position: relative;
+  overflow: hidden;
+}
+.noia-claroscuro::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 50%;
+  background: linear-gradient(180deg, rgba(232,168,56,0.03) 0%, transparent 100%);
+  pointer-events: none;
+}
+
 

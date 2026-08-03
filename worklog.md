@@ -1042,3 +1042,173 @@ Task: QA assessment, Document Templates Library, Recently Viewed tracking, Tools
 5. **AI-powered templates**: Use AI to auto-fill templates with user's CV data
 6. **Video tutorials**: Embed tutorials alongside templates
 7. **Community templates**: Allow users to share custom templates
+
+---
+Task ID: 12-13 (Fases 12-13: Biblioteca de Cursos + NO.IA_CORE Academy + Modo Estudio)
+Agent: Main (Z.ai Code)
+Task: Integrar 100+ cursos externos, crear academia NO.IA_CORE con contenido de archivos subidos, implementar Modo Estudio, herramientas de estudio IA, y estética premium.
+
+## Current Project Status Assessment
+- Fases 1-11 completas: 9 secciones, IA assistant, TTS, glosario, eventos, herramientas, recordatorios, guías visuales, plantillas
+- 9 archivos subidos con 32,057 líneas de contenido educativo extraídos del ecosistema NO.IA_CORE by Pedro Belentani
+- Plataforma estable con 0 errores, lint limpio
+
+## Completed Modifications
+
+### FASE 12: Biblioteca de Cursos y Modo Estudio
+
+1. **Base de datos de 115 cursos externos** (`src/data/external-courses.ts`)
+   - 15 cursos de Google Actívate (marketing, datos, web, cloud, IA, etc.)
+   - 15 cursos de SEPE/Fundae (ofimática, empleo, PRL, atención al cliente, etc.)
+   - 10 cursos de Miríadax (universidades españolas)
+   - 10 cursos de Coursera (Excel, Python, IA, negotiations, etc.)
+   - 5 cursos de edX (CS50, R, economics, etc.)
+   - 5 cursos de UNED Abierta
+   - 10 cursos de AulaFácil
+   - 5 cursos de Khan Academy
+   - 5 cursos de Cisco Networking Academy
+   - 5 cursos de freeCodeCamp
+   - 5 cursos de Microsoft Learn
+   - 3 cursos de AWS Skill Builder
+   - 3 cursos de Instituto Cervantes
+   - 19 cursos adicionales (hostelería, construcción, salud, etc.)
+   - Cada curso: título, proveedor, URL real, duración, nivel, categoría, habilidades, certificación
+   - 15 categorías color-coded
+
+2. **Sección Biblioteca de Cursos** (10ª sección de navegación)
+   - Filtros: búsqueda, categoría, nivel, "solo con certificado"
+   - Tarjetas con: emoji, categoría, proveedor, duración, nivel, certificado, habilidades
+   - Tracking de progreso: "Iniciado" / "Completado" con persistencia localStorage
+   - Stats: total, con certificado, iniciados, completados
+   - Paginación "Cargar más"
+
+3. **Modo Estudio** (estética optimizada para lectura)
+   - Paleta científica: fondo beige #F8F4EC, texto gris-azulado #2C3E50
+   - Acentos azules serenos (#4A6FA5) en lugar de terracota
+   - Color de resaltado amarillo pastel #FFFACD
+   - Reducida fatiga visual, mejora concentración
+   - Integrado en ReadingModeToggle (4 modos: Normal, Estudio, Grande, Contraste)
+
+4. **Temporizador Pomodoro** (`src/components/manos-abiertas/pomodoro-timer.tsx`)
+   - 25min concentración + 5min descanso + 15min descanso largo (cada 4 sesiones)
+   - Fases color-coded: azul (focus), verde (break), ámbar (long-break)
+   - Notificaciones del navegador al completar fase
+   - Barra de progreso animada
+   - Contador de sesiones completadas (🍅)
+   - Controles: Iniciar/Pausar, Saltar, Reiniciar
+   - Panel flotante posicionado bottom-left
+   - Botón compacto en footer
+
+5. **Herramientas de Estudio IA** (`src/components/manos-abiertas/ai-study-tools.tsx` + `src/app/api/study-tools/route.ts`)
+   - **Generador de Preguntas**: IA crea 3 preguntas de comprensión sobre el contenido
+   - **Resumen Automático**: IA extrae 5 puntos clave del texto
+   - API endpoint: POST /api/study-tools usando z-ai-web-dev-sdk
+   - Integrado en lecciones de IA y artículos de Derechos
+   - Resultados en tarjeta destacada con hints
+
+### FASE 13: NO.IA_CORE Academy - Ecosistema Premium
+
+6. **20 Cursos NO.IA_CORE** (`src/data/noia-courses.ts`)
+   Extraídos de los 9 archivos subidos del ecosistema NO.IA_CORE by Pedro Belentani:
+
+   **Ingeniería de Prompts (4 cursos)** - del archivo "Mejores Prácticas en Ingeniería de Prompts":
+   - Fundamentos de Prompt Engineering
+   - Estructura Jerárquica de Prompts
+   - Técnicas Avanzadas: Chain-of-Thought y Tree-of-Thought
+   - Prompting Multimodal y Nichos Especializados
+
+   **Teoría del Diseño Premium (4 cursos)** - del archivo "Estética Corporativa Premium NO.IA_CORE":
+   - Teoría de la Armonía y Proporción Áurea
+   - Teoría del Color: Lujo Tecnológico
+   - Escaparatismo y Visual Merchandising Digital
+   - Iconografía y Teoría Fonética del Lenguaje de Marca
+
+   **Neurociencia y Percepción (4 cursos)** - del archivo "Ilusiones Ópticas y Límites Mentales":
+   - Procesamiento Cerebral: Sensación vs Percepción
+   - Sistema Visual Dual y Codificación Dispersa
+   - Constancias Perceptivas y Heurísticas Cognitivas
+   - Aplicaciones Prácticas: Diseño Basado en Neurociencia
+
+   **Arquitectura Web Autónoma (4 cursos)** - del archivo "1000 Self-Managed Traffic-Generating Websites":
+   - Programmatic SEO: Tráfico Autónomo
+   - Herramientas Web para Windows 11
+   - Edición Web Offline: Herramientas sin API
+   - Matriz Combinatoria: 1000 Webs Automatizadas
+
+   **Arte Generativo (2 cursos)** - del archivo "Laboratorio de Arte Generativo Noiacore":
+   - Shaders WebGL: Silk, Plasma, Grid-Warp
+   - Motor Armónico: 13 Intervalos Justos
+
+   **Comunidad e Impacto (2 cursos)** - de los archivos "Aumentar Participación Comunitaria" y "OMNICORE":
+   - Banco de Habilidades Vecinal
+   - OMNICORE: Arquitectura de Sistema Total
+
+7. **Estética Premium NO.IA_CORE** (CSS en `globals.css`)
+   - Paleta: Obsidiana (#0A0A0C), Titanio (#3A3A42), Ámbar Núcleo (#E8A838)
+   - Clases CSS: `.noia-gradient`, `.noia-text-gradient`, `.noia-card-premium`, `.noia-badge-premium`
+   - Efectos: claroscuro, sombra monolítica, transiciones cubic-bezier
+   - Proporción áurea (Phi) aplicada al espaciado
+   - Quiet luxury: espacio negativo extremo, iluminación sutil
+
+8. **Componente NO.IA_CORE Academy** (`src/components/manos-abiertas/noia-core-academy.tsx`)
+   - Header premium con gradiente obsidiana/ámbar
+   - Stats: total cursos, premium, módulos
+   - Filtros por módulo (6 módulos)
+   - Tarjetas de curso con:
+     - Badge Premium (corona) para cursos premium
+     - Nivel: Fundamentos/Intermedio/Avanzado/Maestría
+     - Temas expandibles
+     - Habilidades
+     - Fuente del curso (archivo de origen)
+   - Integrado como pestaña en Biblioteca de Cursos
+
+9. **Integración en Biblioteca de Cursos**
+   - Toggle entre "Cursos Externos (115)" y "NO.IA_CORE Academy (20)"
+   - Total: 135 cursos en la plataforma
+   - Navegación: 10ª sección en navbar, home quick access, Command Palette
+
+### Estadísticas Finales del Proyecto
+| Métrica | Valor |
+|---------|-------|
+| Secciones | 10 |
+| Cursos externos | 115 |
+| Cursos NO.IA_CORE | 20 |
+| Total cursos | 135 |
+| Lecciones IA | 62 |
+| Lecciones Office | 44 |
+| Recursos verificados | 3,647 |
+| Artículos derechos | 61 |
+| Términos glosario | 24 |
+| Plantillas documentos | 9 |
+| Eventos comunitarios | 12 |
+| Testimonios | 9 |
+| Plantillas CV | 7 |
+| Idiomas | 39 |
+| Herramientas | 6 (Documentos, Procesos, Plantillas, Coste, Recordatorios, Logros) |
+| Modos de lectura | 4 (Normal, Estudio, Grande, Contraste) |
+| Archivos procesados | 9 (32,057 líneas) |
+
+## Verification Results
+- ✅ `bun run lint` passes with 0 errors, 0 warnings
+- ✅ HTTP 200, 0 runtime errors
+- ✅ 115 external courses visible with filters and progress tracking
+- ✅ NO.IA_CORE Academy: 20 courses across 6 modules, premium badges, expandable topics
+- ✅ Tab toggle works between External Courses and NO.IA_CORE Academy
+- ✅ Study Mode: beige background #F8F4EC, gray-blue text applied
+- ✅ Pomodoro timer: floating panel with 25min/5min/15min phases
+- ✅ AI Study Tools: "Generar preguntas" and "Resumir con IA" buttons in lessons
+- ✅ VLM confirmed: "6 módulos categorizados, 14 premium, diseño profesional"
+
+## Unresolved Issues / Risks
+- None critical. All features verified working.
+- Minor: NO.IA_CORE premium dark cards only apply in light mode (by design)
+- Minor: Study tools API requires z-ai-web-dev-sdk (may timeout on very long content)
+
+## Priority Recommendations for Next Phase
+1. **PWA**: Service worker for offline course access
+2. **Video tutorials**: Embed alongside NO.IA_CORE courses
+3. **Community features**: Comments/ratings on courses
+4. **Multi-language**: Translate NO.IA_CORE course descriptions
+5. **XP integration**: Award XP for completing NO.IA_CORE courses
+6. **Certificate generation**: Auto-generate completion certificates
+7. **Learning paths**: Suggested course sequences by career goal

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EXTERNAL_COURSES, COURSE_CATEGORIES, getCourseStats, type ExternalCourse, type CourseCategory } from '@/data/external-courses';
+import { NoiaCoreAcademy } from './noia-core-academy';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -50,6 +51,7 @@ export function CoursesLibrarySection() {
   const [certOnly, setCertOnly] = useState(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [progress, setProgress] = useState<CourseProgress>(loadProgress);
+  const [activeTab, setActiveTab] = useState<'external' | 'noia'>('external');
 
   useEffect(() => {
     try {
@@ -107,17 +109,49 @@ export function CoursesLibrarySection() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
-      <div className="text-center mb-6">
+      <div className="text-center mb-4">
         <Badge variant="secondary" className="mb-2 gap-1.5">
           <GraduationCap className="h-3 w-3" />
-          {EXTERNAL_COURSES.length} cursos gratuitos
+          {EXTERNAL_COURSES.length + 20} cursos en total
         </Badge>
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Biblioteca de Cursos</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">
-          Cursos online de Google, SEPE, universidades y más plataformas. Todos gratuitos, con certificación.
+          Cursos online de Google, SEPE, universidades y más. Más la academia premium NO.IA_CORE.
         </p>
       </div>
 
+      {/* Tab toggle: External Courses vs NO.IA_CORE Academy */}
+      <div className="flex justify-center mb-6">
+        <div className="inline-flex p-1 bg-muted rounded-lg">
+          <button
+            onClick={() => setActiveTab('external')}
+            className={cn(
+              'px-4 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5',
+              activeTab === 'external' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'
+            )}
+          >
+            <GraduationCap className="h-3.5 w-3.5" />
+            Cursos Externos ({EXTERNAL_COURSES.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('noia')}
+            className={cn(
+              'px-4 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5',
+              activeTab === 'noia' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'
+            )}
+          >
+            <span className="text-base">👑</span>
+            NO.IA_CORE Academy (20)
+          </button>
+        </div>
+      </div>
+
+      {/* NO.IA_CORE Academy */}
+      {activeTab === 'noia' && <NoiaCoreAcademy />}
+
+      {/* External Courses */}
+      {activeTab === 'external' && (
+        <>
       {/* Stats bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
         <StatCard icon={BookOpen} label="Cursos" value={stats.total} color="text-primary" />
@@ -212,6 +246,8 @@ export function CoursesLibrarySection() {
               </Button>
             </div>
           )}
+        </>
+      )}
         </>
       )}
     </div>
