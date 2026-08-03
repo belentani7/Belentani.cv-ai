@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { ReadingModeToggle } from './reading-mode-toggle';
+import { PomodoroTimer } from './pomodoro-timer';
 import { LANGUAGE_COUNT } from '@/i18n/languages';
 import { RESOURCES } from '@/data/resources';
 import { AI_COURSES } from '@/data/ai-courses';
@@ -106,6 +107,7 @@ export function Footer() {
                 Atajos
               </button>
               <ReadingModeToggle />
+              <PomodoroTimer />
             </div>
             <div className="text-[11px] text-muted-foreground/80 leading-relaxed">
               ¿Necesitas ayuda? Escribe a:<br />

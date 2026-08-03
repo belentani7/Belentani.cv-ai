@@ -431,4 +431,57 @@ html[data-reading-mode='high-contrast'] a {
   text-decoration: underline;
 }
 
+/* Study Mode - optimized for reading and learning */
+html[data-reading-mode='study'] {
+  --background: oklch(0.97 0.012 75) !important;
+  --foreground: oklch(0.27 0.03 250) !important;
+  --card: oklch(0.98 0.008 75) !important;
+  --card-foreground: oklch(0.27 0.03 250) !important;
+  --popover: oklch(0.98 0.008 75) !important;
+  --popover-foreground: oklch(0.27 0.03 250) !important;
+  --primary: oklch(0.50 0.14 250) !important;
+  --primary-foreground: oklch(0.98 0.008 75) !important;
+  --secondary: oklch(0.93 0.01 75) !important;
+  --secondary-foreground: oklch(0.30 0.03 250) !important;
+  --muted: oklch(0.94 0.008 75) !important;
+  --muted-foreground: oklch(0.50 0.02 250) !important;
+  --accent: oklch(0.92 0.02 75) !important;
+  --accent-foreground: oklch(0.30 0.03 250) !important;
+  --border: oklch(0.88 0.01 75) !important;
+  --input: oklch(0.90 0.01 75) !important;
+  --ring: oklch(0.50 0.14 250) !important;
+  --sidebar: oklch(0.96 0.01 75) !important;
+  --sidebar-foreground: oklch(0.27 0.03 250) !important;
+}
+html[data-reading-mode='study'] body {
+  background: #f8f4ec !important;
+  color: #2c3e50 !important;
+}
+html[data-reading-mode='study'] .gradient-brand {
+  background: linear-gradient(135deg, #5b7fa5, #4a6fa5) !important;
+}
+html[data-reading-mode='study'] .gradient-text {
+  background: linear-gradient(135deg, #4a6fa5, #6b8db5) !important;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+html[data-reading-mode='study'] .gradient-hero {
+  background: linear-gradient(180deg, #f8f4ec, #f0ebe0) !important;
+}
+html[data-reading-mode='study'] .card-hover:hover {
+  box-shadow: 0 8px 20px -6px rgba(74, 111, 165, 0.15);
+}
+/* Highlight color for study mode */
+html[data-reading-mode='study'] ::selection {
+  background: #fffacd;
+  color: #2c3e50;
+}
+html[data-reading-mode='study'] mark {
+  background: #fffacd;
+  color: #2c3e50;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
 

@@ -15,6 +15,7 @@ import { AIAssistant } from './ai-assistant';
 import { OnboardingWizard } from './onboarding-wizard';
 import { ToolsSection } from './tools-section';
 import { EventsSection } from './events-section';
+import { CoursesLibrarySection } from './courses-library-section';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -63,6 +64,7 @@ export function ManosAbiertasApp() {
             {activeSection === 'rights' && <RightsSection />}
             {activeSection === 'tools' && <ToolsSection />}
             {activeSection === 'events' && <EventsSection />}
+            {activeSection === 'courses' && <CoursesLibrarySection />}
             {activeSection === 'contacts' && <ContactsSection />}
           </motion.div>
         </AnimatePresence>

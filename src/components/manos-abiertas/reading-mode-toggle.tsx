@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Eye, Type, Contrast, Check } from 'lucide-react';
+import { Eye, Type, Contrast, Check, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/stores/app-store';
 import { cn } from '@/lib/utils';
 
 const MODES = [
   { value: 'normal' as const, label: 'Normal', icon: Eye, desc: 'Vista estándar' },
+  { value: 'study' as const, label: 'Modo Estudio', icon: BookOpen, desc: 'Colores suaves para leer' },
   { value: 'large' as const, label: 'Texto grande', icon: Type, desc: 'Para baja visión' },
   { value: 'high-contrast' as const, label: 'Alto contraste', icon: Contrast, desc: 'Máxima legibilidad' },
 ];
@@ -24,8 +25,8 @@ export function ReadingModeToggle() {
         onClick={() => setOpen(!open)}
         className="gap-1.5 text-xs h-7"
       >
-        {readingMode === 'normal' ? <Eye className="h-3.5 w-3.5" /> : readingMode === 'large' ? <Type className="h-3.5 w-3.5" /> : <Contrast className="h-3.5 w-3.5" />}
-        {readingMode === 'normal' ? 'Normal' : readingMode === 'large' ? 'Grande' : 'Contraste'}
+        {readingMode === 'normal' ? <Eye className="h-3.5 w-3.5" /> : readingMode === 'study' ? <BookOpen className="h-3.5 w-3.5" /> : readingMode === 'large' ? <Type className="h-3.5 w-3.5" /> : <Contrast className="h-3.5 w-3.5" />}
+        {readingMode === 'normal' ? 'Normal' : readingMode === 'study' ? 'Estudio' : readingMode === 'large' ? 'Grande' : 'Contraste'}
       </Button>
 
       {open && (

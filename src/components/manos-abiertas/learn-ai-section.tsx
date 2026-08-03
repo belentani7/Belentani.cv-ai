@@ -13,6 +13,7 @@ import { getTranslation } from '@/i18n/translations';
 import { SimpleMarkdown } from './simple-markdown';
 import { AIPlayground } from './ai-playground';
 import { TTSButton, TTSPlayer } from './tts-button';
+import { AIStudyTools } from './ai-study-tools';
 import { cn } from '@/lib/utils';
 
 export function LearnAISection() {
@@ -389,6 +390,9 @@ function LessonViewer({
             </Button>
           </div>
           <TTSPlayer text={lesson.content} title={lesson.title} />
+
+          {/* AI Study Tools - questions and summary */}
+          <AIStudyTools content={lesson.content} title={lesson.title} />
         </CardContent>
       </Card>
     </div>

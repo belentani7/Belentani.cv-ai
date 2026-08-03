@@ -13,6 +13,7 @@ import { useAppStore } from '@/stores/app-store';
 import { SimpleMarkdown as SharedMarkdown } from './simple-markdown';
 import { TTSButton, TTSPlayer } from './tts-button';
 import { LegalGlossary } from './legal-glossary';
+import { AIStudyTools } from './ai-study-tools';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
 
@@ -117,6 +118,7 @@ export function RightsSection() {
           </CardContent>
         </Card>
         <TTSPlayer text={selectedArticle.content} title={selectedArticle.title} />
+        <AIStudyTools content={selectedArticle.content} title={selectedArticle.title} />
       </div>
     );
   }

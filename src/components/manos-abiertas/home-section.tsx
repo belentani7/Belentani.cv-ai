@@ -78,6 +78,14 @@ export function HomeSection() {
       gradient: 'from-pink-400 to-rose-500',
     },
     {
+      id: 'courses',
+      emoji: '🎓',
+      icon: GraduationCap,
+      title: 'Biblioteca de Cursos',
+      desc: '115+ cursos gratuitos online con certificado',
+      gradient: 'from-blue-400 to-indigo-500',
+    },
+    {
       id: 'contacts',
       emoji: '📞',
       icon: Phone,

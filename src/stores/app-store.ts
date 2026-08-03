@@ -13,7 +13,8 @@ export type SectionId =
   | 'rights'
   | 'contacts'
   | 'tools'
-  | 'events';
+  | 'events'
+  | 'courses';
 
 interface AppState {
   // Language
@@ -31,8 +32,14 @@ interface AppState {
   setSearchQuery: (q: string) => void;
 
   // Accessibility
-  readingMode: 'normal' | 'large' | 'high-contrast';
-  setReadingMode: (mode: 'normal' | 'large' | 'high-contrast') => void;
+  readingMode: 'normal' | 'large' | 'high-contrast' | 'study';
+  setReadingMode: (mode: 'normal' | 'large' | 'high-contrast' | 'study') => void;
+
+  // Study mode tools
+  pomodoroActive: boolean;
+  setPomodoroActive: (active: boolean) => void;
+  focusMode: boolean;
+  setFocusMode: (active: boolean) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -53,6 +60,10 @@ export const useAppStore = create<AppState>()(
       setSearchQuery: (q) => set({ searchQuery: q }),
       readingMode: 'normal',
       setReadingMode: (mode) => set({ readingMode: mode }),
+      pomodoroActive: false,
+      setPomodoroActive: (active) => set({ pomodoroActive: active }),
+      focusMode: false,
+      setFocusMode: (active) => set({ focusMode: active }),
     }),
     {
       name: 'manos-abiertas-store',

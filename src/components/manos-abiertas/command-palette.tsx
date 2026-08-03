@@ -68,6 +68,7 @@ export function CommandPalette() {
       { id: 'sec-rights', title: 'Derechos y Ayudas', subtitle: 'Guía legal y de derechos', icon: '⚖️', section: 'rights', category: 'section' },
       { id: 'sec-tools', title: 'Herramientas', subtitle: 'Checklist trámites, coste de vida, conversor', icon: '🛠️', section: 'tools', category: 'section' },
       { id: 'sec-events', title: 'Eventos', subtitle: 'Ferias de empleo, jornadas, cursos', icon: '📅', section: 'events', category: 'section' },
+      { id: 'sec-courses', title: 'Biblioteca de Cursos', subtitle: '115+ cursos gratuitos con certificado', icon: '🎓', section: 'courses', category: 'section' },
       { id: 'sec-contacts', title: 'Contactos', subtitle: 'Emergencias y ONGs', icon: '📞', section: 'contacts', category: 'section' },
     ];
 
