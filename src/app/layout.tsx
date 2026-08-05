@@ -16,10 +16,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://manos-abiertas.es"),
   title: "Manos Abiertas · IA, CV y Derechos para personas inmigrantes en España",
   description: "Plataforma gratuita multilingüe para personas inmigrantes en España. Aprende inteligencia artificial (ChatGPT, Gemini, Copilot, DeepSeek), crea tu currículum con IA, curso completo de Office y 3000+ recursos verificados.",
   keywords: ["inmigrantes España", "inteligencia artificial", "ChatGPT", "currículum", "CV", "NIE", "derechos", "recursos", "manos abiertas", "Office", "cursos gratis", "35 idiomas"],
   authors: [{ name: "Manos Abiertas" }],
+  robots: { index: true, follow: true },
+  manifest: "/manifest.json",
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },
@@ -36,6 +39,17 @@ export const metadata: Metadata = {
     title: "Manos Abiertas",
     description: "IA, CV y derechos para personas inmigrantes en España",
   },
+  alternates: {
+    languages: {
+      es: "https://manos-abiertas.es",
+      en: "https://manos-abiertas.es/en",
+    },
+  },
+};
+
+export const viewport = {
+  themeColor: "#A0522D",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -49,6 +63,35 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                name: "Manos Abiertas",
+                url: "https://manos-abiertas.es",
+                description: "Plataforma gratuita multilingüe para personas inmigrantes en España",
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: "https://manos-abiertas.es?q={search_term_string}",
+                  "query-input": "required name=search_term_string",
+                },
+              }),
+            }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                name: "Manos Abiertas",
+                url: "https://manos-abiertas.es",
+                description: "Plataforma educativa multilingüe para inmigrantes en España",
+              }),
+            }}
+          />
           {children}
           <Toaster />
           <SonnerToaster position="top-center" richColors />
