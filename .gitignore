@@ -12,7 +12,9 @@ dist/
 # Environment files
 .env
 .env.local
+.env.*
 .env.*.local
+!.env.example
 
 # IDE
 .vscode/
@@ -38,6 +40,10 @@ server.log
 
 # Prisma
 prisma/migrations/
+db/*.db
+db/*.db-*
+*.sqlite
+*.sqlite3
 
 # Temporary
 _tmp_*
