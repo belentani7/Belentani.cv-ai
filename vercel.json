@@ -1,0 +1,1 @@
+{"buildCommand": "pnpm db:generate && pnpm run build", "framework": "nextjs"}
