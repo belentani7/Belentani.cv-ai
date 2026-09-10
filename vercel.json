@@ -1,1 +1,1 @@
-{"buildCommand": "pnpm db:generate && pnpm run build", "framework": "nextjs"}
+{"buildCommand": "pnpm db:generate && pnpm exec next build", "framework": "nextjs"}
