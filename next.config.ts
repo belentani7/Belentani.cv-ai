@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // El script de build copia .next/static dentro de .next/standalone/.next/,
+  // lo que exige salida standalone.
+  output: "standalone",
   reactStrictMode: true,
   async headers() {
     return [
