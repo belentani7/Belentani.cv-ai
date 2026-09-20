@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // El script de build copia .next/static dentro de .next/standalone/.next/,
-  // lo que exige salida standalone.
-  output: "standalone",
+  // NO usar output: "standalone".
+  // El modo standalone mueve los trazados .nft.json dentro de .next/standalone/,
+  // y el paso onBuildComplete de Vercel busca .next/next-server.js.nft.json en la
+  // raiz de .next. Resultado: ENOENT y fallo de TODOS los deploys (preview y prod).
+  // Vercel construye Next.js de forma nativa y no necesita standalone.
   reactStrictMode: true,
   async headers() {
     return [
