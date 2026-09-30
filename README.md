@@ -1,39 +1,28 @@
 # Belentani.cv-ai
 
-Proyecto de **Belentani** — Belentani Academy / NOIACORE.
+Currículum con IA: generación y adaptación de CV.
 
-Stack: `node, nextjs`.
+## Qué es
 
-## Scripts
+Una herramienta para construir currículums que se adaptan a cada oferta. La IA no inventa
+experiencia: reorganiza y destaca lo que ya existe según lo que pide el puesto.
 
-- `npm run build`
-- `npm run db:generate`
-- `npm run db:migrate`
-- `npm run db:push`
-- `npm run db:reset`
-- `npm run dev`
-- `npm run lint`
-- `npm run start`
+En línea: <https://belentani-cv-ai.vercel.app>
 
-## Estructura
+## Stack
 
-```
-.env.example
-.github
-.gitignore
-.zscripts
-Caddyfile
-PROYECTO-ANALISIS-COMPLETO.md
-SECURITY.md
-bun.lock
-components.json
-docs
-download
-ecosistema.html
-ecosystem.json
-eslint.config.mjs
-examples
-```
+- **Next.js** — aplicación
+- **Prisma** — base de datos (`prisma/`)
+- **Tailwind + shadcn/ui** — interfaz (`components.json`)
+- **Caddy** — servidor (`Caddyfile`)
+
+## Documentación
+
+`PROYECTO-ANALISIS-COMPLETO.md` recoge el análisis del proyecto.
+
+## Configuración
+
+Copiar `.env.example` a `.env`. Nunca se versiona un secreto.
 
 ## Licencia
 
