@@ -1,10 +1,27 @@
-# Politica de seguridad
+# Security Policy
 
-## Reportar una vulnerabilidad
+## Reporting a Vulnerability
 
-Escribe de forma privada a belentani7pedro@gmail.com. No abras un issue
-publico para fallos de seguridad.
+If you discover a security vulnerability in this project, please email
+[belentani7studio@proton.me](mailto:belentani7studio@proton.me)
+instead of using the issue tracker.
 
-## Alcance
+Please include:
+- Description of the vulnerability
+- Steps to reproduce
+- Potential impact
+- Suggested fix (if available)
 
-Cualquier secreto expuesto, escape de sandbox o ejecucion remota de codigo.
+## Security Best Practices
+
+- Keep dependencies up to date
+- Use environment variables for sensitive data
+- Review pull requests carefully
+- Never commit `.env` or credentials
+
+## Supported Versions
+
+| Version | Supported |
+|---------|-----------|
+| Latest  | Yes |
+| Older   | As-is |

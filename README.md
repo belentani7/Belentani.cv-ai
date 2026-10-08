@@ -1,23 +1,29 @@
 # Belentani.cv-ai
 
-Proyecto del ecosistema Belentani.
+Currículum con IA: generación y adaptación de CV.
 
-## Instalacion
+## Qué es
 
-```bash
-npm install
-```
+Una herramienta para construir currículums que se adaptan a cada oferta. La IA no inventa
+experiencia: reorganiza y destaca lo que ya existe según lo que pide el puesto.
 
-## Uso
+En línea: <https://belentani-cv-ai.vercel.app>
 
-```bash
-npm run dev
-```
+## Stack
 
-## Estado
+- **Next.js** — aplicación
+- **Prisma** — base de datos (`prisma/`)
+- **Tailwind + shadcn/ui** — interfaz (`components.json`)
+- **Caddy** — servidor (`Caddyfile`)
 
-Proyecto del ecosistema **Belentani**. Publicado de forma automatizada.
+## Documentación
+
+`PROYECTO-ANALISIS-COMPLETO.md` recoge el análisis del proyecto.
+
+## Configuración
+
+Copiar `.env.example` a `.env`. Nunca se versiona un secreto.
 
 ## Licencia
 
-MIT - ver [LICENSE](LICENSE).
+MIT — ver `LICENSE`.

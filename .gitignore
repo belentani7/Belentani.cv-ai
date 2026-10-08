@@ -1,50 +1,67 @@
-# Dependencias
+# Dependencies
 node_modules/
-.venv/
-venv/
-__pycache__/
-*.py[cod]
+.pnp
+.pnp.js
 
-# Entorno y secretos
-.env
-.env.*
-*.local
-*.pem
-*.key
-credentials.json
-api-keys*.txt
-
-# Build y dist
-dist/
-build/
+# Build outputs
+.next/
 out/
-target/
-*.tgz
+build/
+dist/
 
-# Logs y temporales
-*.log
-*.pid
-.tmp/
-tmp/
+# Environment files
+.env
+.env.local
+.env.*.local
+!.env.example
 
-# IDE y SO
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+
+# OS
 .DS_Store
 Thumbs.db
 
-# --- guardias-sinc-2026-10-08 (auto) ---
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+dev.log
+server.log
+
+# Cache
+.eslintcache
+.turbo/
+.vercel/
+
+# Prisma
+prisma/migrations/
+db/*.db
+db/*.sqlite
+db/*.sqlite3
+
+# Temporary
+_tmp_*
+*.bak
+*.backup
+
+# remediacion 2026-09-14
 node_modules/
 .env
 .env.*
-!.env.example
-*.pem
-*.key
-.next/
-.nuxt/
-.turbo/
-dist/
-build/
-coverage/
+.mimosa/
+__pycache__/
+.vercel/
 *.log
-.DS_Store
+
+# IA agent states
+.cline/
+.opencode/
+.mcp/
+.zen/
+.mimocode/
+.zcode/
+*agent_state*
