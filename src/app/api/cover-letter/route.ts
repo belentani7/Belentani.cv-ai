@@ -1,19 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import ZAI from 'z-ai-web-dev-sdk';
+import { coverLetterRequestSchema, readAIRequest, requireAIText, aiErrorResponse } from '../../../lib/ai-request';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
-
-interface CoverLetterRequest {
-  fullName?: string;
-  profession?: string;
-  companyName?: string;
-  jobTitle?: string;
-  experience?: string;
-  skills?: string[];
-  language?: string;
-  tone?: 'formal' | 'friendly' | 'direct';
-}
 
 const LANG_INSTRUCTIONS: Record<string, string> = {
   es: 'Escribe la carta en español de España, con lenguaje formal pero cercano.',
@@ -30,7 +20,7 @@ const LANG_INSTRUCTIONS: Record<string, string> = {
 
 export async function POST(req: NextRequest) {
   try {
-    const body: CoverLetterRequest = await req.json();
+    const body = await readAIRequest(req, coverLetterRequestSchema);
     const lang = body.language || 'es';
     const langInstruction = LANG_INSTRUCTIONS[lang] || LANG_INSTRUCTIONS.es;
     const tone = body.tone || 'formal';
@@ -69,15 +59,10 @@ Devuelve SOLO el texto de la carta, lista para usar.`;
       thinking: { type: 'disabled' },
     });
 
-    const text = completion.choices[0]?.message?.content?.trim() || '';
+    const text = requireAIText(completion.choices?.[0]?.message?.content);
 
     return NextResponse.json({ text, ok: true });
   } catch (error: unknown) {
-    console.error('Cover letter generation error:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { ok: false, error: message, text: '' },
-      { status: 500 }
-    );
+    return aiErrorResponse(error);
   }
 }

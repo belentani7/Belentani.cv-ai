@@ -1,19 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import ZAI from 'z-ai-web-dev-sdk';
+import { studyToolsRequestSchema, readAIRequest, requireAIText, aiErrorResponse } from '../../../lib/ai-request';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
-interface StudyToolsRequest {
-  tool: 'questions' | 'summary';
-  content: string;
-  title?: string;
-  language?: string;
-}
-
 export async function POST(req: NextRequest) {
   try {
-    const body: StudyToolsRequest = await req.json();
+    const body = await readAIRequest(req, studyToolsRequestSchema);
     const lang = body.language || 'es';
 
     if (!body.content || body.content.trim().length < 50) {
@@ -68,15 +62,10 @@ Formato: lista numerada, cada punto en una línea, máximo 15 palabras por punto
       thinking: { type: 'disabled' },
     });
 
-    const text = completion.choices[0]?.message?.content?.trim() || '';
+    const text = requireAIText(completion.choices?.[0]?.message?.content);
 
     return NextResponse.json({ text, ok: true, tool: body.tool });
   } catch (error: unknown) {
-    console.error('Study tools API error:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { ok: false, error: message, text: '' },
-      { status: 500 }
-    );
+    return aiErrorResponse(error);
   }
 }

@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAppStore } from '@/stores/app-store';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { buildChatHistory, MAX_CHAT_MESSAGE_CHARS } from '@/lib/chat-history';
 
 interface AIPlaygroundProps {
   /** Title for the playground section */
@@ -41,6 +42,10 @@ export function AIPlayground({
 
   async function sendPrompt(text: string) {
     if (!text.trim() || loading) return;
+    if (text.trim().length > MAX_CHAT_MESSAGE_CHARS) {
+      toast.error('El mensaje es demasiado largo. Máximo 8.000 caracteres.');
+      return;
+    }
 
     const userMsg: Message = {
       id: `u-${Date.now()}`,
@@ -60,11 +65,11 @@ export function AIPlayground({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [
+          messages: buildChatHistory([
             { role: 'assistant', content: systemMsg },
             ...messages.map((m) => ({ role: m.role, content: m.content })),
             { role: 'user', content: text.trim() },
-          ],
+          ]),
           language,
         }),
       });
@@ -195,6 +200,7 @@ export function AIPlayground({
               {/* Input */}
               <div className="flex gap-2 items-end">
                 <Textarea
+                  maxLength={MAX_CHAT_MESSAGE_CHARS}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}

@@ -1,19 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import ZAI from 'z-ai-web-dev-sdk';
+import { chatRequestSchema, readAIRequest, requireAIText, aiErrorResponse } from '../../../lib/ai-request';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
-
-interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
-interface ChatRequest {
-  messages: ChatMessage[];
-  language?: string;
-  context?: string;
-}
 
 const LANG_INSTRUCTIONS: Record<string, string> = {
   es: 'Responde SIEMPRE en español de España, con lenguaje sencillo y claro.',
@@ -85,7 +75,7 @@ Eres parte de una plataforma con:
 
 export async function POST(req: NextRequest) {
   try {
-    const body: ChatRequest = await req.json();
+    const body = await readAIRequest(req, chatRequestSchema);
     const lang = body.language || 'es';
     const langInstruction = LANG_INSTRUCTIONS[lang] || LANG_INSTRUCTIONS.es;
 
@@ -101,15 +91,10 @@ export async function POST(req: NextRequest) {
       thinking: { type: 'disabled' },
     });
 
-    const text = completion.choices[0]?.message?.content?.trim() || '';
+    const text = requireAIText(completion.choices?.[0]?.message?.content);
 
     return NextResponse.json({ text, ok: true });
   } catch (error: unknown) {
-    console.error('Chat API error:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { ok: false, error: message, text: 'Lo siento, tuve un problema. Inténtalo de nuevo.' },
-      { status: 500 }
-    );
+    return aiErrorResponse(error);
   }
 }
