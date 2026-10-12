@@ -8,7 +8,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAppStore } from '@/stores/app-store';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { buildChatHistory, MAX_CHAT_MESSAGE_CHARS } from '@/lib/chat-history';
 
 interface Message {
   id: string;
@@ -77,6 +79,10 @@ export function AIAssistant() {
 
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || loading) return;
+    if (text.trim().length > MAX_CHAT_MESSAGE_CHARS) {
+      toast.error('El mensaje es demasiado largo. Máximo 8.000 caracteres.');
+      return;
+    }
 
     const userMsg: Message = {
       id: `u-${Date.now()}`,
@@ -93,7 +99,7 @@ export function AIAssistant() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMsg].map((m) => ({ role: m.role, content: m.content })),
+          messages: buildChatHistory([...messages, userMsg]),
           language,
         }),
       });
@@ -293,6 +299,7 @@ export function AIAssistant() {
             <div className="p-3 border-t border-border bg-card flex-shrink-0">
               <div className="flex gap-2 items-end">
                 <Textarea
+                  maxLength={MAX_CHAT_MESSAGE_CHARS}
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}

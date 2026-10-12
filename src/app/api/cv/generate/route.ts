@@ -1,22 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import ZAI from 'z-ai-web-dev-sdk';
+import { cvRequestSchema, readAIRequest, requireAIText, aiErrorResponse } from '../../../../lib/ai-request';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
-interface CVRequest {
-  field: 'summary' | 'experience';
-  fullName?: string;
-  profession?: string;
-  experiences?: { position: string; company: string; description: string; startDate: string; endDate: string }[];
-  education?: { title: string; institution: string; year: string; description: string }[];
-  skills?: string[];
-  language?: string;
-}
-
 export async function POST(req: NextRequest) {
   try {
-    const body: CVRequest = await req.json();
+    const body = await readAIRequest(req, cvRequestSchema);
     const lang = body.language || 'es';
 
     const langInstruction: Record<string, string> = {
@@ -67,15 +58,10 @@ Reescribe en formato de viñetas (•) con logros concretos y verbos de acción.
       thinking: { type: 'disabled' },
     });
 
-    const text = completion.choices[0]?.message?.content?.trim() || '';
+    const text = requireAIText(completion.choices?.[0]?.message?.content);
 
     return NextResponse.json({ text, ok: true });
   } catch (error: unknown) {
-    console.error('CV generation error:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { ok: false, error: message, text: '' },
-      { status: 500 }
-    );
+    return aiErrorResponse(error);
   }
 }
