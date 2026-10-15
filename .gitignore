@@ -1,67 +1,38 @@
 # Dependencies
 node_modules/
-.pnp
-.pnp.js
+bower_components/
 
-# Build outputs
-.next/
-out/
+# Production
 build/
 dist/
 
-# Environment files
+docs/
+
+# Misc
 .env
 .env.local
 .env.*.local
-!.env.example
 
 # IDE
-.vscode/
 .idea/
+.vscode/
 *.swp
-*.swo
 
 # OS
 .DS_Store
 Thumbs.db
 
 # Logs
-*.log
 npm-debug.log*
 yarn-debug.log*
-dev.log
-server.log
+yarn-error.log*
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Tests
+.cypress/
 
 # Cache
-.eslintcache
-.turbo/
-.vercel/
-
-# Prisma
-prisma/migrations/
-db/*.db
-db/*.sqlite
-db/*.sqlite3
-
-# Temporary
-_tmp_*
-*.bak
-*.backup
-
-# remediacion 2026-09-14
-node_modules/
-.env
-.env.*
-.mimosa/
-__pycache__/
-.vercel/
-*.log
-
-# IA agent states
-.cline/
-.opencode/
-.mcp/
-.zen/
-.mimocode/
-.zcode/
-*agent_state*
+.cache/
