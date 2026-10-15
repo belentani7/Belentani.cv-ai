@@ -17,6 +17,10 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
+      # `@prisma/client` no exporta PrismaClient hasta que se genera el cliente.
+      # Sin este paso, `tsc` falla con TS2305 en src/lib/db.ts.
+      - name: Generate Prisma client
+        run: pnpm db:generate
       # `pnpm typecheck` y `pnpm test` no existen en package.json:
       # los scripts reales son dev, build, start, lint, db:*
       - name: Lint
