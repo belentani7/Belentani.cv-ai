@@ -95,7 +95,7 @@ describe('POST /api/cv/generate', () => {
   });
 
   it('returns generic error on AI failure', async () => {
-    const { create } = require('z-ai-web-dev-sdk');
+    const { create } = jest.requireMock<{ create: jest.Mock }>('z-ai-web-dev-sdk');
     create.mockResolvedValueOnce({
       chat: {
         completions: {
@@ -115,7 +115,7 @@ describe('POST /api/cv/generate', () => {
   });
 
   it('rate limits after 5 requests', async () => {
-    const { Ratelimit } = require('@upstash/ratelimit');
+    const { Ratelimit } = jest.requireMock<{ Ratelimit: { slidingWindow: jest.Mock } }>('@upstash/ratelimit');
     Ratelimit.slidingWindow.mockReturnValueOnce({
       limit: jest.fn().mockResolvedValue({ success: false, limit: 5, remaining: 0, reset: Date.now() + 60000 }),
     });

@@ -48,7 +48,7 @@ export function validateCVPayload(body: unknown) {
 }
 
 // Apply to route handler
-export function withCVValidation(handler: Function) {
+export function withCVValidation(handler: (req: NextRequest) => Response | Promise<Response>) {
   return async (req: NextRequest) => {
     try {
       const body = await req.json().catch(() => null);
