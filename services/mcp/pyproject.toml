@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "belentani-mcp"
+version = "1.0.0"
+description = "MCP server for the Belentani / NOIACORE ecosystem"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = [
+    "mcp>=1.6.0",
+    "structlog>=24.2.0",
+    "pydantic>=2.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.6.0",
+    "black>=24.8.0",
+    "mypy>=1.11.0",
+]
+
+[project.scripts]
+belentani-mcp = "belentani_mcp:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["belentani_mcp"]
