@@ -1,5 +1,7 @@
 import { POST } from '@/app/api/cv/generate/route';
 import { NextRequest } from 'next/server';
+import { create } from 'z-ai-web-dev-sdk';
+import { Ratelimit } from '@upstash/ratelimit';
 
 // Mock ZAI
 jest.mock('z-ai-web-dev-sdk', () => ({
@@ -95,8 +97,7 @@ describe('POST /api/cv/generate', () => {
   });
 
   it('returns generic error on AI failure', async () => {
-    const { create } = require('z-ai-web-dev-sdk');
-    create.mockResolvedValueOnce({
+    jest.mocked(create).mockResolvedValueOnce({
       chat: {
         completions: {
           create: jest.fn().mockRejectedValue(new Error('API key invalid')),
@@ -115,8 +116,7 @@ describe('POST /api/cv/generate', () => {
   });
 
   it('rate limits after 5 requests', async () => {
-    const { Ratelimit } = require('@upstash/ratelimit');
-    Ratelimit.slidingWindow.mockReturnValueOnce({
+    jest.mocked(Ratelimit.slidingWindow).mockReturnValueOnce({
       limit: jest.fn().mockResolvedValue({ success: false, limit: 5, remaining: 0, reset: Date.now() + 60000 }),
     });
 
