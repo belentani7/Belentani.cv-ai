@@ -102,15 +102,8 @@ jobs:
           fetch-depth: 0
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
-        with:
-          config-path: .gitleaks.toml
-          report-format: sarif
-          report-path: gitleaks.sarif
-        continue-on-error: true
-      - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: gitleaks.sarif
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   lighthouse:
     name: Lighthouse Audit
@@ -143,26 +136,3 @@ jobs:
           budgetPath: ./.github/lighthouse/budget.json
           uploadArtifacts: true
 
-  deploy-preview:
-    name: Deploy Preview
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - uses: pnpm/action-setup@v4
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
-      - name: Build for preview
-        run: pnpm run --if-present build
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: "--prebuilt"
-          vercel-scope: ${{ secrets.VERCEL_ORG_ID }}
