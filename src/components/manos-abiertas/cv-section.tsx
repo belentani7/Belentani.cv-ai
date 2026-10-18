@@ -136,6 +136,10 @@ export function CVSection() {
           language,
         }),
       });
+      if (resp.status === 503) {
+        toast.error('La generación con IA no está disponible ahora. Puedes seguir editando y guardar tu CV en PDF.');
+        return;
+      }
       if (!resp.ok) throw new Error('Error en la generación');
       const data = await resp.json();
       if (field === 'summary') {
@@ -574,7 +578,7 @@ export function CVSection() {
                 {t.print}
               </Button>
               <Button
-                onClick={() => hasContent ? toast.success('Usa «Imprimir» → «Guardar como PDF»') : toast.error('Rellena tu CV primero')}
+                onClick={handlePrint}
                 disabled={!hasContent}
                 className="flex-1 gap-1.5"
               >
