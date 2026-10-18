@@ -135,4 +135,3 @@ jobs:
             http://localhost:3000/terms
           budgetPath: ./.github/lighthouse/budget.json
           uploadArtifacts: true
-
