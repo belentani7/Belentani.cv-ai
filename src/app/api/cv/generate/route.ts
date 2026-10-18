@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import ZAI from 'z-ai-web-dev-sdk';
 import { z } from 'zod';
 import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@vercel/kv';
+import { kv } from '@vercel/kv';
 
 const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
+  redis: kv,
   limiter: Ratelimit.slidingWindow(5, '1 m'),
   analytics: true,
 });

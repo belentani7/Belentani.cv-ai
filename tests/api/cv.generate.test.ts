@@ -2,32 +2,24 @@ import { POST } from '@/app/api/cv/generate/route';
 import { NextRequest } from 'next/server';
 
 // Mock ZAI
-jest.mock('z-ai-web-dev-sdk', () => ({
-  create: jest.fn().mockResolvedValue({
-    chat: {
-      completions: {
-        create: jest.fn().mockResolvedValue({
-          choices: [{ message: { content: 'Generated CV content' } }],
-        }),
-      },
-    },
-  }),
-}));
+jest.mock('z-ai-web-dev-sdk', () => {
+  const mockCreate = jest.fn();
+  return { __esModule: true, default: { create: mockCreate }, __mockCreate: mockCreate };
+});
 
 // Mock @upstash/ratelimit
-jest.mock('@upstash/ratelimit', () => ({
-  Ratelimit: {
-    slidingWindow: jest.fn().mockReturnValue({
-      limit: jest.fn().mockResolvedValue({ success: true, limit: 5, remaining: 4, reset: Date.now() + 60000 }),
-    }),
-  },
-}));
+jest.mock('@upstash/ratelimit', () => {
+  const mockLimit = jest.fn();
+  const Ratelimit = Object.assign(
+    jest.fn().mockImplementation(() => ({ limit: mockLimit })),
+    { slidingWindow: jest.fn().mockReturnValue({}) },
+  );
+  return { Ratelimit, __mockLimit: mockLimit };
+});
 
 // Mock @vercel/kv
 jest.mock('@vercel/kv', () => ({
-  Redis: {
-    fromEnv: jest.fn(),
-  },
+  kv: {},
 }));
 
 describe('POST /api/cv/generate', () => {
@@ -44,6 +36,14 @@ describe('POST /api/cv/generate', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    const { __mockCreate } = jest.requireMock('z-ai-web-dev-sdk');
+    const { __mockLimit } = jest.requireMock('@upstash/ratelimit');
+    __mockLimit.mockResolvedValue({ success: true, limit: 5, remaining: 4, reset: Date.now() + 60000 });
+    __mockCreate.mockResolvedValue({
+      chat: { completions: { create: jest.fn().mockResolvedValue({
+        choices: [{ message: { content: 'Generated CV content' } }],
+      }) } },
+    });
   });
 
   it('rejects payload with extra fields (injection attempt)', async () => {
@@ -95,8 +95,8 @@ describe('POST /api/cv/generate', () => {
   });
 
   it('returns generic error on AI failure', async () => {
-    const { create } = require('z-ai-web-dev-sdk');
-    create.mockResolvedValueOnce({
+    const { __mockCreate } = jest.requireMock('z-ai-web-dev-sdk');
+    __mockCreate.mockResolvedValueOnce({
       chat: {
         completions: {
           create: jest.fn().mockRejectedValue(new Error('API key invalid')),
@@ -115,10 +115,8 @@ describe('POST /api/cv/generate', () => {
   });
 
   it('rate limits after 5 requests', async () => {
-    const { Ratelimit } = require('@upstash/ratelimit');
-    Ratelimit.slidingWindow.mockReturnValueOnce({
-      limit: jest.fn().mockResolvedValue({ success: false, limit: 5, remaining: 0, reset: Date.now() + 60000 }),
-    });
+    const { __mockLimit } = jest.requireMock('@upstash/ratelimit');
+    __mockLimit.mockResolvedValueOnce({ success: false, limit: 5, remaining: 0, reset: Date.now() + 60000 });
 
     const req = createRequest({ field: 'summary', fullName: 'Test' }, { 'x-forwarded-for': '1.2.3.4' });
     const res = await POST(req);
