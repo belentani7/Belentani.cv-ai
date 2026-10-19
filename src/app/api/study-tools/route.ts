@@ -75,7 +75,7 @@ Formato: lista numerada, cada punto en una línea, máximo 15 palabras por punto
     const text = completion.choices[0]?.message?.content?.trim() || '';
 
     return NextResponse.json({ text, ok: true, tool: body.tool });
-  } catch (error: unknown) {
+  } catch {
     return NextResponse.json(
       { ok: false, error: 'No se pudo procesar el contenido educativo.', text: '' },
       { status: 500 }
