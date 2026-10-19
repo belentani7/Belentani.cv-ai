@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { Ratelimit } from '@upstash/ratelimit';
@@ -46,10 +47,11 @@ export async function guardAiRequest<S extends z.ZodTypeAny>(
 
   // All three routes share a quota to prevent switching endpoints to bypass it.
   const forwardedIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
-  const clientId = (forwardedIp || req.headers.get('x-real-ip') || 'unknown').slice(0, 128);
+  const clientId = (req.headers.get('x-real-ip') || forwardedIp || 'unknown').trim().slice(0, 128);
+  const anonymizedClient = createHash('sha256').update(clientId).digest('hex');
 
   try {
-    const result = await limiter.limit(`public-ai:${clientId}`);
+    const result = await limiter.limit(`public-ai:${anonymizedClient}`);
     if (!result.success) {
       const retryAfter = Math.max(1, Math.ceil((result.reset - Date.now()) / 1000));
       return reject(429, 'Límite de solicitudes alcanzado. Inténtalo más tarde.', {
