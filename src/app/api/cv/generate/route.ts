@@ -165,14 +165,12 @@ Reescribe en formato de viñetas (•) con logros concretos y verbos de acción.
     return NextResponse.json({ text, ok: true });
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      console.warn('CV generation: invalid payload', { errors: error.flatten() });
       return NextResponse.json(
         { ok: false, error: 'Invalid request payload' },
         { status: 400 }
       );
     }
     
-    console.error('CV generation error:', error);
     return NextResponse.json(
       { ok: false, error: 'Failed to generate content. Please try again.' },
       { status: 500 }
