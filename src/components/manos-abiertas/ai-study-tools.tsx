@@ -26,15 +26,17 @@ export function AIStudyTools({ content, title }: AIStudyToolsProps) {
   const [questions, setQuestions] = useState<Question[] | null>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
+  const [aiConsent, setAiConsent] = useState(false);
 
   async function generateQuestions() {
+    if (!aiConsent) return;
     setLoading('questions');
     setSummary(null);
     try {
       const resp = await fetch('/api/study-tools', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tool: 'questions', content, title, language }),
+        body: JSON.stringify({ tool: 'questions', content, title, language, consentToAI: true }),
       });
       if (!resp.ok) throw new Error('Error');
       const data = await resp.json();
@@ -57,13 +59,14 @@ export function AIStudyTools({ content, title }: AIStudyToolsProps) {
   }
 
   async function generateSummary() {
+    if (!aiConsent) return;
     setLoading('summary');
     setQuestions(null);
     try {
       const resp = await fetch('/api/study-tools', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tool: 'summary', content, title, language }),
+        body: JSON.stringify({ tool: 'summary', content, title, language, consentToAI: true }),
       });
       if (!resp.ok) throw new Error('Error');
       const data = await resp.json();
@@ -79,13 +82,17 @@ export function AIStudyTools({ content, title }: AIStudyToolsProps) {
 
   return (
     <div className="mt-4">
+      <label className="mb-3 flex items-start gap-2 text-xs text-muted-foreground">
+        <input type="checkbox" className="mt-0.5 size-4 shrink-0" checked={aiConsent} onChange={(event) => setAiConsent(event.target.checked)} />
+        <span>Autorizo enviar el material del ejercicio a OpenRouter y al proveedor del modelo IA para crear preguntas o resúmenes.</span>
+      </label>
       {/* Action buttons */}
       <div className="flex gap-2 flex-wrap">
         <Button
           size="sm"
           variant="outline"
           onClick={generateQuestions}
-          disabled={loading !== null}
+          disabled={loading !== null || !aiConsent}
           className="gap-1.5"
         >
           {loading === 'questions' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <HelpCircle className="h-3.5 w-3.5 text-primary" />}
@@ -95,7 +102,7 @@ export function AIStudyTools({ content, title }: AIStudyToolsProps) {
           size="sm"
           variant="outline"
           onClick={generateSummary}
-          disabled={loading !== null}
+          disabled={loading !== null || !aiConsent}
           className="gap-1.5"
         >
           {loading === 'summary' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5 text-primary" />}
