@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { guardAiRequest } from '@/lib/ai-request-guard';
@@ -79,7 +80,8 @@ describe('shared public AI request guard', () => {
     const limit = jest.requireMock('@upstash/ratelimit').__mockLimit;
     limit.mockResolvedValueOnce({ success: false, limit: 5, remaining: 0, reset: Date.now() + 60_000 });
     const result = await guardAiRequest(request('{"prompt":"hola"}', { 'x-forwarded-for': '203.0.113.9' }), schema);
-    expect(limit).toHaveBeenCalledWith('public-ai:203.0.113.9');
+    const hash = createHash('sha256').update('203.0.113.9').digest('hex');
+    expect(limit).toHaveBeenCalledWith(`public-ai:${hash}`);
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.response.status).toBe(429);
