@@ -34,6 +34,7 @@ export function CoverLetterBuilder() {
   const [tone, setTone] = useState<'formal' | 'friendly' | 'direct'>('formal');
   const [letter, setLetter] = useState('');
   const [loading, setLoading] = useState(false);
+  const [aiConsent, setAiConsent] = useState(false);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
 
   // Load saved data
@@ -75,6 +76,10 @@ export function CoverLetterBuilder() {
   }
 
   async function generate() {
+    if (!aiConsent) {
+      toast.error('Autoriza primero el envío de la información de la carta a la IA.');
+      return;
+    }
     if (!profession.trim()) {
       toast.error('Escribe tu profesión para generar la carta');
       return;
@@ -108,7 +113,7 @@ export function CoverLetterBuilder() {
     if (confirm('¿Borrar todos los datos de la carta?')) {
       localStorage.removeItem(STORAGE_KEY);
       setFullName(''); setProfession(''); setCompanyName(''); setJobTitle('');
-      setExperience(''); setSkills([]); setLetter('');
+      setExperience(''); setSkills([]); setLetter(''); setAiConsent(false);
       setSavedAt(null);
       toast.success('Datos reiniciados');
     }
@@ -116,6 +121,10 @@ export function CoverLetterBuilder() {
 
   return (
     <div className="space-y-4">
+      <label className="flex items-start gap-2 rounded-lg border p-3 text-xs text-muted-foreground">
+        <input type="checkbox" checked={aiConsent} onChange={(event) => setAiConsent(event.target.checked)} className="mt-0.5 size-4 shrink-0" />
+        <span>Autorizo el envío del nombre, experiencia, habilidades y demás campos de esta carta al servicio de IA para generar el texto. Sin autorización puedo editar mis datos localmente.</span>
+      </label>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center">
