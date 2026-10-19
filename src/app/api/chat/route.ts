@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
     const text = completion.choices[0]?.message?.content?.trim() || '';
 
     return NextResponse.json({ text, ok: true });
-  } catch (error: unknown) {
+  } catch {
     return NextResponse.json(
       { ok: false, error: 'No se pudo completar la solicitud.', text: 'Lo siento, tuve un problema. Inténtalo de nuevo.' },
       { status: 500 }
