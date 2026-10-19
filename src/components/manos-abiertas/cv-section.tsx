@@ -53,6 +53,7 @@ export function CVSection() {
   const [langInput, setLangInput] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [aiLoading, setAiLoading] = useState<'summary' | 'experience' | null>(null);
+  const [aiConsent, setAiConsent] = useState(false);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [activeTool, setActiveTool] = useState<'cv' | 'letter'>('cv');
 
@@ -121,6 +122,10 @@ export function CVSection() {
   }
 
   async function generateWithAI(field: 'summary' | 'experience') {
+    if (!aiConsent) {
+      toast.error('Autoriza primero el envío de los campos necesarios a la IA.');
+      return;
+    }
     setAiLoading(field);
     try {
       const resp = await fetch('/api/cv/generate', {
@@ -171,6 +176,10 @@ export function CVSection() {
         </Badge>
         <h1 className="text-3xl md:text-4xl font-bold mb-2">{t.cv_title}</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">{t.cv_subtitle}</p>
+        <label className="mx-auto mt-3 flex max-w-2xl items-start gap-2 rounded-lg border p-3 text-left text-xs text-muted-foreground">
+          <input type="checkbox" checked={aiConsent} onChange={(event) => setAiConsent(event.target.checked)} className="mt-0.5 size-4 shrink-0" />
+          <span>Autorizo enviar al servicio de IA el nombre, profesión, experiencia, formación y habilidades incluidos en la solicitud para generar texto. El correo, teléfono y dirección no se envían mediante esta función. Sin esta autorización puedo seguir editando e imprimir mi CV localmente.</span>
+        </label>
 
         {/* Tool toggle: CV vs Cover Letter */}
         <div className="inline-flex p-1 bg-muted rounded-lg mt-4">
