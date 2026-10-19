@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import ZAI from 'z-ai-web-dev-sdk';
+import { z } from 'zod';
+import { guardAiRequest } from '@/lib/ai-request-guard';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
-interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
-interface ChatRequest {
-  messages: ChatMessage[];
-  language?: string;
-  context?: string;
-}
+const chatSchema = z.object({
+  messages: z.array(z.object({
+    role: z.enum(['user', 'assistant']),
+    content: z.string().min(1).max(5000),
+  }).strict()).min(1).max(50),
+  language: z.string().max(12).optional(),
+  context: z.string().max(1000).optional(),
+}).strict();
 
 const LANG_INSTRUCTIONS: Record<string, string> = {
   es: 'Responde SIEMPRE en español de España, con lenguaje sencillo y claro.',
@@ -85,7 +85,9 @@ Eres parte de una plataforma con:
 
 export async function POST(req: NextRequest) {
   try {
-    const body: ChatRequest = await req.json();
+    const checked = await guardAiRequest(req, chatSchema);
+    if (!checked.ok) return checked.response;
+    const body = checked.data;
     const lang = body.language || 'es';
     const langInstruction = LANG_INSTRUCTIONS[lang] || LANG_INSTRUCTIONS.es;
 
@@ -105,10 +107,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ text, ok: true });
   } catch (error: unknown) {
-    console.error('Chat API error:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { ok: false, error: message, text: 'Lo siento, tuve un problema. Inténtalo de nuevo.' },
+      { ok: false, error: 'No se pudo completar la solicitud.', text: 'Lo siento, tuve un problema. Inténtalo de nuevo.' },
       { status: 500 }
     );
   }
