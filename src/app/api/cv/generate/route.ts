@@ -2,33 +2,34 @@ import { NextRequest, NextResponse } from 'next/server';
 import ZAI from 'z-ai-web-dev-sdk';
 import { z } from 'zod';
 import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@vercel/kv';
+import { kv } from '@vercel/kv';
+import { LANGUAGES, type LanguageCode } from '@/i18n/languages';
 
 const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
+  redis: kv,
   limiter: Ratelimit.slidingWindow(5, '1 m'),
   analytics: true,
 });
 
 const cvSchema = z.object({
   field: z.enum(['summary', 'experience']),
-  fullName: z.string().min(2).max(100).optional(),
+  fullName: z.union([z.literal(''), z.string().min(2).max(100)]).optional(),
   profession: z.string().max(100).optional(),
   experiences: z.array(z.object({
     position: z.string().max(150),
     company: z.string().max(150),
     description: z.string().max(3000),
-    startDate: z.string().regex(/^\d{4}-\d{2}$/),
-    endDate: z.string().regex(/^\d{4}-\d{2}$/),
+    startDate: z.union([z.literal(''), z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/)]),
+    endDate: z.union([z.literal(''), z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/)]),
   })).max(10).optional(),
   education: z.array(z.object({
     title: z.string().max(200),
     institution: z.string().max(200),
-    year: z.string().regex(/^\d{4}$/),
+    year: z.union([z.literal(''), z.string().regex(/^\d{4}$/)]),
     description: z.string().max(1000).optional(),
   })).max(5).optional(),
   skills: z.array(z.string().max(50)).max(30).optional(),
-  language: z.enum(['es', 'en', 'ca', 'pt-BR', 'fr', 'ar', 'zh', 'hi']).optional(),
+  language: z.custom<LanguageCode>((value) => LANGUAGES.some(({ code }) => code === value)).optional(),
 }).strict();
 
 export const runtime = 'nodejs';
@@ -36,6 +37,12 @@ export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
+    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+      return NextResponse.json(
+        { ok: false, error: 'AI generation is unavailable. You can keep editing and export your CV as PDF.' },
+        { status: 503 },
+      );
+    }
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() 
       || req.headers.get('x-real-ip') 
       || 'unknown';
@@ -71,7 +78,8 @@ export async function POST(req: NextRequest) {
       hi: 'हिंदी में उत्तर दें.',
     };
 
-    const langPrompt = langInstruction[lang] || langInstruction.es;
+    const selectedLanguage = LANGUAGES.find(({ code }) => code === lang)!;
+    const langPrompt = `${langInstruction[lang] || `Write in ${selectedLanguage.englishName}.`} Idioma de salida: ${selectedLanguage.name} (${lang}).`;
 
     const zai = await ZAI.create();
 

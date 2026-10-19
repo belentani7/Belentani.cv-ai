@@ -17,7 +17,9 @@ const PII_REGEX = [
   /\b(?:\+?\d{1,3}[-.]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/, // phone
 ];
 
-export function validateCVPayload(body: unknown) {
+export function validateCVPayload(body: unknown):
+  | { success: true; data: z.infer<typeof cvSchema> }
+  | { success: false; error: { message: string }; status: number; issues?: { field: string; message: string }[] } {
   // PII pre-check
   const bodyStr = JSON.stringify(body || {});
   for (const regex of PII_REGEX) {
@@ -48,7 +50,7 @@ export function validateCVPayload(body: unknown) {
 }
 
 // Apply to route handler
-export function withCVValidation(handler: Function) {
+export function withCVValidation(handler: (req: NextRequest) => Response | Promise<Response>) {
   return async (req: NextRequest) => {
     try {
       const body = await req.json().catch(() => null);
