@@ -81,9 +81,9 @@ Eres parte de una plataforma con:
 - 8 cursos de IA (ChatGPT, Gemini, Copilot, Claude, DeepSeek, Qwen, Perplexity, Meta AI)
 - Constructor de CV con IA
 - Curso completo de Office (Word, Excel, PowerPoint)
-- 3.647 recursos verificados
-- 61 artículos sobre derechos
-- 41 contactos de emergencia`;
+- Directorio de recursos externos, que requieren confirmar disponibilidad y elegibilidad en la fuente oficial
+- Guías generales sobre derechos, cuya vigencia legal debe verificarse antes de actuar
+- Contactos y orientaciones que pueden cambiar; consulta siempre fuentes oficiales`;
 
 export async function POST(req: NextRequest) {
   try {
