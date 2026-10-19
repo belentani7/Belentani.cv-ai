@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { completeChat } from '@/lib/ai-provider';
 import { aiFailureResponse } from '@/lib/ai-error-response';
@@ -9,7 +10,7 @@ import { LANGUAGES, type LanguageCode } from '@/i18n/languages';
 const ratelimit = new Ratelimit({
   redis: kv,
   limiter: Ratelimit.slidingWindow(5, '1 m'),
-  analytics: true,
+  analytics: false,
 });
 
 const cvSchema = z.object({
@@ -81,7 +82,8 @@ export async function POST(req: NextRequest) {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() 
       || req.headers.get('x-real-ip') 
       || 'unknown';
-    const { success, limit, reset, remaining } = await ratelimit.limit(ip);
+    const hashedIp = createHash('sha256').update(ip).digest('hex');
+    const { success, limit, reset, remaining } = await ratelimit.limit(`cv:${hashedIp}`);
     
     if (!success) {
       return NextResponse.json(
