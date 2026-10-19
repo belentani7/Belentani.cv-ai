@@ -90,7 +90,7 @@ export function CoverLetterBuilder() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fullName, profession, companyName, jobTitle, experience, skills, tone, language,
+          fullName, profession, companyName, jobTitle, experience, skills, tone, language, consentToAI: true,
         }),
       });
       if (!resp.ok) throw new Error('Error');
@@ -123,7 +123,7 @@ export function CoverLetterBuilder() {
     <div className="space-y-4">
       <label className="flex items-start gap-2 rounded-lg border p-3 text-xs text-muted-foreground">
         <input type="checkbox" checked={aiConsent} onChange={(event) => setAiConsent(event.target.checked)} className="mt-0.5 size-4 shrink-0" />
-        <span>Autorizo el envío del nombre, experiencia, habilidades y demás campos de esta carta al servicio de IA para generar el texto. Sin autorización puedo editar mis datos localmente.</span>
+        <span>Autorizo el envío a OpenRouter y al proveedor del modelo IA configurado del nombre, experiencia, habilidades y demás campos de esta carta al servicio de IA para generar el texto. Sin autorización puedo editar mis datos localmente.</span>
       </label>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
