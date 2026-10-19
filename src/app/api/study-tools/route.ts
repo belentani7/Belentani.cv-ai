@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import ZAI from 'z-ai-web-dev-sdk';
+import { completeChat } from '@/lib/ai-provider';
+import { aiFailureResponse } from '@/lib/ai-error-response';
 import { z } from 'zod';
 import { guardAiRequest } from '@/lib/ai-request-guard';
 
@@ -7,6 +8,7 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 const studySchema = z.object({
+  consentToAI: z.literal(true),
   tool: z.enum(['questions', 'summary']),
   content: z.string().min(50).max(20000),
   title: z.string().max(200).optional(),
@@ -27,7 +29,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const zai = await ZAI.create();
     const content = body.content.slice(0, 5000); // Limit to 5000 chars
 
     let systemPrompt = '';
@@ -64,21 +65,13 @@ ${content}
 Formato: lista numerada, cada punto en una línea, máximo 15 palabras por punto.`;
     }
 
-    const completion = await zai.chat.completions.create({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      thinking: { type: 'disabled' },
-    });
-
-    const text = completion.choices[0]?.message?.content?.trim() || '';
+    const text = await completeChat([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ], { maxTokens: body.tool === 'questions' ? 700 : 500, temperature: 0.25 });
 
     return NextResponse.json({ text, ok: true, tool: body.tool });
-  } catch {
-    return NextResponse.json(
-      { ok: false, error: 'No se pudo procesar el contenido educativo.', text: '' },
-      { status: 500 }
-    );
+  } catch (error) {
+    return aiFailureResponse(error);
   }
 }
