@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import ZAI from 'z-ai-web-dev-sdk';
+import { completeChat } from '@/lib/ai-provider';
+import { aiFailureResponse } from '@/lib/ai-error-response';
 import { z } from 'zod';
 import { guardAiRequest } from '@/lib/ai-request-guard';
 
@@ -7,6 +8,7 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 const chatSchema = z.object({
+  consentToAI: z.literal(true),
   messages: z.array(z.object({
     role: z.enum(['user', 'assistant']),
     content: z.string().min(1).max(5000),
@@ -91,25 +93,16 @@ export async function POST(req: NextRequest) {
     const lang = body.language || 'es';
     const langInstruction = LANG_INSTRUCTIONS[lang] || LANG_INSTRUCTIONS.es;
 
-    const zai = await ZAI.create();
 
     const messages = [
       { role: 'system' as const, content: `${SYSTEM_PROMPT}\n\n${langInstruction}` },
       ...body.messages.slice(-10), // Keep last 10 messages for context
     ];
 
-    const completion = await zai.chat.completions.create({
-      messages,
-      thinking: { type: 'disabled' },
-    });
-
-    const text = completion.choices[0]?.message?.content?.trim() || '';
+    const text = await completeChat(messages, { maxTokens: 700, temperature: 0.3 });
 
     return NextResponse.json({ text, ok: true });
-  } catch {
-    return NextResponse.json(
-      { ok: false, error: 'No se pudo completar la solicitud.', text: 'Lo siento, tuve un problema. Inténtalo de nuevo.' },
-      { status: 500 }
-    );
+  } catch (error) {
+    return aiFailureResponse(error);
   }
 }
