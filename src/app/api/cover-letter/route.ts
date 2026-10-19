@@ -76,7 +76,7 @@ Devuelve SOLO el texto de la carta, lista para usar.`;
     const text = completion.choices[0]?.message?.content?.trim() || '';
 
     return NextResponse.json({ text, ok: true });
-  } catch (error: unknown) {
+  } catch {
     // Never expose provider failures or private candidate data to users or logs.
     return NextResponse.json(
       { ok: false, error: 'No se pudo generar la carta. Inténtalo de nuevo.', text: '' },
