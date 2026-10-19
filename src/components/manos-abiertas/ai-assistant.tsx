@@ -33,6 +33,7 @@ export function AIAssistant() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [aiConsent, setAiConsent] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -76,7 +77,7 @@ export function AIAssistant() {
   }, [open]);
 
   const sendMessage = useCallback(async (text: string) => {
-    if (!text.trim() || loading) return;
+    if (!text.trim() || loading || !aiConsent) return;
 
     const userMsg: Message = {
       id: `u-${Date.now()}`,
@@ -93,7 +94,8 @@ export function AIAssistant() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMsg].map((m) => ({ role: m.role, content: m.content })),
+          consentToAI: true,
+          messages: [...messages, userMsg].slice(-20).map((m) => ({ role: m.role, content: m.content })),
           language,
         }),
       });
@@ -117,7 +119,7 @@ export function AIAssistant() {
     } finally {
       setLoading(false);
     }
-  }, [messages, loading, language]);
+  }, [messages, loading, language, aiConsent]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -291,6 +293,10 @@ export function AIAssistant() {
 
             {/* Input */}
             <div className="p-3 border-t border-border bg-card flex-shrink-0">
+              <label className="mb-2 flex items-start gap-2 text-xs text-muted-foreground">
+                <input type="checkbox" className="mt-0.5 size-4 shrink-0" checked={aiConsent} onChange={(event) => setAiConsent(event.target.checked)} />
+                <span>Autorizo enviar mi mensaje y el contexto del chat a OpenRouter y al proveedor del modelo IA. Evitaré incluir documentos o datos sensibles.</span>
+              </label>
               <div className="flex gap-2 items-end">
                 <Textarea
                   ref={inputRef}
@@ -305,7 +311,7 @@ export function AIAssistant() {
                 <Button
                   size="icon"
                   onClick={() => sendMessage(input)}
-                  disabled={!input.trim() || loading}
+                  disabled={!input.trim() || loading || !aiConsent}
                   className="h-10 w-10 flex-shrink-0 gradient-brand text-white"
                   aria-label="Enviar"
                 >
