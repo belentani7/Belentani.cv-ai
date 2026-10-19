@@ -132,6 +132,7 @@ export function CVSection() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          consentToAI: true,
           field,
           fullName,
           profession,
@@ -178,7 +179,7 @@ export function CVSection() {
         <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">{t.cv_subtitle}</p>
         <label className="mx-auto mt-3 flex max-w-2xl items-start gap-2 rounded-lg border p-3 text-left text-xs text-muted-foreground">
           <input type="checkbox" checked={aiConsent} onChange={(event) => setAiConsent(event.target.checked)} className="mt-0.5 size-4 shrink-0" />
-          <span>Autorizo enviar al servicio de IA el nombre, profesión, experiencia, formación y habilidades incluidos en la solicitud para generar texto. El correo, teléfono y dirección no se envían mediante esta función. Sin esta autorización puedo seguir editando e imprimir mi CV localmente.</span>
+          <span>Autorizo enviar a OpenRouter y al proveedor del modelo IA configurado el nombre, profesión, experiencia, formación y habilidades incluidos en la solicitud para generar texto. El correo, teléfono y dirección no se envían mediante esta función. Sin esta autorización puedo seguir editando e imprimir mi CV localmente.</span>
         </label>
 
         {/* Tool toggle: CV vs Cover Letter */}
