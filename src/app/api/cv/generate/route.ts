@@ -16,13 +16,17 @@ const cvSchema = z.object({
   fullName: z.union([z.literal(''), z.string().trim().min(2).max(100)]).optional(),
   profession: z.string().max(100).optional(),
   experiences: z.array(z.object({
+    // The editor includes stable local IDs in each row; they are not sent to the model.
+    id: z.string().max(100).optional(),
     position: z.string().max(150),
     company: z.string().max(150),
     description: z.string().max(3000),
-    startDate: z.union([z.literal(''), z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/)]),
-    endDate: z.union([z.literal(''), z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/)]),
+    // The UI intentionally accepts human-readable dates such as "Ene 2022" and "Actual".
+    startDate: z.string().max(40),
+    endDate: z.string().max(40),
   }).strict()).max(10).optional(),
   education: z.array(z.object({
+    id: z.string().max(100).optional(),
     title: z.string().max(200),
     institution: z.string().max(200),
     year: z.union([z.literal(''), z.string().regex(/^\d{4}$/)]),
