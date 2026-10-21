@@ -13,8 +13,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { useAppStore } from '@/stores/app-store';
 import { cn } from '@/lib/utils';
+import { buildLocalLetter, localLetterLanguage } from '@/lib/cover-letter-local';
 
-const STORAGE_KEY = 'manos-abiertas-cover-letter';
+const STORAGE_KEY = 'belentani-cv-studio:cover-letter:v1';
+const LEGACY_STORAGE_KEY = 'manos-abiertas-cover-letter';
 
 const TONE_OPTIONS = [
   { value: 'formal' as const, label: 'Formal', emoji: '🎩', desc: 'Profesional y tradicional' },
@@ -33,13 +35,15 @@ export function CoverLetterBuilder() {
   const [skillInput, setSkillInput] = useState('');
   const [tone, setTone] = useState<'formal' | 'friendly' | 'direct'>('formal');
   const [letter, setLetter] = useState('');
+  const [letterSource, setLetterSource] = useState<'local' | 'ai'>('local');
+  const [allowRemoteAI, setAllowRemoteAI] = useState(false);
   const [loading, setLoading] = useState(false);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
 
   // Load saved data
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);
       if (stored) {
         const data = JSON.parse(stored);
         if (data.fullName) setFullName(data.fullName);
@@ -47,9 +51,10 @@ export function CoverLetterBuilder() {
         if (data.companyName) setCompanyName(data.companyName);
         if (data.jobTitle) setJobTitle(data.jobTitle);
         if (data.experience) setExperience(data.experience);
-        if (data.skills) setSkills(data.skills);
+        if (Array.isArray(data.skills)) setSkills(data.skills.filter((item: unknown): item is string => typeof item === 'string').slice(0, 20));
         if (data.tone) setTone(data.tone);
-        if (data.letter) setLetter(data.letter);
+        if (typeof data.letter === 'string') setLetter(data.letter);
+        if (data.letterSource === 'ai') setLetterSource('ai');
         if (data.savedAt) setSavedAt(new Date(data.savedAt));
       }
     } catch { /* ignore */ }
@@ -59,13 +64,19 @@ export function CoverLetterBuilder() {
   useEffect(() => {
     const id = setTimeout(() => {
       try {
-        const data = { fullName, profession, companyName, jobTitle, experience, skills, tone, letter, savedAt: new Date().toISOString() };
+        // A privacy reset must not quietly recreate a blank document on the next autosave.
+        if (![fullName, profession, companyName, jobTitle, experience, letter].some(value => value.trim()) && skills.length === 0) {
+          localStorage.removeItem(STORAGE_KEY);
+          setSavedAt(null);
+          return;
+        }
+        const data = { fullName, profession, companyName, jobTitle, experience, skills, tone, letter, letterSource, savedAt: new Date().toISOString() };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         setSavedAt(new Date());
       } catch { /* ignore */ }
     }, 800);
     return () => clearTimeout(id);
-  }, [fullName, profession, companyName, jobTitle, experience, skills, tone, letter]);
+  }, [fullName, profession, companyName, jobTitle, experience, skills, tone, letter, letterSource]);
 
   function addSkill() {
     if (skillInput.trim() && !skills.includes(skillInput.trim())) {
@@ -74,7 +85,26 @@ export function CoverLetterBuilder() {
     }
   }
 
-  async function generate() {
+  function generateOffline() {
+    try {
+      const result = buildLocalLetter(
+        { fullName, profession, companyName, jobTitle, experience, skills, tone },
+        language,
+      );
+      setLetter(result.text);
+      setLetterSource('local');
+      toast.success('Borrador local creado. Revisa y personaliza cada frase.');
+      if (result.languageUsed !== language) toast.info('El borrador local se ha preparado en español.');
+    } catch {
+      toast.error('Indica una profesión para generar el borrador.');
+    }
+  }
+
+  async function generateWithAI() {
+    if (!allowRemoteAI) {
+      toast.error('Confirma primero que deseas enviar estos datos al proveedor de IA.');
+      return;
+    }
     if (!profession.trim()) {
       toast.error('Escribe tu profesión para generar la carta');
       return;
@@ -88,10 +118,14 @@ export function CoverLetterBuilder() {
           fullName, profession, companyName, jobTitle, experience, skills, tone, language,
         }),
       });
-      if (!resp.ok) throw new Error('Error');
-      const data = await resp.json();
-      setLetter(data.text);
-      toast.success('Carta generada con IA ✨');
+      if (!resp.ok) throw new Error('AI unavailable');
+      const data: unknown = await resp.json();
+      if (!data || typeof data !== 'object' || !('text' in data) || typeof data.text !== 'string' || !data.text.trim()) {
+        throw new Error('Empty AI response');
+      }
+      setLetter(data.text.trim());
+      setLetterSource('ai');
+      toast.success('Borrador de IA recibido. Verifica todos los datos antes de enviarlo.');
     } catch {
       toast.error('No se pudo generar. Inténtalo de nuevo.');
     } finally {
@@ -99,14 +133,20 @@ export function CoverLetterBuilder() {
     }
   }
 
-  function copyLetter() {
-    navigator.clipboard.writeText(letter);
-    toast.success('Carta copiada al portapapeles 📋');
+  async function copyLetter() {
+    try {
+      await navigator.clipboard.writeText(letter);
+      toast.success('Carta copiada al portapapeles 📋');
+    } catch {
+      toast.error('El navegador no permitió copiar. Selecciona el texto manualmente.');
+    }
   }
 
   function reset() {
     if (confirm('¿Borrar todos los datos de la carta?')) {
-      localStorage.removeItem(STORAGE_KEY);
+      try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(LEGACY_STORAGE_KEY); } catch { /* storage unavailable */ }
+      setLetterSource('local');
+      setAllowRemoteAI(false);
       setFullName(''); setProfession(''); setCompanyName(''); setJobTitle('');
       setExperience(''); setSkills([]); setLetter('');
       setSavedAt(null);
@@ -123,7 +163,7 @@ export function CoverLetterBuilder() {
           </div>
           <div>
             <h2 className="text-lg font-bold">Carta de Presentación</h2>
-            <p className="text-xs text-muted-foreground">Genera una carta profesional con IA</p>
+            <p className="text-xs text-muted-foreground">Borradores locales gratuitos; IA opcional con consentimiento.</p>
           </div>
         </div>
         {savedAt && (
@@ -262,14 +302,21 @@ export function CoverLetterBuilder() {
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-1">
-                <Button
-                  onClick={generate}
-                  disabled={loading || !profession.trim()}
-                  className="flex-1 gap-1.5 gradient-brand text-white"
-                >
+              <p className="text-[11px] text-muted-foreground">
+                El borrador local se genera sin conexión y sin enviar datos. Idiomas: ES, EN, PT-BR, CA, FR
+                {localLetterLanguage(language) !== language ? ' (tu idioma actual usa ES como alternativa).' : '.'}
+              </p>
+              <div className="flex flex-col gap-2 pt-1">
+                <Button type="button" onClick={generateOffline} disabled={!profession.trim()} className="gap-1.5 gradient-brand text-white">
+                  <FileText className="h-4 w-4" /> Crear borrador local
+                </Button>
+                <label className="flex items-start gap-2 text-[11px] leading-5 text-muted-foreground">
+                  <input type="checkbox" className="mt-1" checked={allowRemoteAI} onChange={(e) => setAllowRemoteAI(e.target.checked)} />
+                  Autorizo enviar los datos de esta carta al servicio de IA para generar otra versión. Es opcional.
+                </label>
+                <Button type="button" variant="outline" onClick={generateWithAI} disabled={loading || !profession.trim() || !allowRemoteAI} className="gap-1.5">
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                  {loading ? 'Generando...' : 'Generar carta con IA'}
+                  {loading ? 'Generando...' : 'Generar con IA (opcional)'}
                 </Button>
                 {(letter || fullName) && (
                   <Button variant="outline" onClick={reset} className="gap-1">
@@ -295,7 +342,7 @@ export function CoverLetterBuilder() {
                   <div className="flex items-center justify-between mb-3 pb-2 border-b border-border">
                     <Badge variant="secondary" className="gap-1 text-[10px]">
                       <Sparkles className="h-2.5 w-2.5" />
-                      Generada con IA · {TONE_OPTIONS.find(t => t.value === tone)?.label}
+                      {letterSource === 'local' ? 'Borrador local · ' : 'Borrador IA · '}{TONE_OPTIONS.find(t => t.value === tone)?.label}
                     </Badge>
                     <div className="flex gap-1">
                       <Button size="sm" variant="ghost" onClick={copyLetter} className="h-7 gap-1 text-xs">
@@ -324,7 +371,7 @@ export function CoverLetterBuilder() {
                   </div>
                   <p className="text-sm font-medium text-muted-foreground mb-1">Tu carta aparecerá aquí</p>
                   <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                    Rellena tus datos en la pestaña "Datos" y pulsa "Generar carta con IA"
+                    Rellena tus datos y pulsa "Crear borrador local" para empezar sin conexión.
                   </p>
                 </div>
               )}
