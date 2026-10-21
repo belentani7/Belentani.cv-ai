@@ -34,7 +34,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - name: Verify CV ownership and protect education route
-        run: node --test tests/cv-identity.test.mjs
+        run: node --test scripts/check-cv-identity.mjs
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
       - name: Typecheck
