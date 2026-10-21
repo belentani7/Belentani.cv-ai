@@ -195,6 +195,38 @@ describe('POST /api/cv/generate', () => {
     expect(completion.mock.calls[0][0].messages[0].content).toContain(name);
   });
 
+  it('returns 502 instead of a false success for empty AI content', async () => {
+    jest.requireMock('z-ai-web-dev-sdk').__mockCreate.mockResolvedValueOnce({
+      chat: { completions: { create: jest.fn().mockResolvedValue({
+        choices: [{ message: { content: '   ' } }],
+      }) } },
+    });
+    const res = await POST(createRequest({ field: 'summary', profession: 'Dev' }));
+    expect(res.status).toBe(502);
+    expect(res.headers.get('Cache-Control')).toBe('no-store');
+    expect(await res.json()).toEqual({
+      ok: false,
+      error: 'The AI provider returned no content. Please try again.',
+    });
+  });
+
+  it('prohibits invented achievement metrics in experience prompts', async () => {
+    const completion = jest.fn().mockResolvedValue({
+      choices: [{ message: { content: 'Organicé procesos internos.' } }],
+    });
+    jest.requireMock('z-ai-web-dev-sdk').__mockCreate.mockResolvedValueOnce({
+      chat: { completions: { create: completion } },
+    });
+    const res = await POST(createRequest({
+      field: 'experience',
+      experiences: [{ position: 'Asistente', company: 'Acme', description: 'Apoyo al equipo', startDate: '', endDate: '' }],
+    }));
+    expect(res.status).toBe(200);
+    const messages = completion.mock.calls[0][0].messages;
+    expect(messages[0].content).toContain('Incluye cifras únicamente si el usuario las ha proporcionado');
+    expect(messages[1].content).toContain('sin inventar cifras, métricas, logros');
+  });
+
   it('returns generic error on AI failure', async () => {
     const { __mockCreate } = jest.requireMock('z-ai-web-dev-sdk');
     __mockCreate.mockResolvedValueOnce({
