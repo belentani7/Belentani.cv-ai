@@ -1,97 +1,47 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "next-themes";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://belentani-cv-ai.vercel.app";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://manos-abiertas.es"),
-  title: "Manos Abiertas · IA, CV y Derechos para personas inmigrantes en España",
-  description: "Plataforma gratuita multilingüe para personas inmigrantes en España. Aprende inteligencia artificial (ChatGPT, Gemini, Copilot, DeepSeek), crea tu currículum con IA, curso completo de Office y 3000+ recursos verificados.",
-  keywords: ["inmigrantes España", "inteligencia artificial", "ChatGPT", "currículum", "CV", "NIE", "derechos", "recursos", "manos abiertas", "Office", "cursos gratis", "35 idiomas"],
-  authors: [{ name: "Manos Abiertas" }],
+  metadataBase: new URL(siteUrl),
+  title: { default: "Belentani CV Studio | Tu trayectoria, bien contada", template: "%s | Belentani CV Studio" },
+  description: "Crea y personaliza tu currículum con plantillas profesionales, editor de experiencia y asistencia opcional de IA.",
+  applicationName: "Belentani CV Studio",
+  authors: [{ name: "Belentani" }],
   robots: { index: true, follow: true },
+  alternates: { canonical: "/" },
   manifest: "/manifest.json",
-  icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
-  },
+  icons: { icon: "/logo.svg" },
   openGraph: {
-    title: "Manos Abiertas · IA, CV y Derechos para inmigrantes",
-    description: "Aprende IA, crea tu CV y conoce tus derechos en España. Gratis y en 35 idiomas.",
-    url: "https://manos-abiertas.es",
-    siteName: "Manos Abiertas",
-    type: "website",
-    locale: "es_ES",
+    type: "website", locale: "es_ES", siteName: "Belentani CV Studio",
+    title: "Belentani CV Studio | Tu trayectoria, bien contada",
+    description: "Diseña tu currículum profesional y prepara tus candidaturas.",
+    url: siteUrl,
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "Manos Abiertas",
-    description: "IA, CV y derechos para personas inmigrantes en España",
-  },
-  alternates: {
-    languages: {
-      es: "https://manos-abiertas.es",
-      en: "https://manos-abiertas.es/en",
-    },
-  },
+  twitter: { card: "summary", title: "Belentani CV Studio", description: "Tu trayectoria, bien contada." },
 };
+export const viewport: Viewport = { themeColor: "#090a0d", viewportFit: "cover" };
 
-export const viewport = {
-  themeColor: "#A0522D",
-  viewportFit: "cover",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}
-      >
+      <body className={[geistSans.variable, geistMono.variable, "min-h-screen antialiased"].join(" ")}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                name: "Manos Abiertas",
-                url: "https://manos-abiertas.es",
-                description: "Plataforma gratuita multilingüe para personas inmigrantes en España",
-                potentialAction: {
-                  "@type": "SearchAction",
-                  target: "https://manos-abiertas.es?q={search_term_string}",
-                  "query-input": "required name=search_term_string",
-                },
-              }),
-            }}
-          />
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Organization",
-                name: "Manos Abiertas",
-                url: "https://manos-abiertas.es",
-                description: "Plataforma educativa multilingüe para inmigrantes en España",
-              }),
-            }}
-          />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org", "@type": "SoftwareApplication",
+            name: "Belentani CV Studio", url: siteUrl,
+            description: "Editor profesional de currículums y cartas de presentación.",
+            applicationCategory: "BusinessApplication", operatingSystem: "Web",
+            publisher: { "@type": "Organization", name: "Belentani" },
+          }) }} />
           {children}
           <Toaster />
           <SonnerToaster position="top-center" richColors />
