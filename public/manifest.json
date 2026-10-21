@@ -1,12 +1,12 @@
 {
-  "name": "Manos Abiertas — IA, CV y Derechos para inmigrantes",
-  "short_name": "Manos Abiertas",
-  "description": "Plataforma gratuita multilingüe para personas inmigrantes en España. Aprende IA, crea tu CV y conoce tus derechos.",
+  "name": "Belentani | CV Studio",
+  "short_name": "Belentani CV",
+  "description": "Crea y personaliza currículums y documentos profesionales en Belentani CV Studio.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#A0522D",
-  "orientation": "portrait-primary",
+  "background_color": "#08090b",
+  "theme_color": "#08090b",
+  "orientation": "any",
   "icons": [
     {
       "src": "/icon-192.png",
@@ -21,5 +21,9 @@
   ],
   "lang": "es",
   "dir": "ltr",
-  "categories": ["education", "productivity", "utilities"]
+  "categories": [
+    "productivity",
+    "business",
+    "utilities"
+  ]
 }
