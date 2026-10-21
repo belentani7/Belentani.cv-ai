@@ -27,6 +27,7 @@ export const metadata: Metadata = {
   keywords: ["currículum profesional", "CV Studio", "Belentani", "editor de CV", "currículum"],
   authors: [{ name: "Belentani" }],
   robots: { index: true, follow: true },
+  manifest: "/manifest.json",
   openGraph: {
     title: "Belentani | CV Studio",
     description: "Un espacio de trabajo para crear y adaptar tu currículum.",
