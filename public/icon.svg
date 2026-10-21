@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Belentani B">
+  <rect x="1" y="1" width="62" height="62" rx="16" fill="#090a0d"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="15.5" fill="none" stroke="#ffffff" stroke-opacity=".32"/>
+  <path d="M20 14v36h14c11 0 17-6 17-14 0-5-3-9-8-11 3-2 5-5 5-9 0-7-6-12-15-12H20v10h13c4 0 6 2 6 5s-2 5-6 5h-4v9h5c5 0 8 2 8 6s-3 6-8 6h-5V14h-9Z" fill="#fff" transform="translate(0 7) scale(.91)"/>
+</svg>

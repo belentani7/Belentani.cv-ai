@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
   alternates: { canonical: "/" },
   manifest: "/manifest.json",
-  icons: { icon: "/logo.svg" },
+  icons: { icon: "/icon.svg" },
   openGraph: {
     type: "website", locale: "es_ES", siteName: "Belentani CV Studio",
     title: "Belentani CV Studio | Tu trayectoria, bien contada",
