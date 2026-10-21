@@ -1,19 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import ZAI from 'z-ai-web-dev-sdk';
+import { completeChat } from '@/lib/ai-provider';
+import { aiFailureResponse } from '@/lib/ai-error-response';
+import { z } from 'zod';
+import { guardAiRequest } from '@/lib/ai-request-guard';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
-interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
-interface ChatRequest {
-  messages: ChatMessage[];
-  language?: string;
-  context?: string;
-}
+const chatSchema = z.object({
+  consentToAI: z.literal(true),
+  messages: z.array(z.object({
+    role: z.enum(['user', 'assistant']),
+    content: z.string().min(1).max(5000),
+  }).strict()).min(1).max(50),
+  language: z.string().max(12).optional(),
+  context: z.string().max(1000).optional(),
+}).strict();
 
 const LANG_INSTRUCTIONS: Record<string, string> = {
   es: 'Responde SIEMPRE en español de España, con lenguaje sencillo y claro.',
@@ -79,37 +81,28 @@ Eres parte de una plataforma con:
 - 8 cursos de IA (ChatGPT, Gemini, Copilot, Claude, DeepSeek, Qwen, Perplexity, Meta AI)
 - Constructor de CV con IA
 - Curso completo de Office (Word, Excel, PowerPoint)
-- 3.647 recursos verificados
-- 61 artículos sobre derechos
-- 41 contactos de emergencia`;
+- Directorio de recursos externos, que requieren confirmar disponibilidad y elegibilidad en la fuente oficial
+- Guías generales sobre derechos, cuya vigencia legal debe verificarse antes de actuar
+- Contactos y orientaciones que pueden cambiar; consulta siempre fuentes oficiales`;
 
 export async function POST(req: NextRequest) {
   try {
-    const body: ChatRequest = await req.json();
+    const checked = await guardAiRequest(req, chatSchema);
+    if (!checked.ok) return checked.response;
+    const body = checked.data;
     const lang = body.language || 'es';
     const langInstruction = LANG_INSTRUCTIONS[lang] || LANG_INSTRUCTIONS.es;
 
-    const zai = await ZAI.create();
 
     const messages = [
       { role: 'system' as const, content: `${SYSTEM_PROMPT}\n\n${langInstruction}` },
       ...body.messages.slice(-10), // Keep last 10 messages for context
     ];
 
-    const completion = await zai.chat.completions.create({
-      messages,
-      thinking: { type: 'disabled' },
-    });
-
-    const text = completion.choices[0]?.message?.content?.trim() || '';
+    const text = await completeChat(messages, { maxTokens: 700, temperature: 0.3 });
 
     return NextResponse.json({ text, ok: true });
-  } catch (error: unknown) {
-    console.error('Chat API error:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { ok: false, error: message, text: 'Lo siento, tuve un problema. Inténtalo de nuevo.' },
-      { status: 500 }
-    );
+  } catch (error) {
+    return aiFailureResponse(error);
   }
 }
