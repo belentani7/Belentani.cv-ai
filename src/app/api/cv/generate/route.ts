@@ -81,9 +81,12 @@ export async function POST(req: NextRequest) {
         { status: 503 },
       );
     }
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() 
-      || req.headers.get('x-real-ip') 
-      || 'unknown';
+    // Only Vercel's platform-sanitized client IP is trusted for rate limiting.
+    // Self-hosted deployments must configure a trusted proxy strategy before
+    // using visitor-specific limits; do not trust arbitrary incoming IP headers.
+    const ip = process.env.VERCEL === '1'
+      ? (req.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() || 'unknown')
+      : 'unknown';
     const { success, limit, reset, remaining } = await ratelimit.limit(ip);
     
     if (!success) {
