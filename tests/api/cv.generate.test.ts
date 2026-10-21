@@ -54,9 +54,9 @@ describe('POST /api/cv/generate', () => {
 
   it('does not enable analytics or share Redis keys with cover-letter endpoint', () => {
     const route = readFileSync(join(process.cwd(), 'src/app/api/cv/generate/route.ts'), 'utf8');
-    expect(route).toMatch(/analytics:\\s*false/);
+    expect(route).toMatch(/analytics:\s*false/);
     expect(route).toContain("prefix: 'cv-studio:generate'");
-    expect(route).not.toMatch(/analytics:\\s*true/);
+    expect(route).not.toMatch(/analytics:\s*true/);
   });
 
   it('keeps generation unavailable when the rate limiter is not configured', async () => {
