@@ -64,6 +64,12 @@ export function CoverLetterBuilder() {
   useEffect(() => {
     const id = setTimeout(() => {
       try {
+        // A privacy reset must not quietly recreate a blank document on the next autosave.
+        if (![fullName, profession, companyName, jobTitle, experience, letter].some(value => value.trim()) && skills.length === 0) {
+          localStorage.removeItem(STORAGE_KEY);
+          setSavedAt(null);
+          return;
+        }
         const data = { fullName, profession, companyName, jobTitle, experience, skills, tone, letter, letterSource, savedAt: new Date().toISOString() };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         setSavedAt(new Date());
