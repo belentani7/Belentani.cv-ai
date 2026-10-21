@@ -8,7 +8,9 @@ import { LANGUAGES, type LanguageCode } from '@/i18n/languages';
 const ratelimit = new Ratelimit({
   redis: kv,
   limiter: Ratelimit.slidingWindow(5, '1 m'),
-  analytics: true,
+  // CV payloads are personal data: do not enable request analytics in Redis.
+  analytics: false,
+  prefix: 'cv-studio:generate',
 });
 
 const cvSchema = z.object({
