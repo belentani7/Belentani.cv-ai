@@ -1,6 +1,8 @@
 import { POST } from '@/app/api/cv/generate/route';
 import { NextRequest } from 'next/server';
 import { LANGUAGES } from '@/i18n/languages';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 // Mock ZAI
 jest.mock('z-ai-web-dev-sdk', () => {
@@ -49,6 +51,13 @@ describe('POST /api/cv/generate', () => {
   });
 
   afterEach(() => jest.restoreAllMocks());
+
+  it('does not enable analytics or share Redis keys with cover-letter endpoint', () => {
+    const route = readFileSync(join(process.cwd(), 'src/app/api/cv/generate/route.ts'), 'utf8');
+    expect(route).toMatch(/analytics:\\s*false/);
+    expect(route).toContain("prefix: 'cv-studio:generate'");
+    expect(route).not.toMatch(/analytics:\\s*true/);
+  });
 
   it('keeps generation unavailable when the rate limiter is not configured', async () => {
     delete process.env.KV_REST_API_TOKEN;
