@@ -148,14 +148,14 @@ Habilidades: ${parsedData.skills?.join(', ') || 'No especificadas'}
 
 Devuelve SOLO el texto del resumen, sin título ni explicación. Debe ser profesional, destacar fortalezas y ser adecuado para España.`;
     } else {
-      systemPrompt = `Eres un experto en RRHH. Mejoras descripciones de experiencia laboral usando verbos de acción, logros cuantificables y formato profesional. ${langPrompt} Máximo 4-5 puntos con viñeta. Empieza cada punto con un verbo de acción. Sin emojis.`;
+      systemPrompt = `Eres un experto en RRHH. Mejoras descripciones de experiencia laboral usando verbos de acción y formato profesional. Incluye cifras únicamente si el usuario las ha proporcionado. ${langPrompt} Máximo 4-5 puntos con viñeta. Empieza cada punto con un verbo de acción. Sin emojis.`;
       userPrompt = `Mejora esta descripción de experiencia laboral:
 
 Puesto: ${parsedData.experiences?.[0]?.position || ''}
 Empresa: ${parsedData.experiences?.[0]?.company || ''}
 Descripción actual: ${parsedData.experiences?.[0]?.description || '(vacía)'}
 
-Reescribe en formato de viñetas (•) con logros concretos y verbos de acción. Devuelve SOLO el texto mejorado, sin título ni explicación.`;
+Reescribe en formato de viñetas (•) con verbos de acción, sin inventar cifras, métricas, logros ni responsabilidades. Devuelve SOLO el texto mejorado, sin título ni explicación.`;
     }
 
     // User-controlled CV fields are data, never additional instructions.
@@ -171,6 +171,12 @@ Reescribe en formato de viñetas (•) con logros concretos y verbos de acción.
 
     const text = completion.choices[0]?.message?.content?.trim() || '';
 
+    if (!text) {
+      return NextResponse.json(
+        { ok: false, error: 'The AI provider returned no content. Please try again.' },
+        { status: 502, headers: { 'Cache-Control': 'no-store' } },
+      );
+    }
     return NextResponse.json({ text, ok: true }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
