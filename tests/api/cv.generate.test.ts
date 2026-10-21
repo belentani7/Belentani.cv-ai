@@ -215,6 +215,43 @@ describe('POST /api/cv/generate', () => {
     expect(json.error).not.toContain('ZAI');
   });
 
+  it('uses Vercel-controlled IP and ignores spoofed forwarding headers', async () => {
+    process.env.VERCEL = '1';
+    const req = createRequest(
+      { field: 'summary', profession: 'Dev' },
+      {
+        'x-vercel-forwarded-for': '203.0.113.42',
+        'x-forwarded-for': '198.51.100.99',
+        'x-real-ip': '192.0.2.17',
+      },
+    );
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    expect(jest.requireMock('@upstash/ratelimit').__mockLimit).toHaveBeenCalledWith('203.0.113.42');
+  });
+
+  it('uses one safe fallback bucket without platform-trusted IP', async () => {
+    delete process.env.VERCEL;
+    const req = createRequest(
+      { field: 'summary', profession: 'Dev' },
+      { 'x-forwarded-for': '198.51.100.99', 'x-real-ip': '192.0.2.17' },
+    );
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    expect(jest.requireMock('@upstash/ratelimit').__mockLimit).toHaveBeenCalledWith('unknown');
+  });
+
+  it('does not trust generic IP headers when Vercel omits client IP', async () => {
+    process.env.VERCEL = '1';
+    const req = createRequest(
+      { field: 'summary', profession: 'Dev' },
+      { 'x-forwarded-for': '198.51.100.99', 'x-real-ip': '192.0.2.17' },
+    );
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    expect(jest.requireMock('@upstash/ratelimit').__mockLimit).toHaveBeenCalledWith('unknown');
+  });
+
   it('rate limits after 5 requests', async () => {
     const { __mockLimit } = jest.requireMock('@upstash/ratelimit');
     __mockLimit.mockResolvedValueOnce({ success: false, limit: 5, remaining: 0, reset: Date.now() + 60000 });
