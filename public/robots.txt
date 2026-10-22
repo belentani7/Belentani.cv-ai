@@ -1,17 +1,6 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /manos-abiertas/
 
-Sitemap: https://manos-abiertas.es/sitemap.xml
+Sitemap: https://belentani-cv-ai.vercel.app/sitemap.xml

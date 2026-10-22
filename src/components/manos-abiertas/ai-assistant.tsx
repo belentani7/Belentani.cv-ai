@@ -93,7 +93,7 @@ export function AIAssistant() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMsg].map((m) => ({ role: m.role, content: m.content })),
+          messages: [...messages, userMsg].slice(-10).map((m) => ({ role: m.role, content: m.content })),
           language,
         }),
       });
@@ -298,6 +298,7 @@ export function AIAssistant() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Escribe tu pregunta..."
+                  maxLength={4000}
                   className="min-h-[40px] max-h-24 resize-none text-sm"
                   rows={1}
                   disabled={loading}
