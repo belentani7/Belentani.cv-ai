@@ -35,12 +35,12 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
-      - name: Generate Prisma client
-        run: pnpm exec prisma generate
       - name: Typecheck
         run: pnpm run typecheck
       - name: Lint
-        run: pnpm run lint
+        run: pnpm run --if-present lint
+      - name: Format check
+        run: pnpm run --if-present format:check
 
   test:
     name: Test
@@ -131,5 +131,7 @@ jobs:
         with:
           urls: |
             http://localhost:3000
-            http://localhost:3000/cv
+            http://localhost:3000/privacy
+            http://localhost:3000/terms
+          budgetPath: ./.github/lighthouse/budget.json
           uploadArtifacts: true

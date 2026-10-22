@@ -37,3 +37,13 @@ coverage/
 
 # Cache
 .cache/
+
+# Additional generated and sensitive files
+.pnpm-store/
+.vercel/
+*.pem
+*.key
+*.tsbuildinfo
+playwright-report/
+test-results/
+*.swo

@@ -31,7 +31,10 @@ class PayloadTooLarge extends Error {}
 
 async function readJson(req: NextRequest): Promise<unknown> {
   const declared = req.headers.get('content-length');
-  if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > MAX_REQUEST_BYTES)) {
+  if (declared !== null && !/^\d+$/.test(declared)) {
+    throw new SyntaxError('Invalid content length');
+  }
+  if (declared !== null && Number(declared) > MAX_REQUEST_BYTES) {
     throw new PayloadTooLarge();
   }
   const reader = req.body?.getReader();
@@ -94,6 +97,13 @@ export async function POST(req: NextRequest) {
           'X-RateLimit-Limit': String(limit),
           'X-RateLimit-Remaining': String(remaining),
         } },
+      );
+    }
+    const contentType = req.headers.get('content-type')?.split(';', 1)[0]?.trim().toLowerCase();
+    if (contentType !== 'application/json') {
+      return NextResponse.json(
+        { ok: false, text: '', error: 'Se requiere contenido JSON.' },
+        { status: 415, headers: { 'Cache-Control': 'no-store' } },
       );
     }
     let payload: unknown;

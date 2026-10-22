@@ -49,9 +49,26 @@ describe('POST /api/cover-letter', () => {
     expect(res.status).toBe(413);
   });
   it('rejects malformed JSON', async () => {
-    const request = new NextRequest('http://localhost/api/cover-letter', { method: 'POST', body: '{"profession":' });
+    const request = new NextRequest('http://localhost/api/cover-letter', { method: 'POST', body: '{"profession":', headers: { 'content-type': 'application/json' } });
     const res = await POST(request);
     expect(res.status).toBe(400);
+  });
+  it('refuses non-JSON request media types before invoking the AI provider', async () => {
+    const request = new NextRequest('http://localhost/api/cover-letter', {
+      method: 'POST', body: '{"profession":"Ingeniera"}', headers: { 'content-type': 'text/plain' },
+    });
+    const res = await POST(request);
+    expect(res.status).toBe(415);
+    expect(jest.requireMock('z-ai-web-dev-sdk').__mockCreate).not.toHaveBeenCalled();
+  });
+  it('returns 400 (not 413) for malformed Content-Length', async () => {
+    const request = new NextRequest('http://localhost/api/cover-letter', {
+      method: 'POST', body: '{"profession":"Ingeniera"}',
+      headers: { 'content-type': 'application/json', 'content-length': 'invalid' },
+    });
+    const res = await POST(request);
+    expect(res.status).toBe(400);
+    expect(jest.requireMock('z-ai-web-dev-sdk').__mockCreate).not.toHaveBeenCalled();
   });
   it('limits requests via a shared rate limiter', async () => {
     jest.requireMock('@upstash/ratelimit').__mockLimit.mockResolvedValueOnce({
