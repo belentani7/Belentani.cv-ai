@@ -68,6 +68,14 @@ describe('POST /api/cv/generate', () => {
     expect(jest.requireMock('@upstash/ratelimit').__mockLimit).not.toHaveBeenCalled();
   });
 
+  it('rejects non-JSON media types without invoking rate limits or the model', async () => {
+    const res = await POST(createRequest({ field: 'summary' }, { 'content-type': 'text/plain' }));
+    expect(res.status).toBe(415);
+    expect(res.headers.get('Cache-Control')).toBe('no-store');
+    expect(jest.requireMock('z-ai-web-dev-sdk').__mockCreate).not.toHaveBeenCalled();
+    expect(jest.requireMock('@upstash/ratelimit').__mockLimit).not.toHaveBeenCalled();
+  });
+
   it('rejects oversized JSON before invoking AI', async () => {
     const req = createRequest({ field: 'summary', profession: 'x'.repeat(70_000) });
     const res = await POST(req);
