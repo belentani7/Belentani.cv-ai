@@ -89,6 +89,14 @@ export async function POST(req: NextRequest) {
         { status: 503 },
       );
     }
+    // Reject non-JSON submissions without passing personal data to the model.
+    const contentType = req.headers.get('content-type')?.split(';', 1)[0]?.trim().toLowerCase();
+    if (contentType !== 'application/json') {
+      return NextResponse.json(
+        { ok: false, error: 'Content-Type must be application/json' },
+        { status: 415, headers: { 'Cache-Control': 'no-store' } },
+      );
+    }
     // Only Vercel's platform-sanitized client IP is trusted for rate limiting.
     // Self-hosted deployments must configure a trusted proxy strategy before
     // using visitor-specific limits; do not trust arbitrary incoming IP headers.
