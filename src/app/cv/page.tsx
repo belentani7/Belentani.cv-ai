@@ -2,8 +2,17 @@ import type { Metadata } from 'next';
 import { CVSection } from '@/components/manos-abiertas/cv-section';
 
 export const metadata: Metadata = {
-  title: 'CV Studio | Belentani',
-  description: 'Crea, adapta y exporta tu currículum con herramientas de edición y plantillas profesionales.',
+  title: 'Crear currículum online | Editor CV',
+  description: 'Crea y adapta tu currículum con plantillas profesionales y un editor online. Organiza tu experiencia, revisa el diseño y prepara tu candidatura.',
+  alternates: { canonical: '/cv' },
+  openGraph: {
+    type: 'website',
+    url: '/cv',
+    title: 'Crear currículum online | Belentani CV Studio',
+    description: 'Diseña tu currículum con plantillas profesionales y herramientas de edición claras.',
+    siteName: 'Belentani CV Studio',
+    locale: 'es_ES',
+  },
 };
 
 export default function CVStudioPage() {

@@ -1,5 +1,8 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowUpRight, FileText, LayoutTemplate, PenLine, ShieldCheck, Sparkles } from "lucide-react";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const features = [
   { Icon: LayoutTemplate, title: "Plantillas profesionales", detail: "Elige diseños clásicos, minimalistas y creativos para distintas candidaturas." },
