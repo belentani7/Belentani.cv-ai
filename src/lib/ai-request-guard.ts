@@ -26,7 +26,20 @@ export function createAiRequestGuard(namespace: string, maxBytes: number) {
     const visitor = process.env.VERCEL === '1'
       ? (req.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() || 'unknown')
       : 'unknown';
-    const { success, reset, limit, remaining } = await ratelimit.limit(visitor);
+    // Fail closed if the backing rate-limit service is unavailable. Never send
+    // user CV content to the AI provider when abuse protection cannot run.
+    let limitResult: Awaited<ReturnType<typeof ratelimit.limit>>;
+    try {
+      limitResult = await ratelimit.limit(visitor);
+    } catch {
+      return {
+        error: NextResponse.json(
+          { ok: false, text: '', error: 'El servicio de IA no está disponible temporalmente.' },
+          { status: 503, headers: { 'Cache-Control': 'no-store', 'Retry-After': '60' } },
+        ),
+      };
+    }
+    const { success, reset, limit, remaining } = limitResult;
     if (!success) {
       return {
         error: NextResponse.json(
