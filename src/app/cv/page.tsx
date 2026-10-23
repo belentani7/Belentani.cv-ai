@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { CVSection } from '@/components/manos-abiertas/cv-section';
+import { CV_STUDIO_KEY } from '@/lib/cv-draft-storage';
 
 export const metadata: Metadata = {
   title: 'CV Studio | Belentani',
@@ -26,7 +27,7 @@ export default function CVStudioPage() {
       <section id="editor" aria-label="Editor de currículum" className="bg-white px-3 py-12 text-neutral-950 sm:px-8">
         <div className="mx-auto max-w-7xl">
           <h2 className="mb-6 px-3 text-2xl font-semibold tracking-tight">Estudio de currículum</h2>
-          <CVSection />
+          <CVSection draftStorageKey={CV_STUDIO_KEY} />
         </div>
       </section>
       <footer className="border-t border-white/10 px-6 py-8 text-center text-xs text-white/50">BELENTANI · Herramientas profesionales de documentación</footer>
