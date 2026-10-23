@@ -35,6 +35,17 @@ export function hasMeaningfulCvData(data: CvDraft): boolean {
 }
 
 /**
+ * Keep the reset affordance renderable while the first local autosave is pending.
+ * A missing timestamp is expected before the debounce completes.
+ */
+export function getCvSaveStatus(savedAt: Date | null, hasContent: boolean): string | null {
+  if (!savedAt && !hasContent) return null;
+  return savedAt
+    ? `Guardado automáticamente · ${savedAt.toLocaleTimeString()}`
+    : 'Cambios locales pendientes de guardar';
+}
+
+/**
  * AI assistance is per-click opt-in in the UI. Minimize outgoing data here:
  * do not transmit name, contact details, addresses, local IDs or unneeded rows.
  */
