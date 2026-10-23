@@ -35,6 +35,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
       - name: Typecheck
         run: pnpm run typecheck
       - name: Lint
@@ -93,7 +95,6 @@ jobs:
   security:
     name: Security Scan
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - uses: actions/checkout@v5
         with:
