@@ -18,6 +18,7 @@ import { CoverLetterBuilder } from './cover-letter-builder';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
+import { LEGACY_CV_KEY, hasCvDraftContent, readCvDraft } from '@/lib/cv-draft-storage';
 
 interface Experience {
   id: string;
@@ -35,7 +36,13 @@ interface Education {
   description: string;
 }
 
-export function CVSection() {
+function isStoredRow(value: unknown, fields: readonly string[]): boolean {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const row = value as Record<string, unknown>;
+  return fields.every((field) => typeof row[field] === 'string');
+}
+
+export function CVSection({ draftStorageKey = LEGACY_CV_KEY }: { draftStorageKey?: string } = {}) {
   const { language } = useAppStore();
   const t = getTranslation(language);
   const [template, setTemplate] = useState(CV_TEMPLATES[0]);
@@ -59,41 +66,47 @@ export function CVSection() {
   // Autosave to localStorage (debounced via effect)
   useEffect(() => {
     const data = { template: template.id, fullName, profession, email, phone, address, summary, experiences, education, skills, languages };
+    if (!hasCvDraftContent(data)) return;
     const id = setTimeout(() => {
       try {
-        localStorage.setItem('manos-abiertas-cv', JSON.stringify({ ...data, savedAt: new Date().toISOString() }));
+        localStorage.setItem(draftStorageKey, JSON.stringify({ ...data, savedAt: new Date().toISOString() }));
         setSavedAt(new Date());
       } catch { /* ignore */ }
     }, 800);
     return () => clearTimeout(id);
-  }, [template, fullName, profession, email, phone, address, summary, experiences, education, skills, languages]);
+  }, [template, fullName, profession, email, phone, address, summary, experiences, education, skills, languages, draftStorageKey]);
 
   // Load saved CV on mount
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('manos-abiertas-cv');
-      if (stored) {
-        const data = JSON.parse(stored);
-        if (data.template) {
+      const data = readCvDraft(localStorage, draftStorageKey);
+      if (data) {
+        if (typeof data.template === 'string') {
           const tpl = CV_TEMPLATES.find((t) => t.id === data.template);
           if (tpl) setTemplate(tpl);
         }
-        if (data.fullName) setFullName(data.fullName);
-        if (data.profession) setProfession(data.profession);
-        if (data.email) setEmail(data.email);
-        if (data.phone) setPhone(data.phone);
-        if (data.address) setAddress(data.address);
-        if (data.summary) setSummary(data.summary);
-        if (data.experiences?.length) setExperiences(data.experiences);
-        if (data.education?.length) setEducation(data.education);
-        if (data.skills?.length) setSkills(data.skills);
-        if (data.languages?.length) setLanguages(data.languages);
-        if (data.savedAt) setSavedAt(new Date(data.savedAt));
+        if (typeof data.fullName === 'string') setFullName(data.fullName);
+        if (typeof data.profession === 'string') setProfession(data.profession);
+        if (typeof data.email === 'string') setEmail(data.email);
+        if (typeof data.phone === 'string') setPhone(data.phone);
+        if (typeof data.address === 'string') setAddress(data.address);
+        if (typeof data.summary === 'string') setSummary(data.summary);
+        if (Array.isArray(data.experiences)) {
+          const rows = data.experiences.filter((row: unknown) => isStoredRow(row, ['id', 'position', 'company', 'startDate', 'endDate', 'description'])) as Experience[];
+          if (rows.length) setExperiences(rows.slice(0, 30));
+        }
+        if (Array.isArray(data.education)) {
+          const rows = data.education.filter((row: unknown) => isStoredRow(row, ['id', 'title', 'institution', 'year', 'description'])) as Education[];
+          if (rows.length) setEducation(rows.slice(0, 30));
+        }
+        if (Array.isArray(data.skills)) setSkills(data.skills.filter((value: unknown): value is string => typeof value === 'string').slice(0, 30));
+        if (Array.isArray(data.languages)) setLanguages(data.languages.filter((value: unknown): value is string => typeof value === 'string').slice(0, 30));
+        if (typeof data.savedAt === 'string' && !Number.isNaN(Date.parse(data.savedAt))) setSavedAt(new Date(data.savedAt));
       }
     } catch { /* ignore */ }
-  }, []);
+  }, [draftStorageKey]);
 
-  const hasContent = Boolean(fullName || profession || summary || email || experiences.some((e) => e.position || e.company) || education.some((e) => e.title) || skills.length || languages.length);
+  const hasContent = hasCvDraftContent({ fullName, profession, email, phone, address, summary, experiences, education, skills, languages });
 
   function addExperience() {
     setExperiences([...experiences, { id: Date.now().toString(), position: '', company: '', startDate: '', endDate: '', description: '' }]);
@@ -552,7 +565,7 @@ export function CVSection() {
                 <button
                   onClick={() => {
                     if (confirm('¿Borrar todos los datos del CV? Esta acción no se puede deshacer.')) {
-                      localStorage.removeItem('manos-abiertas-cv');
+                      localStorage.removeItem(draftStorageKey);
                       setFullName(''); setProfession(''); setEmail(''); setPhone(''); setAddress(''); setSummary('');
                       setExperiences([{ id: '1', position: '', company: '', startDate: '', endDate: '', description: '' }]);
                       setEducation([{ id: '1', title: '', institution: '', year: '', description: '' }]);
