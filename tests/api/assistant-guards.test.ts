@@ -81,6 +81,18 @@ describe('AI assistant endpoint safety', () => {
     expect(jest.requireMock('z-ai-web-dev-sdk').default.create).not.toHaveBeenCalled();
   });
 
+  it('fails closed when the rate-limit backend is unavailable', async () => {
+    jest.requireMock('@upstash/ratelimit').__limit.mockRejectedValueOnce(new Error('private-redis-error'));
+    const response = await chat(request('/api/chat', {
+      messages: [{ role: 'user', content: 'Hola' }],
+    }));
+    expect(response.status).toBe(503);
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    expect(response.headers.get('retry-after')).toBe('60');
+    expect(JSON.stringify(await response.json())).not.toContain('private-redis-error');
+    expect(jest.requireMock('z-ai-web-dev-sdk').default.create).not.toHaveBeenCalled();
+  });
+
   it('answers valid chat messages with no-store', async () => {
     const response = await chat(request('/api/chat', {
       messages: [{ role: 'user', content: 'Hola' }],
