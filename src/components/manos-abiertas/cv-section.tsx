@@ -18,6 +18,7 @@ import { CoverLetterBuilder } from './cover-letter-builder';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
+import { buildCvAiPayload, hasMeaningfulCvData } from '@/lib/cv-draft-privacy';
 
 interface Experience {
   id: string;
@@ -56,14 +57,20 @@ export function CVSection() {
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [activeTool, setActiveTool] = useState<'cv' | 'letter'>('cv');
 
-  // Autosave to localStorage (debounced via effect)
+  // Autosave locally only if there is a meaningful draft. A reset stays erased.
   useEffect(() => {
     const data = { template: template.id, fullName, profession, email, phone, address, summary, experiences, education, skills, languages };
     const id = setTimeout(() => {
       try {
-        localStorage.setItem('manos-abiertas-cv', JSON.stringify({ ...data, savedAt: new Date().toISOString() }));
-        setSavedAt(new Date());
-      } catch { /* ignore */ }
+        if (!hasMeaningfulCvData(data)) {
+          localStorage.removeItem('manos-abiertas-cv');
+          setSavedAt(null);
+          return;
+        }
+        const now = new Date();
+        localStorage.setItem('manos-abiertas-cv', JSON.stringify({ ...data, savedAt: now.toISOString() }));
+        setSavedAt(now);
+      } catch { /* Browser storage may be unavailable. */ }
     }, 800);
     return () => clearTimeout(id);
   }, [template, fullName, profession, email, phone, address, summary, experiences, education, skills, languages]);
@@ -93,7 +100,7 @@ export function CVSection() {
     } catch { /* ignore */ }
   }, []);
 
-  const hasContent = Boolean(fullName || profession || summary || email || experiences.some((e) => e.position || e.company) || education.some((e) => e.title) || skills.length || languages.length);
+  const hasContent = hasMeaningfulCvData({ fullName, profession, email, phone, address, summary, experiences, education, skills, languages });
 
   function addExperience() {
     setExperiences([...experiences, { id: Date.now().toString(), position: '', company: '', startDate: '', endDate: '', description: '' }]);
@@ -121,20 +128,19 @@ export function CVSection() {
   }
 
   async function generateWithAI(field: 'summary' | 'experience') {
+    const consent = field === 'summary'
+      ? 'Para redactar el resumen se enviarán tu profesión, experiencias, formación y habilidades a un proveedor de IA externo. No se enviarán nombre, email, teléfono ni dirección. ¿Autorizas este envío?'
+      : 'Para mejorar la descripción se enviarán únicamente los datos de la primera experiencia laboral y el idioma a un proveedor de IA externo. ¿Autorizas este envío?';
+    if (!window.confirm(consent)) return;
+    const aiPayload = buildCvAiPayload(
+      field, { fullName, profession, email, phone, address, summary, experiences, education, skills, languages }, language,
+    );
     setAiLoading(field);
     try {
       const resp = await fetch('/api/cv/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          field,
-          fullName,
-          profession,
-          experiences: experiences.filter((e) => e.position || e.company),
-          education: education.filter((e) => e.title || e.institution),
-          skills,
-          language,
-        }),
+        body: JSON.stringify(aiPayload),
       });
       if (resp.status === 503) {
         toast.error('La generación con IA no está disponible ahora. Puedes seguir editando y guardar tu CV en PDF.');
@@ -545,14 +551,19 @@ export function CVSection() {
           {/* Action bar */}
           <div className="sticky bottom-4 space-y-2">
             {/* Saved indicator */}
-            {savedAt && (
+            {(savedAt || hasContent) && (
               <div className="flex items-center justify-center gap-2 text-[11px] text-muted-foreground bg-card/80 backdrop-blur px-3 py-1.5 rounded-lg border border-border">
                 <Save className="h-3 w-3 text-emerald-500" />
                 Guardado automáticamente · {savedAt.toLocaleTimeString()}
                 <button
                   onClick={() => {
                     if (confirm('¿Borrar todos los datos del CV? Esta acción no se puede deshacer.')) {
-                      localStorage.removeItem('manos-abiertas-cv');
+                      try {
+                        localStorage.removeItem('manos-abiertas-cv');
+                      } catch {
+                        toast.error('No se pudo borrar el almacenamiento local. Revisa los permisos del navegador.');
+                        return;
+                      }
                       setFullName(''); setProfession(''); setEmail(''); setPhone(''); setAddress(''); setSummary('');
                       setExperiences([{ id: '1', position: '', company: '', startDate: '', endDate: '', description: '' }]);
                       setEducation([{ id: '1', title: '', institution: '', year: '', description: '' }]);
