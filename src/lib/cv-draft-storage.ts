@@ -15,7 +15,8 @@ export function hasCvDraftContent(value: unknown): boolean {
   const fields = ['fullName', 'profession', 'email', 'phone', 'address', 'summary'];
   if (fields.some((field) => typeof value[field] === 'string' && (value[field] as string).trim())) return true;
   for (const key of ['skills', 'languages']) {
-    if (Array.isArray(value[key]) && value[key].some((item: unknown) => typeof item === 'string' && item.trim())) return true;
+    const values = value[key];
+    if (Array.isArray(values) && values.some((item: unknown) => typeof item === 'string' && item.trim())) return true;
   }
   const entries: Record<string, string[]> = {
     experiences: ['position', 'company', 'startDate', 'endDate', 'description'],
