@@ -4,6 +4,8 @@ import { resolve } from 'node:path';
 // Protect against silently green CI checks and redundant Action runs.
 const ci = readFileSync(resolve(process.cwd(), '.github/workflows/ci.yml'), 'utf8');
 const manualBuild = readFileSync(resolve(process.cwd(), '.github/workflows/build.yml'), 'utf8');
+const securityWorkflow = readFileSync(resolve(process.cwd(), '.github/workflows/security.yml'), 'utf8');
+const codeqlWorkflow = readFileSync(resolve(process.cwd(), '.github/workflows/codeql.yml'), 'utf8');
 const packageJson = JSON.parse(readFileSync(resolve(process.cwd(), 'package.json'), 'utf8')) as {
   scripts: Record<string, string>;
 };
@@ -29,11 +31,18 @@ describe('CI quality-gate contract', () => {
     expect(typecheck).toBeGreaterThan(generate);
   });
 
-  it('runs secret scanning even when build fails', () => {
-    const security = ci.split('  security:\n')[1]?.split('\n  lighthouse:\n')[0];
-    expect(security).toBeDefined();
-    expect(security).toContain('gitleaks/gitleaks-action@');
-    expect(security).not.toMatch(/\bneeds:/);
+  it('runs secret scanning independently of the application build', () => {
+    expect(ci).not.toContain('gitleaks/gitleaks-action@');
+    expect(securityWorkflow).toContain('gitleaks/gitleaks-action@v2');
+    expect(securityWorkflow).not.toMatch(/\bneeds:/);
+    expect(securityWorkflow).toContain('pull_request:');
+  });
+
+  it('analyzes JavaScript and TypeScript once in the dedicated CodeQL workflow', () => {
+    expect(codeqlWorkflow).toContain('languages: javascript-typescript');
+    expect(codeqlWorkflow).toContain('github/codeql-action/analyze@');
+    expect(codeqlWorkflow).not.toContain('language: [javascript, typescript]');
+    expect(securityWorkflow).not.toContain('github/codeql-action/');
   });
 
   it('audits real routes, using a failing readiness probe', () => {
