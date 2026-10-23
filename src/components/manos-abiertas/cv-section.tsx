@@ -18,7 +18,7 @@ import { CoverLetterBuilder } from './cover-letter-builder';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
-import { buildCvAiPayload, hasMeaningfulCvData } from '@/lib/cv-draft-privacy';
+import { buildCvAiPayload, getCvSaveStatus, hasMeaningfulCvData } from '@/lib/cv-draft-privacy';
 
 interface Experience {
   id: string;
@@ -101,6 +101,7 @@ export function CVSection() {
   }, []);
 
   const hasContent = hasMeaningfulCvData({ fullName, profession, email, phone, address, summary, experiences, education, skills, languages });
+  const saveStatus = getCvSaveStatus(savedAt, hasContent);
 
   function addExperience() {
     setExperiences([...experiences, { id: Date.now().toString(), position: '', company: '', startDate: '', endDate: '', description: '' }]);
@@ -551,10 +552,10 @@ export function CVSection() {
           {/* Action bar */}
           <div className="sticky bottom-4 space-y-2">
             {/* Saved indicator */}
-            {(savedAt || hasContent) && (
+            {saveStatus && (
               <div className="flex items-center justify-center gap-2 text-[11px] text-muted-foreground bg-card/80 backdrop-blur px-3 py-1.5 rounded-lg border border-border">
                 <Save className="h-3 w-3 text-emerald-500" />
-                Guardado automáticamente · {savedAt.toLocaleTimeString()}
+                {saveStatus}
                 <button
                   onClick={() => {
                     if (confirm('¿Borrar todos los datos del CV? Esta acción no se puede deshacer.')) {
