@@ -1,4 +1,4 @@
-import { buildCvAiPayload, hasMeaningfulCvData, type CvDraft } from '../../src/lib/cv-draft-privacy';
+import { buildCvAiPayload, getCvSaveStatus, hasMeaningfulCvData, type CvDraft } from '../../src/lib/cv-draft-privacy';
 
 const blank: CvDraft = {
   fullName: '', profession: '', email: '', phone: '', address: '', summary: '',
@@ -11,6 +11,12 @@ describe('CV privacy and draft persistence', () => {
   it('does not recreate an empty draft after a user resets it', () => {
     expect(hasMeaningfulCvData(blank)).toBe(false);
     expect(hasMeaningfulCvData({ ...blank, fullName: '   ', skills: ['  '] })).toBe(false);
+  });
+
+  it('keeps the reset status renderable before the first autosave', () => {
+    expect(getCvSaveStatus(null, true)).toBe('Cambios locales pendientes de guardar');
+    expect(getCvSaveStatus(null, false)).toBeNull();
+    expect(getCvSaveStatus(new Date('2026-10-23T10:00:00.000Z'), true)).toContain('Guardado automáticamente · ');
   });
 
   it.each(['email', 'phone', 'address', 'summary', 'fullName', 'profession'] as const)(
