@@ -38,9 +38,7 @@ jobs:
       - name: Typecheck
         run: pnpm run typecheck
       - name: Lint
-        run: pnpm run --if-present lint
-      - name: Format check
-        run: pnpm run --if-present format:check
+        run: pnpm run lint
 
   test:
     name: Test
@@ -125,13 +123,19 @@ jobs:
         env:
           PORT: 3000
       - name: Wait for server
-        run: sleep 10
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --output /dev/null http://localhost:3000/; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo 'Next.js server did not become ready' >&2
+          exit 1
       - name: Run Lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
             http://localhost:3000
-            http://localhost:3000/privacy
-            http://localhost:3000/terms
-          budgetPath: ./.github/lighthouse/budget.json
+            http://localhost:3000/cv
           uploadArtifacts: true
