@@ -18,7 +18,7 @@ import { CoverLetterBuilder } from './cover-letter-builder';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
-import { LEGACY_CV_KEY, hasCvDraftContent, readCvDraft } from '@/lib/cv-draft-storage';
+import { LEGACY_CV_KEY, hasCvDraftContent, readCvDraft, resetCvDraft } from '@/lib/cv-draft-storage';
 
 interface Experience {
   id: string;
@@ -565,7 +565,12 @@ export function CVSection({ draftStorageKey = LEGACY_CV_KEY }: { draftStorageKey
                 <button
                   onClick={() => {
                     if (confirm('¿Borrar todos los datos del CV? Esta acción no se puede deshacer.')) {
-                      localStorage.removeItem(draftStorageKey);
+                      try {
+                        resetCvDraft(localStorage, draftStorageKey);
+                      } catch {
+                        toast.error('No se pudo borrar el borrador guardado. Comprueba el almacenamiento del navegador.');
+                        return;
+                      }
                       setFullName(''); setProfession(''); setEmail(''); setPhone(''); setAddress(''); setSummary('');
                       setExperiences([{ id: '1', position: '', company: '', startDate: '', endDate: '', description: '' }]);
                       setEducation([{ id: '1', title: '', institution: '', year: '', description: '' }]);
