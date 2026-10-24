@@ -1,4 +1,4 @@
-import { CV_STUDIO_KEY, LEGACY_CV_KEY, hasCvDraftContent, readCvDraft } from '../../src/lib/cv-draft-storage';
+import { CV_STUDIO_KEY, LEGACY_CV_KEY, hasCvDraftContent, readCvDraft, resetCvDraft } from '../../src/lib/cv-draft-storage';
 
 function storage() {
   const entries = new Map<string, string>();
@@ -6,6 +6,7 @@ function storage() {
     entries,
     getItem: (key: string) => entries.get(key) ?? null,
     setItem: (key: string, value: string) => { entries.set(key, value); },
+    removeItem: (key: string) => { entries.delete(key); },
   };
 }
 
@@ -65,6 +66,31 @@ describe('CV Studio draft isolation and safe migration', () => {
     s.setItem(LEGACY_CV_KEY, '{"fullName":"Historic"}');
     expect(readCvDraft(s, CV_STUDIO_KEY)).toBeNull();
     expect(s.getItem(CV_STUDIO_KEY)).toBe('{corrupt');
+  });
+
+  it('does not restore historic data after an intentional Studio reset', () => {
+    const s = storage();
+    s.setItem(LEGACY_CV_KEY, '{"fullName":"Historic"}');
+    s.setItem(CV_STUDIO_KEY, '{"fullName":"Current"}');
+    resetCvDraft(s, CV_STUDIO_KEY);
+    expect(s.getItem(CV_STUDIO_KEY)).toBe('{}');
+    expect(hasCvDraftContent(readCvDraft(s, CV_STUDIO_KEY))).toBe(false);
+    expect(s.getItem(LEGACY_CV_KEY)).toBe('{"fullName":"Historic"}');
+  });
+
+  it('clears the historical draft without affecting Studio', () => {
+    const s = storage();
+    s.setItem(LEGACY_CV_KEY, '{"fullName":"Historic"}');
+    s.setItem(CV_STUDIO_KEY, '{"fullName":"Current"}');
+    resetCvDraft(s, LEGACY_CV_KEY);
+    expect(s.getItem(LEGACY_CV_KEY)).toBeNull();
+    expect(readCvDraft(s, CV_STUDIO_KEY)?.fullName).toBe('Current');
+  });
+
+  it('does not silently claim reset succeeded when browser storage rejects writes', () => {
+    const s = storage();
+    const blocked = { ...s, setItem: (_key: string, _value: string): void => { throw new Error('quota'); } };
+    expect(() => resetCvDraft(blocked, CV_STUDIO_KEY)).toThrow('quota');
   });
 
   it('recovers prior data in read-only/private storage when a migration write fails', () => {
