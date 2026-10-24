@@ -60,3 +60,13 @@ export function readCvDraft(storage: StorageReader, key: string): RecordValue | 
   }
   return previousDraft;
 }
+
+/** Clear a draft without resurrecting the copied legacy CV on the next visit. */
+export function resetCvDraft(storage: Pick<Storage, 'setItem' | 'removeItem'>, key: string): void {
+  if (key === CV_STUDIO_KEY) {
+    // Blank marker means 'Studio was deliberately cleared', not 'never visited'.
+    storage.setItem(key, '{}');
+  } else {
+    storage.removeItem(key);
+  }
+}
