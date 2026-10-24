@@ -48,6 +48,14 @@ function serializeUntrustedCv(value: unknown): string {
 
 class PayloadTooLargeError extends Error {}
 
+// CV data is sensitive. Disable browser and intermediary caching for every
+// response, including validation, rate-limit, and provider failures.
+function noStoreJson(body: unknown, init?: ResponseInit) {
+  const headers = new Headers(init?.headers);
+  headers.set('Cache-Control', 'no-store');
+  return NextResponse.json(body, { ...init, headers });
+}
+
 async function readBoundedJson(req: NextRequest): Promise<unknown> {
   const length = req.headers.get('content-length');
   if (length !== null) {
@@ -84,7 +92,7 @@ export const maxDuration = 60;
 export async function POST(req: NextRequest) {
   try {
     if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
-      return NextResponse.json(
+      return noStoreJson(
         { ok: false, error: 'AI generation is unavailable. You can keep editing and export your CV as PDF.' },
         { status: 503 },
       );
@@ -92,7 +100,7 @@ export async function POST(req: NextRequest) {
     // Reject non-JSON submissions without passing personal data to the model.
     const contentType = req.headers.get('content-type')?.split(';', 1)[0]?.trim().toLowerCase();
     if (contentType !== 'application/json') {
-      return NextResponse.json(
+      return noStoreJson(
         { ok: false, error: 'Content-Type must be application/json' },
         { status: 415, headers: { 'Cache-Control': 'no-store' } },
       );
@@ -106,7 +114,7 @@ export async function POST(req: NextRequest) {
     const { success, limit, reset, remaining } = await ratelimit.limit(ip);
     
     if (!success) {
-      return NextResponse.json(
+      return noStoreJson(
         { ok: false, error: 'Rate limit exceeded. Try again later.' },
         { 
           status: 429,
@@ -124,7 +132,7 @@ export async function POST(req: NextRequest) {
     try {
       body = await readBoundedJson(req);
     } catch (error) {
-      return NextResponse.json(
+      return noStoreJson(
         { ok: false, error: error instanceof PayloadTooLargeError ? 'Request too large' : 'Invalid request payload' },
         { status: error instanceof PayloadTooLargeError ? 413 : 400 },
       );
@@ -186,23 +194,23 @@ export async function POST(req: NextRequest) {
     const text = completion.choices[0]?.message?.content?.trim() || '';
 
     if (!text) {
-      return NextResponse.json(
+      return noStoreJson(
         { ok: false, error: 'The AI provider returned no content. Please try again.' },
         { status: 502, headers: { 'Cache-Control': 'no-store' } },
       );
     }
-    return NextResponse.json({ text, ok: true }, { headers: { 'Cache-Control': 'no-store' } });
+    return noStoreJson({ text, ok: true }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       console.warn('CV generation: invalid payload');
-      return NextResponse.json(
+      return noStoreJson(
         { ok: false, error: 'Invalid request payload' },
         { status: 400 }
       );
     }
     
     console.error('CV generation error');
-    return NextResponse.json(
+    return noStoreJson(
       { ok: false, error: 'Failed to generate content. Please try again.' },
       { status: 500 }
     );
