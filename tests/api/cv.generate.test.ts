@@ -69,6 +69,16 @@ describe('POST /api/cv/generate', () => {
     expect(jest.requireMock('@upstash/ratelimit').__mockLimit).not.toHaveBeenCalled();
   });
 
+  it('fails closed if the rate-limit backend is unavailable', async () => {
+    jest.requireMock('@upstash/ratelimit').__mockLimit.mockRejectedValueOnce(new Error('private-redis-error'));
+    const res = await POST(createRequest({ field: 'summary', profession: 'Dev' }));
+    expect(res.status).toBe(503);
+    expect(res.headers.get('Cache-Control')).toBe('no-store');
+    expect(res.headers.get('Retry-After')).toBe('60');
+    expect(JSON.stringify(await res.json())).not.toContain('private-redis-error');
+    expect(jest.requireMock('z-ai-web-dev-sdk').__mockCreate).not.toHaveBeenCalled();
+  });
+
   it('rejects non-JSON media types without invoking rate limits or the model', async () => {
     const res = await POST(createRequest({ field: 'summary' }, { 'content-type': 'text/plain' }));
     expect(res.status).toBe(415);
