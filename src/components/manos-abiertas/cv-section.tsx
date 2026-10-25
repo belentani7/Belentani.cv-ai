@@ -18,6 +18,7 @@ import { CoverLetterBuilder } from './cover-letter-builder';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
+import { clearCvDraft, readCvDraft, saveCvDraft } from '@/lib/cv-storage';
 
 interface Experience {
   id: string;
@@ -33,6 +34,21 @@ interface Education {
   institution: string;
   year: string;
   description: string;
+}
+
+interface StoredCvDraft {
+  template?: string;
+  fullName?: string;
+  profession?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  summary?: string;
+  experiences?: Experience[];
+  education?: Education[];
+  skills?: string[];
+  languages?: string[];
+  savedAt?: string;
 }
 
 export function CVSection() {
@@ -60,20 +76,16 @@ export function CVSection() {
   useEffect(() => {
     const data = { template: template.id, fullName, profession, email, phone, address, summary, experiences, education, skills, languages };
     const id = setTimeout(() => {
-      try {
-        localStorage.setItem('manos-abiertas-cv', JSON.stringify({ ...data, savedAt: new Date().toISOString() }));
-        setSavedAt(new Date());
-      } catch { /* ignore */ }
+      const saved = saveCvDraft(data);
+      if (saved) setSavedAt(saved);
     }, 800);
     return () => clearTimeout(id);
   }, [template, fullName, profession, email, phone, address, summary, experiences, education, skills, languages]);
 
   // Load saved CV on mount
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('manos-abiertas-cv');
-      if (stored) {
-        const data = JSON.parse(stored);
+    const data = readCvDraft<StoredCvDraft>();
+    if (data) {
         if (data.template) {
           const tpl = CV_TEMPLATES.find((t) => t.id === data.template);
           if (tpl) setTemplate(tpl);
@@ -88,9 +100,8 @@ export function CVSection() {
         if (data.education?.length) setEducation(data.education);
         if (data.skills?.length) setSkills(data.skills);
         if (data.languages?.length) setLanguages(data.languages);
-        if (data.savedAt) setSavedAt(new Date(data.savedAt));
-      }
-    } catch { /* ignore */ }
+        if (typeof data.savedAt === 'string') setSavedAt(new Date(data.savedAt));
+    }
   }, []);
 
   const hasContent = Boolean(fullName || profession || summary || email || experiences.some((e) => e.position || e.company) || education.some((e) => e.title) || skills.length || languages.length);
@@ -552,7 +563,7 @@ export function CVSection() {
                 <button
                   onClick={() => {
                     if (confirm('¿Borrar todos los datos del CV? Esta acción no se puede deshacer.')) {
-                      localStorage.removeItem('manos-abiertas-cv');
+                      clearCvDraft();
                       setFullName(''); setProfession(''); setEmail(''); setPhone(''); setAddress(''); setSummary('');
                       setExperiences([{ id: '1', position: '', company: '', startDate: '', endDate: '', description: '' }]);
                       setEducation([{ id: '1', title: '', institution: '', year: '', description: '' }]);
