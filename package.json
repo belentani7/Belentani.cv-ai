@@ -103,7 +103,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@mdxeditor/editor>js-yaml": "4.3.2"
+      "@mdxeditor/editor>js-yaml": "4.3.2",
+      "@istanbuljs/load-nyc-config>js-yaml": "4.3.2"
     }
   }
 }
