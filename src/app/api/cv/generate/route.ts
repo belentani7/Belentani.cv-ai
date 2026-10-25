@@ -111,8 +111,18 @@ export async function POST(req: NextRequest) {
     const ip = process.env.VERCEL === '1'
       ? (req.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() || 'unknown')
       : 'unknown';
-    const { success, limit, reset, remaining } = await ratelimit.limit(ip);
-    
+    let limitResult: Awaited<ReturnType<typeof ratelimit.limit>>;
+    try {
+      limitResult = await ratelimit.limit(ip);
+    } catch {
+      // Fail closed: if rate limiting is unavailable, never send CV data to AI.
+      return noStoreJson(
+        { ok: false, error: 'AI generation is temporarily unavailable. You can keep editing and export your CV as PDF.' },
+        { status: 503, headers: { 'Retry-After': '60' } },
+      );
+    }
+    const { success, limit, reset, remaining } = limitResult;
+
     if (!success) {
       return noStoreJson(
         { ok: false, error: 'Rate limit exceeded. Try again later.' },
