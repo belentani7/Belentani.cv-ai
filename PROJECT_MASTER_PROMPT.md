@@ -63,12 +63,7 @@ No tratar esta estructura propuesta como funcionalidades ya implementadas.
 ## 6. Prompt operativo reutilizable para agentes
 «Trabaja en el repositorio existente `belentani7/Belentani.cv-ai`. Lee primero este PROJECT_MASTER_PROMPT.md, README, package.json, rutas reales, APIs y tests. Selecciona la primera fase no terminada. Define un cambio mínimo pero funcional con pruebas. Implementa el código, ejecuta las verificaciones disponibles, corrige fallos, documenta los resultados y abre un PR para revisión si la modificación puede afectar producción. No crees otro repositorio, no declares completadas funciones sin evidencia, no inventes datos del usuario, no expongas PII y no publiques ni modifiques servicios externos sin comprobar permisos y efectos. Avanza a la siguiente mejora sólo al cerrar la anterior.»
 
-## 7. Estado real de ejecución — 23 de octubre de 2026
-- **Fase A en curso; producto NO finalizado.** Además del plan maestro, se han aplicado cambios funcionales en rama de revisión, sin publicar a producción.
-- **PR #82 (borrador):** `fix/ai-letter-prompt-data-boundary-20261023`. Código real: serializador compartido de datos de IA, delimitadores seguros para cartas, test de inyección de instrucciones, consentimiento explícito por petición de ayuda con IA en el editor, minimización de datos personales del CV enviados al servidor y corrección del guardado que volvía a crear un borrador vacío tras borrarlo.
-- **Verificación 1 — lectura independiente del GitHub remoto:** cambios aislados y sin borrados; fuentes y nuevas pruebas presentes. **PASS.**
-- **Verificación 2 — ejecución de funciones puras:** casos de datos privados, límites de experiencias, borradores vacíos, caracteres y etiquetas adversariales; se mantiene compatibilidad del serializador de CV anterior. **PASS** para los casos comprobados.
-- **Verificación 3 — compilador real:** `tsc --strict --target ES2022 --module commonjs --noEmit` en copia íntegra del nuevo módulo `cv-draft-privacy.ts`, contrastada con su SHA de blob Git `a96eee492df12ba89de34a04f5bdb77a3de4fdee`, más ejecución compilada con Node 22. **PASS** para ese módulo, no para toda la aplicación.
-- **Bloqueos observados:** GitHub Actions falla inmediatamente en el commit nuevo y también había fallado en `main` antes de estos cambios; no hay logs accesibles para confirmar causa. Vercel rechazó la creación de un preview con **HTTP 402, `api-deployments-free-per-day`** (límite de despliegues). No se ha cambiado el plan ni la facturación.
-- **Gates aún pendientes:** `pnpm install --frozen-lockfile`, Prisma, TypeScript global, ESLint, Jest completo, Next build, pruebas reales de interfaz/impresión y accesibilidad y un preview de este SHA. Mantener PR en borrador. No considerar ninguna funcionalidad de despliegue ni el producto completo como verificados.
-- **Criterio de paso:** resolver y pasar todas las verificaciones, revisar integraciones y registrar evidencia antes de cerrar este repositorio o pasar al siguiente.
+## 7. Estado de esta intervención
+- Evidencia consultada: README.md y package.json en la rama main.
+- Primer entregable: este plan maestro concreto.
+- Estado de fases A–D: **pendientes de implementación y verificación**; la existencia del plan no implica funcionalidad nueva ni ejecución de tests.

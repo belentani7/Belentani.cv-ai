@@ -8,7 +8,7 @@ const cvSchema = z.object({
   profession: z.string().max(100, "Profession too long"),
   experience: z.string().max(5000, "Experience too long"),
   skills: z.array(z.string()).optional(),
-}).strict({ message: "Unexpected fields detected" });
+}).strict();
 
 // PII guard — reject PII in input
 const PII_REGEX = [
@@ -39,7 +39,7 @@ export function validateCVPayload(body: unknown):
       success: false,
       error: { message: "Invalid payload" },
       status: 400,
-      issues: result.error.errors.map(e => ({
+      issues: result.error.issues.map(e => ({
         field: e.path.join("."),
         message: e.message,
       })),

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, Plus, Trash2, Sparkles, Download, Printer, Eye, User, Briefcase, GraduationCap, Award, Languages, Palette, Loader2, Check, Lightbulb, Save, RotateCcw, Mail } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +18,9 @@ import { CoverLetterBuilder } from './cover-letter-builder';
 import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
+import { clearCvDraft, readCvDraft, saveCvDraft } from '@/lib/cv-storage';
+
+import { parseCvFile, serializeCvFile, MAX_CV_FILE_BYTES } from '@/lib/cv-file';
 import { buildCvAiPayload, getCvSaveStatus, hasMeaningfulCvData } from '@/lib/cv-draft-privacy';
 
 interface Experience {
@@ -36,7 +39,24 @@ interface Education {
   description: string;
 }
 
+interface StoredCvDraft {
+  template?: string;
+  fullName?: string;
+  profession?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  summary?: string;
+  experiences?: Experience[];
+  education?: Education[];
+  skills?: string[];
+  languages?: string[];
+  savedAt?: string;
+}
+
 export function CVSection() {
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [importing, setImporting] = useState(false);
   const { language } = useAppStore();
   const t = getTranslation(language);
   const [template, setTemplate] = useState(CV_TEMPLATES[0]);
@@ -57,30 +77,24 @@ export function CVSection() {
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [activeTool, setActiveTool] = useState<'cv' | 'letter'>('cv');
 
-  // Autosave locally only if there is a meaningful draft. A reset stays erased.
+  // Autosave to localStorage (debounced via effect)
   useEffect(() => {
     const data = { template: template.id, fullName, profession, email, phone, address, summary, experiences, education, skills, languages };
     const id = setTimeout(() => {
-      try {
-        if (!hasMeaningfulCvData(data)) {
-          localStorage.removeItem('manos-abiertas-cv');
-          setSavedAt(null);
-          return;
-        }
-        const now = new Date();
-        localStorage.setItem('manos-abiertas-cv', JSON.stringify({ ...data, savedAt: now.toISOString() }));
-        setSavedAt(now);
-      } catch { /* Browser storage may be unavailable. */ }
+      if (!hasMeaningfulCvData(data)) {
+        setSavedAt(null);
+        return;
+      }
+      const saved = saveCvDraft(data);
+      if (saved) setSavedAt(saved);
     }, 800);
     return () => clearTimeout(id);
   }, [template, fullName, profession, email, phone, address, summary, experiences, education, skills, languages]);
 
   // Load saved CV on mount
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('manos-abiertas-cv');
-      if (stored) {
-        const data = JSON.parse(stored);
+    const data = readCvDraft<StoredCvDraft>();
+    if (data) {
         if (data.template) {
           const tpl = CV_TEMPLATES.find((t) => t.id === data.template);
           if (tpl) setTemplate(tpl);
@@ -91,13 +105,12 @@ export function CVSection() {
         if (data.phone) setPhone(data.phone);
         if (data.address) setAddress(data.address);
         if (data.summary) setSummary(data.summary);
-        if (data.experiences?.length) setExperiences(data.experiences);
-        if (data.education?.length) setEducation(data.education);
+        if (data.experiences) setExperiences(data.experiences);
+        if (data.education) setEducation(data.education);
         if (data.skills?.length) setSkills(data.skills);
         if (data.languages?.length) setLanguages(data.languages);
-        if (data.savedAt) setSavedAt(new Date(data.savedAt));
-      }
-    } catch { /* ignore */ }
+        if (typeof data.savedAt === 'string') setSavedAt(new Date(data.savedAt));
+    }
   }, []);
 
   const hasContent = hasMeaningfulCvData({ fullName, profession, email, phone, address, summary, experiences, education, skills, languages });
@@ -129,9 +142,14 @@ export function CVSection() {
   }
 
   async function generateWithAI(field: 'summary' | 'experience') {
+    const targetExperience = experiences.find(e => e.position.trim() || e.company.trim());
+    if (field === 'experience' && !targetExperience) {
+      toast.error('Añade un puesto o empresa antes de mejorar la experiencia.');
+      return;
+    }
     const consent = field === 'summary'
-      ? 'Para redactar el resumen se enviarán tu profesión, experiencias, formación y habilidades a un proveedor de IA externo. No se enviarán nombre, email, teléfono ni dirección. ¿Autorizas este envío?'
-      : 'Para mejorar la descripción se enviarán únicamente los datos de la primera experiencia laboral y el idioma a un proveedor de IA externo. ¿Autorizas este envío?';
+      ? 'Se enviarán profesión, experiencias, formación y habilidades a un proveedor de IA externo. Los campos de nombre y contacto se excluyen, pero el texto libre puede contener datos personales: revísalo antes. ¿Autorizas este envío?'
+      : 'Se enviará la primera experiencia con puesto o empresa a un proveedor de IA externo. Revisa que su texto no contenga datos personales que no quieras compartir. ¿Autorizas este envío?';
     if (!window.confirm(consent)) return;
     const aiPayload = buildCvAiPayload(
       field, { fullName, profession, email, phone, address, summary, experiences, education, skills, languages }, language,
@@ -149,12 +167,13 @@ export function CVSection() {
       }
       if (!resp.ok) throw new Error('Error en la generación');
       const data = await resp.json();
+      if (typeof data.text !== 'string' || !data.text.trim()) throw new Error('Empty AI response');
       if (field === 'summary') {
         setSummary(data.text);
         toast.success('Resumen generado con IA ✨');
       } else {
         setExperiences((prev) =>
-          prev.map((e, i) => (i === 0 ? { ...e, description: data.text } : e))
+          prev.map(e => (e.id === targetExperience?.id ? { ...e, description: data.text } : e))
         );
         toast.success('Descripción mejorada con IA ✨');
       }
@@ -162,6 +181,45 @@ export function CVSection() {
       toast.error('No se pudo generar. Inténtalo de nuevo.');
     } finally {
       setAiLoading(null);
+    }
+  }
+
+  function exportEditable() {
+    try {
+      const content = serializeCvFile({ template: template.id, fullName, profession, email, phone, address, summary, experiences, education, skills, languages });
+      const url = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'belentani-cv.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      toast.error('No se pudo exportar el CV editable. Revisa el tamaño de los campos.');
+    }
+  }
+
+  async function importEditable(file: File) {
+    setImporting(true);
+    try {
+      if (file.size > MAX_CV_FILE_BYTES) throw new Error('size');
+      const data = parseCvFile(await file.text());
+      const selected = CV_TEMPLATES.find(item => item.id === data.template);
+      if (!selected) throw new Error('template');
+      if (!window.confirm('¿Abrir este CV y sustituir el borrador actual? Descarga antes una copia si quieres conservarlo.')) return;
+      setTemplate(selected);
+      setFullName(data.fullName); setProfession(data.profession);
+      setEmail(data.email); setPhone(data.phone); setAddress(data.address); setSummary(data.summary);
+      setExperiences(data.experiences); setEducation(data.education);
+      setSkills(data.skills); setLanguages(data.languages);
+      setSavedAt(null);
+      toast.success('CV editable recuperado');
+    } catch {
+      toast.error('Archivo de CV no válido o superior a 1 MB. Tu borrador se conserva.');
+    } finally {
+      setImporting(false);
+      if (fileInput.current) fileInput.current.value = '';
     }
   }
 
@@ -549,6 +607,17 @@ export function CVSection() {
             </TabsContent>
           </Tabs>
 
+          <div className="space-y-2">
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" onClick={exportEditable} disabled={!hasContent || importing}>Guardar CV editable</Button>
+              <Button variant="outline" onClick={() => fileInput.current?.click()} disabled={importing || aiLoading !== null}>
+                {importing ? 'Abriendo…' : 'Abrir CV editable'}
+              </Button>
+              <input ref={fileInput} type="file" accept=".json,application/json" className="hidden" aria-label="Abrir archivo de CV editable"
+                onChange={event => { const file = event.target.files?.[0]; if (file) void importEditable(file); }} />
+            </div>
+            <p className="text-xs text-muted-foreground">El archivo contiene tus datos personales. Guárdalo en un lugar seguro. Se procesa en tu navegador.</p>
+          </div>
           {/* Action bar */}
           <div className="sticky bottom-4 space-y-2">
             {/* Saved indicator */}
@@ -559,16 +628,12 @@ export function CVSection() {
                 <button
                   onClick={() => {
                     if (confirm('¿Borrar todos los datos del CV? Esta acción no se puede deshacer.')) {
-                      try {
-                        localStorage.removeItem('manos-abiertas-cv');
-                      } catch {
-                        toast.error('No se pudo borrar el almacenamiento local. Revisa los permisos del navegador.');
-                        return;
-                      }
+                      clearCvDraft();
                       setFullName(''); setProfession(''); setEmail(''); setPhone(''); setAddress(''); setSummary('');
                       setExperiences([{ id: '1', position: '', company: '', startDate: '', endDate: '', description: '' }]);
                       setEducation([{ id: '1', title: '', institution: '', year: '', description: '' }]);
                       setSkills([]); setLanguages([]);
+                      setSkillInput(''); setLangInput('');
                       setSavedAt(null);
                       toast.success('CV reiniciado');
                     }

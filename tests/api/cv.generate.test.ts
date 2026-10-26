@@ -63,9 +63,20 @@ describe('POST /api/cv/generate', () => {
     delete process.env.KV_REST_API_TOKEN;
     const res = await POST(createRequest({ field: 'summary', profession: 'Dev' }));
     expect(res.status).toBe(503);
+    expect(res.headers.get('Cache-Control')).toBe('no-store');
     expect((await res.json()).ok).toBe(false);
     expect(jest.requireMock('z-ai-web-dev-sdk').__mockCreate).not.toHaveBeenCalled();
     expect(jest.requireMock('@upstash/ratelimit').__mockLimit).not.toHaveBeenCalled();
+  });
+
+  it('fails closed if the rate-limit backend is unavailable', async () => {
+    jest.requireMock('@upstash/ratelimit').__mockLimit.mockRejectedValueOnce(new Error('private-redis-error'));
+    const res = await POST(createRequest({ field: 'summary', profession: 'Dev' }));
+    expect(res.status).toBe(503);
+    expect(res.headers.get('Cache-Control')).toBe('no-store');
+    expect(res.headers.get('Retry-After')).toBe('60');
+    expect(JSON.stringify(await res.json())).not.toContain('private-redis-error');
+    expect(jest.requireMock('z-ai-web-dev-sdk').__mockCreate).not.toHaveBeenCalled();
   });
 
   it('rejects non-JSON media types without invoking rate limits or the model', async () => {
@@ -141,6 +152,7 @@ describe('POST /api/cv/generate', () => {
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
+    expect(res.headers.get('Cache-Control')).toBe('no-store');
     const json = await res.json();
     expect(json.ok).toBe(false);
     expect(json.error).toBe('Invalid request payload');
@@ -164,6 +176,7 @@ describe('POST /api/cv/generate', () => {
     });
     const res = await POST(req);
     expect(res.status).toBe(200);
+    expect(res.headers.get('Cache-Control')).toBe('no-store');
     const json = await res.json();
     expect(json.ok).toBe(true);
     expect(json.text).toBe('Generated CV content');
@@ -282,6 +295,7 @@ describe('POST /api/cv/generate', () => {
     const req = createRequest({ field: 'summary', fullName: 'Test' });
     const res = await POST(req);
     expect(res.status).toBe(500);
+    expect(res.headers.get('Cache-Control')).toBe('no-store');
     const json = await res.json();
     expect(json.ok).toBe(false);
     expect(json.error).toBe('Failed to generate content. Please try again.');
@@ -333,6 +347,7 @@ describe('POST /api/cv/generate', () => {
     const req = createRequest({ field: 'summary', fullName: 'Test' }, { 'x-forwarded-for': '1.2.3.4' });
     const res = await POST(req);
     expect(res.status).toBe(429);
+    expect(res.headers.get('Cache-Control')).toBe('no-store');
     const json = await res.json();
     expect(json.ok).toBe(false);
     expect(json.error).toBe('Rate limit exceeded. Try again later.');

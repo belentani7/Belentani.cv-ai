@@ -42,107 +42,111 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* Manos Abiertas brand colors */
-  --color-brand-warm: var(--brand-warm);
-  --color-brand-clay: var(--brand-clay);
-  --color-brand-saffron: var(--brand-saffron);
-  --color-brand-olive: var(--brand-olive);
-  --color-brand-teal: var(--brand-teal);
+  /* CANON Design Tokens - WCAG AAA verified on #050505 */
+  --color-canon-black: #050505;
+  --color-canon-ink: #FFFFFF;
+  --color-canon-mute: #B3B3B3;
+  --color-canon-red: #FF7777;
+  --color-canon-red-dim: #FF4444;
+  --color-canon-gold: #FDE047;
+  --color-canon-violet: #D8B4FE;
+  --color-canon-violet-light: #E9D5FF;
+  --color-canon-violet-dark: #A855F7;
 }
 
 :root {
   --radius: 0.75rem;
 
-  /* Warm, welcoming palette - light mode */
-  --background: oklch(0.99 0.008 80);
-  --foreground: oklch(0.22 0.02 50);
+  /* CANON Palette - WCAG AAA (7:1) on black */
+  --background: #050505;
+  --foreground: #FFFFFF;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.02 50);
+  --card: #0A0A0A;
+  --card-foreground: #FFFFFF;
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.02 50);
+  --popover: #0A0A0A;
+  --popover-foreground: #FFFFFF;
 
-  /* Terracota warm - main brand */
-  --primary: oklch(0.55 0.16 45);
-  --primary-foreground: oklch(0.99 0.01 80);
+  /* Neon Red - WCAG AAA 7.7:1 on black */
+  --primary: #FF7777;
+  --primary-foreground: #050505;
 
-  --secondary: oklch(0.96 0.02 75);
-  --secondary-foreground: oklch(0.30 0.04 50);
+  --secondary: #1A1A1A;
+  --secondary-foreground: #FFFFFF;
 
-  --muted: oklch(0.96 0.01 80);
-  --muted-foreground: oklch(0.50 0.02 60);
+  --muted: #1A1A1A;
+  --muted-foreground: #B3B3B3;
 
-  /* Saffron/amber accent */
-  --accent: oklch(0.92 0.05 75);
-  --accent-foreground: oklch(0.30 0.06 50);
+  /* Gold - WCAG AAA 15.0:1 on black */
+  --accent: #FDE047;
+  --accent-foreground: #050505;
 
-  --destructive: oklch(0.58 0.22 25);
-  --border: oklch(0.90 0.015 70);
-  --input: oklch(0.92 0.015 70);
-  --ring: oklch(0.55 0.16 45);
+  --destructive: #FF3B30;
+  --border: rgba(255, 119, 119, 0.28);
+  --input: rgba(255, 119, 119, 0.28);
+  --ring: #FF7777;
 
-  --chart-1: oklch(0.60 0.18 45);
-  --chart-2: oklch(0.70 0.15 70);
-  --chart-3: oklch(0.55 0.13 160);
-  --chart-4: oklch(0.65 0.16 280);
-  --chart-5: oklch(0.72 0.14 30);
+  --chart-1: #FF7777;
+  --chart-2: #FDE047;
+  --chart-3: #D8B4FE;
+  --chart-4: #A855F7;
+  --chart-5: #00D4AA;
 
-  --sidebar: oklch(0.98 0.01 75);
-  --sidebar-foreground: oklch(0.22 0.02 50);
-  --sidebar-primary: oklch(0.55 0.16 45);
-  --sidebar-primary-foreground: oklch(0.99 0.01 80);
-  --sidebar-accent: oklch(0.95 0.02 75);
-  --sidebar-accent-foreground: oklch(0.30 0.04 50);
-  --sidebar-border: oklch(0.90 0.015 70);
-  --sidebar-ring: oklch(0.55 0.16 45);
+  --sidebar: #0A0A0A;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #FF7777;
+  --sidebar-primary-foreground: #050505;
+  --sidebar-accent: #1A1A1A;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 119, 119, 0.28);
+  --sidebar-ring: #FF7777;
 
-  /* Brand colors */
-  --brand-warm: oklch(0.55 0.16 45);
-  --brand-clay: oklch(0.62 0.12 55);
-  --brand-saffron: oklch(0.75 0.15 75);
-  --brand-olive: oklch(0.55 0.10 110);
-  --brand-teal: oklch(0.55 0.10 180);
+  /* Brand colors - CANON */
+  --brand-warm: #FF7777;
+  --brand-clay: #FF4444;
+  --brand-saffron: #FDE047;
+  --brand-olive: #A855F7;
+  --brand-teal: #D8B4FE;
 }
 
 .dark {
-  --background: oklch(0.18 0.015 50);
-  --foreground: oklch(0.96 0.01 80);
-  --card: oklch(0.23 0.02 50);
-  --card-foreground: oklch(0.96 0.01 80);
-  --popover: oklch(0.23 0.02 50);
-  --popover-foreground: oklch(0.96 0.01 80);
-  --primary: oklch(0.70 0.16 50);
-  --primary-foreground: oklch(0.18 0.015 50);
-  --secondary: oklch(0.30 0.02 55);
-  --secondary-foreground: oklch(0.96 0.01 80);
-  --muted: oklch(0.30 0.02 55);
-  --muted-foreground: oklch(0.72 0.02 70);
-  --accent: oklch(0.35 0.04 60);
-  --accent-foreground: oklch(0.96 0.01 80);
-  --destructive: oklch(0.68 0.20 25);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.70 0.16 50);
-  --chart-1: oklch(0.70 0.18 45);
-  --chart-2: oklch(0.75 0.15 70);
-  --chart-3: oklch(0.65 0.13 160);
-  --chart-4: oklch(0.70 0.16 280);
-  --chart-5: oklch(0.75 0.14 30);
-  --sidebar: oklch(0.23 0.02 50);
-  --sidebar-foreground: oklch(0.96 0.01 80);
-  --sidebar-primary: oklch(0.70 0.16 50);
-  --sidebar-primary-foreground: oklch(0.18 0.015 50);
-  --sidebar-accent: oklch(0.30 0.02 55);
-  --sidebar-accent-foreground: oklch(0.96 0.01 80);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.70 0.16 50);
+  --background: #050505;
+  --foreground: #FFFFFF;
+  --card: #0A0A0A;
+  --card-foreground: #FFFFFF;
+  --popover: #0A0A0A;
+  --popover-foreground: #FFFFFF;
+  --primary: #FF7777;
+  --primary-foreground: #050505;
+  --secondary: #1A1A1A;
+  --secondary-foreground: #FFFFFF;
+  --muted: #1A1A1A;
+  --muted-foreground: #B3B3B3;
+  --accent: #FDE047;
+  --accent-foreground: #050505;
+  --destructive: #FF3B30;
+  --border: rgba(255, 119, 119, 0.28);
+  --input: rgba(255, 119, 119, 0.28);
+  --ring: #FF7777;
+  --chart-1: #FF7777;
+  --chart-2: #FDE047;
+  --chart-3: #D8B4FE;
+  --chart-4: #A855F7;
+  --chart-5: #00D4AA;
+  --sidebar: #0A0A0A;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #FF7777;
+  --sidebar-primary-foreground: #050505;
+  --sidebar-accent: #1A1A1A;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 119, 119, 0.28);
+  --sidebar-ring: #FF7777;
 
-  --brand-warm: oklch(0.70 0.16 50);
-  --brand-clay: oklch(0.68 0.12 55);
-  --brand-saffron: oklch(0.78 0.15 75);
-  --brand-olive: oklch(0.68 0.10 110);
-  --brand-teal: oklch(0.68 0.10 180);
+  --brand-warm: #FF7777;
+  --brand-clay: #FF4444;
+  --brand-saffron: #FDE047;
+  --brand-olive: #A855F7;
+  --brand-teal: #D8B4FE;
 }
 
 @layer base {
@@ -242,15 +246,15 @@
   }
   .card-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px -8px oklch(0.55 0.16 45 / 0.18);
+    box-shadow: 0 12px 24px -8px rgba(255, 119, 119, 0.18);
   }
 
   .glass {
-    background: oklch(1 0 0 / 0.7);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
   }
   .dark .glass {
-    background: oklch(0.23 0.02 50 / 0.7);
+    background: rgba(26, 26, 26, 0.7);
   }
 
   .animate-float {
@@ -278,24 +282,20 @@
    PRINT STYLES - Optimized for CV printing on A4 paper
    ============================================================ */
 @media print {
-  /* Reset page margins */
   @page {
     size: A4;
     margin: 15mm 12mm;
   }
 
-  /* Hide everything by default */
   body * {
     visibility: hidden;
   }
 
-  /* Show only the CV preview */
   .print\:block,
   .print\:block * {
     visibility: visible;
   }
 
-  /* Position CV at top of page */
   .print\:block {
     position: absolute !important;
     left: 0 !important;
@@ -307,7 +307,6 @@
     border: none !important;
   }
 
-  /* Ensure CV preview uses full width */
   .print\:block > div {
     box-shadow: none !important;
     border: none !important;
@@ -317,27 +316,23 @@
     min-height: auto !important;
   }
 
-  /* Force colors to print */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
   }
 
-  /* Avoid page breaks inside CV sections */
   h1, h2, h3, h4 {
     break-after: avoid;
     page-break-after: avoid;
   }
 
-  /* Prevent breaking inside experience/education entries */
   .print\:block li,
   .print\:block p {
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  /* Hide interactive elements */
   button,
   nav,
   footer,
@@ -345,7 +340,6 @@
     display: none !important;
   }
 
-  /* Set base font for print */
   .print\:block {
     font-size: 11pt;
     line-height: 1.4;
@@ -353,20 +347,17 @@
     background: white;
   }
 
-  /* Ensure links show their URL in print (optional) */
   .print\:block a[href]::after {
     content: '';
   }
 }
 
-/* Screen-only helper: hide elements when printing */
 @media screen {
   .print-only {
     display: none !important;
   }
 }
 
-/* Print-only helper: show only when printing */
 @media print {
   .screen-only {
     display: none !important;
@@ -377,7 +368,6 @@
    READING MODES - Accessibility
    ============================================================ */
 
-/* Large text mode */
 [data-reading-mode='large'] {
   font-size: 1.15rem;
 }
@@ -397,89 +387,83 @@
 [data-reading-mode='large'] .h-9 { height: 3rem; }
 [data-reading-mode='large'] .h-10 { height: 3.25rem; }
 
-/* High contrast mode */
 html[data-reading-mode='high-contrast'] {
-  --background: oklch(0 0 0) !important;
-  --foreground: oklch(1 0 0) !important;
-  --card: oklch(0.05 0 0) !important;
-  --card-foreground: oklch(1 0 0) !important;
-  --popover: oklch(0.05 0 0) !important;
-  --popover-foreground: oklch(1 0 0) !important;
-  --primary: oklch(0.75 0.18 60) !important;
-  --primary-foreground: oklch(0 0 0) !important;
-  --secondary: oklch(0.2 0 0) !important;
-  --secondary-foreground: oklch(1 0 0) !important;
-  --muted: oklch(0.15 0 0) !important;
-  --muted-foreground: oklch(0.85 0 0) !important;
-  --accent: oklch(0.25 0 0) !important;
-  --accent-foreground: oklch(1 0 0) !important;
-  --border: oklch(0.4 0 0) !important;
-  --input: oklch(0.3 0 0) !important;
-  --ring: oklch(0.75 0.18 60) !important;
-  --sidebar: oklch(0.05 0 0) !important;
-  --sidebar-foreground: oklch(1 0 0) !important;
+  --background: #050505 !important;
+  --foreground: #FFFFFF !important;
+  --card: #0A0A0A !important;
+  --card-foreground: #FFFFFF !important;
+  --popover: #0A0A0A !important;
+  --popover-foreground: #FFFFFF !important;
+  --primary: #FF7777 !important;
+  --primary-foreground: #050505 !important;
+  --secondary: #1A1A1A !important;
+  --secondary-foreground: #FFFFFF !important;
+  --muted: #1A1A1A !important;
+  --muted-foreground: #B3B3B3 !important;
+  --accent: #FDE047 !important;
+  --accent-foreground: #050505 !important;
+  --border: rgba(255, 119, 119, 0.28) !important;
+  --input: rgba(255, 119, 119, 0.28) !important;
+  --ring: #FF7777 !important;
+  --sidebar: #0A0A0A !important;
+  --sidebar-foreground: #FFFFFF !important;
 }
 html[data-reading-mode='high-contrast'] body {
-  background: black !important;
-  color: white !important;
+  background: #050505 !important;
+  color: #FFFFFF !important;
 }
 html[data-reading-mode='high-contrast'] * {
-  border-color: oklch(0.5 0 0) !important;
+  border-color: rgba(255, 119, 119, 0.28) !important;
 }
 html[data-reading-mode='high-contrast'] a {
-  color: oklch(0.75 0.18 60) !important;
+  color: #FF7777 !important;
   text-decoration: underline;
 }
 
-/* Study Mode - optimized for reading and learning */
 html[data-reading-mode='study'] {
-  --background: oklch(0.97 0.012 75) !important;
-  --foreground: oklch(0.27 0.03 250) !important;
-  --card: oklch(0.98 0.008 75) !important;
-  --card-foreground: oklch(0.27 0.03 250) !important;
-  --popover: oklch(0.98 0.008 75) !important;
-  --popover-foreground: oklch(0.27 0.03 250) !important;
-  --primary: oklch(0.50 0.14 250) !important;
-  --primary-foreground: oklch(0.98 0.008 75) !important;
-  --secondary: oklch(0.93 0.01 75) !important;
-  --secondary-foreground: oklch(0.30 0.03 250) !important;
-  --muted: oklch(0.94 0.008 75) !important;
-  --muted-foreground: oklch(0.50 0.02 250) !important;
-  --accent: oklch(0.92 0.02 75) !important;
-  --accent-foreground: oklch(0.30 0.03 250) !important;
-  --border: oklch(0.88 0.01 75) !important;
-  --input: oklch(0.90 0.01 75) !important;
-  --ring: oklch(0.50 0.14 250) !important;
-  --sidebar: oklch(0.96 0.01 75) !important;
-  --sidebar-foreground: oklch(0.27 0.03 250) !important;
+  --background: #050505 !important;
+  --foreground: #FFFFFF !important;
+  --card: #0A0A0A !important;
+  --card-foreground: #FFFFFF !important;
+  --popover: #0A0A0A !important;
+  --popover-foreground: #FFFFFF !important.
+  --primary: #FF7777 !important;
+  --primary-foreground: #050505 !important.
+  --secondary: #1A1A1A !important.
+  --secondary-foreground: #FFFFFF !important.
+  --muted: #1A1A1A !important.
+  --muted-foreground: #B3B3B3 !important.
+  --accent: #FDE047 !important.
+  --accent-foreground: #050505 !important.
+  --border: rgba(255, 119, 119, 0.28) !important.
+  --input: rgba(255, 119, 119, 0.28) !important.
+  --ring: #FF7777 !important.
+  --sidebar: #0A0A0A !important.
+  --sidebar-foreground: #FFFFFF !important.
 }
 html[data-reading-mode='study'] body {
-  background: #f8f4ec !important;
-  color: #2c3e50 !important;
+  background: #050505 !important;
+  color: #FFFFFF !important;
 }
 html[data-reading-mode='study'] .gradient-brand {
-  background: linear-gradient(135deg, #5b7fa5, #4a6fa5) !important;
+  background: linear-gradient(135deg, #FF7777, #FF4444) !important;
 }
 html[data-reading-mode='study'] .gradient-text {
-  background: linear-gradient(135deg, #4a6fa5, #6b8db5) !important;
+  background: linear-gradient(135deg, #FF7777, #FDE047) !important;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-html[data-reading-mode='study'] .gradient-hero {
-  background: linear-gradient(180deg, #f8f4ec, #f0ebe0) !important;
-}
 html[data-reading-mode='study'] .card-hover:hover {
-  box-shadow: 0 8px 20px -6px rgba(74, 111, 165, 0.15);
+  box-shadow: 0 8px 20px -6px rgba(255, 119, 119, 0.15);
 }
-/* Highlight color for study mode */
 html[data-reading-mode='study'] ::selection {
-  background: #fffacd;
-  color: #2c3e50;
+  background: #FDE047;
+  color: #050505;
 }
 html[data-reading-mode='study'] mark {
-  background: #fffacd;
-  color: #2c3e50;
+  background: #FDE047;
+  color: #050505;
   padding: 0 2px;
   border-radius: 2px;
 }
@@ -487,68 +471,66 @@ html[data-reading-mode='study'] mark {
 /* ============================================================
    NO.IA_CORE PREMIUM AESTHETIC - Lujo Tecnológico
    Obsidiana · Titanio · Ámbar Núcleo
+   Updated to CANON WCAG AAA palette
    ============================================================ */
 .noia-premium {
-  --noia-obsidian: #0a0a0c;
-  --noia-titanium: #3a3a42;
-  --noia-amber: #e8a838;
-  --noia-amber-hi: #ffc858;
-  --noia-cream: #f5f0e8;
-  --noia-silver: #c0c0c8;
+  --noia-obsidian: #050505;
+  --noia-titanium: #1A1A1A;
+  --noia-amber: #FDE047;
+  --noia-amber-hi: #FEF08A;
+  --noia-cream: #FFFFFF;
+  --noia-silver: #B3B3B3;
 }
 
 .noia-gradient {
-  background: linear-gradient(135deg, #0a0a0c 0%, #1a1a20 50%, #0a0a0c 100%);
+  background: linear-gradient(135deg, #050505 0%, #1A1A1A 50%, #050505 100%);
 }
 
 .noia-gradient-amber {
-  background: linear-gradient(135deg, #e8a838 0%, #ffc858 100%);
+  background: linear-gradient(135deg, #FDE047 0%, #FEF08A 100%);
 }
 
 .noia-text-amber {
-  color: #e8a838;
+  color: #FDE047;
 }
 
 .noia-text-gradient {
-  background: linear-gradient(135deg, #e8a838 0%, #ffc858 50%, #c0c0c8 100%);
+  background: linear-gradient(135deg, #FDE047 0%, #FEF08A 50%, #B3B3B3 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .noia-border-amber {
-  border-color: rgba(232, 168, 56, 0.3);
+  border-color: rgba(253, 224, 71, 0.3);
 }
 
 .noia-card-premium {
-  background: linear-gradient(135deg, rgba(10,10,12,0.95) 0%, rgba(26,26,32,0.95) 100%);
-  border: 1px solid rgba(232, 168, 56, 0.15);
-  box-shadow: 0 8px 32px -8px rgba(232, 168, 56, 0.1), inset 0 1px 0 rgba(255,255,255,0.03);
+  background: linear-gradient(135deg, rgba(10,10,10,0.95) 0%, rgba(26,26,26,0.95) 100%);
+  border: 1px solid rgba(253, 224, 71, 0.15);
+  box-shadow: 0 8px 32px -8px rgba(253, 224, 71, 0.1), inset 0 1px 0 rgba(255,255,255,0.03);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .noia-card-premium:hover {
-  border-color: rgba(232, 168, 56, 0.35);
-  box-shadow: 0 12px 40px -8px rgba(232, 168, 56, 0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+  border-color: rgba(253, 224, 71, 0.35);
+  box-shadow: 0 12px 40px -8px rgba(253, 224, 71, 0.2), inset 0 1px 0 rgba(255,255,255,0.05);
   transform: translateY(-2px);
 }
 
 .noia-badge-premium {
-  background: linear-gradient(135deg, rgba(232,168,56,0.15), rgba(232,168,56,0.05));
-  border: 1px solid rgba(232, 168, 56, 0.3);
-  color: #e8a838;
+  background: linear-gradient(135deg, rgba(253,224,71,0.15), rgba(253,224,71,0.05));
+  border: 1px solid rgba(253, 224, 71, 0.3);
+  color: #FDE047;
 }
 
-/* Golden ratio spacing utility */
 .noia-phi {
   padding: calc(1rem * 1.618);
 }
 
-/* Monolithic shadow - quiet luxury */
 .noia-shadow-monolith {
-  box-shadow: 0 20px 60px -15px rgba(0,0,0,0.5), 0 0 0 1px rgba(232,168,56,0.08);
+  box-shadow: 0 20px 60px -15px rgba(0,0,0,0.5), 0 0 0 1px rgba(253,224,71,0.08);
 }
 
-/* Claroscuro effect for premium cards */
 .noia-claroscuro {
   position: relative;
   overflow: hidden;
@@ -560,8 +542,6 @@ html[data-reading-mode='study'] mark {
   left: 0;
   right: 0;
   bottom: 50%;
-  background: linear-gradient(180deg, rgba(232,168,56,0.03) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(253,224,71,0.03) 0%, transparent 100%);
   pointer-events: none;
 }
-
-
