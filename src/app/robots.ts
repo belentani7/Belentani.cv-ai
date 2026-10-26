@@ -1,14 +1,14 @@
 import type { MetadataRoute } from "next";
 
-/** Keep private workflows and machine endpoints out of search indexes. */
+/** Las páginas privadas deben requerir autorización: robots.txt no protege datos. */
 export default function robots(): MetadataRoute.Robots {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://belentani-cv-ai.vercel.app";
   return {
-    rules: [
-      {
-        userAgent: "*",
-        allow: "/",
-        disallow: ["/api/", "/_next/", "/cv/editor/", "/cv/drafts/"],
-      },
-    ],
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      disallow: ["/api/", "/cv/editor/", "/cv/drafts/"],
+    },
+    sitemap: new URL("/sitemap.xml", siteUrl).toString(),
   };
 }

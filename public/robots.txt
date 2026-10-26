@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /api/
-Disallow: /manos-abiertas/
-
-Sitemap: https://belentani-cv-ai.vercel.app/sitemap.xml

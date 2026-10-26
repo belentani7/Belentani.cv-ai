@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   applicationName: "Belentani CV Studio",
   authors: [{ name: "Belentani" }],
   robots: { index: true, follow: true },
-  alternates: { canonical: "/" },
   manifest: "/manifest.json",
   icons: { icon: "/icon.svg" },
   openGraph: {
@@ -26,7 +25,7 @@ export const metadata: Metadata = {
     description: "Diseña tu currículum profesional y prepara tus candidaturas.",
     url: siteUrl,
   },
-  twitter: { card: "summary", title: "Belentani CV Studio", description: "Tu trayectoria, bien contada." },
+  twitter: { card: "summary_large_image", title: "Belentani CV Studio", description: "Tu trayectoria, bien contada." },
 };
 export const viewport: Viewport = { themeColor: "#090a0d", viewportFit: "cover" };
 
