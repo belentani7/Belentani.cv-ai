@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, Plus, Trash2, Sparkles, Download, Printer, Eye, User, Briefcase, GraduationCap, Award, Languages, Palette, Loader2, Check, Lightbulb, Save, RotateCcw, Mail } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,6 +19,8 @@ import { useAppStore } from '@/stores/app-store';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
 import { clearCvDraft, readCvDraft, saveCvDraft } from '@/lib/cv-storage';
+
+import { parseCvFile, serializeCvFile, MAX_CV_FILE_BYTES } from '@/lib/cv-file';
 
 interface Experience {
   id: string;
@@ -52,6 +54,8 @@ interface StoredCvDraft {
 }
 
 export function CVSection() {
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [importing, setImporting] = useState(false);
   const { language } = useAppStore();
   const t = getTranslation(language);
   const [template, setTemplate] = useState(CV_TEMPLATES[0]);
@@ -166,6 +170,45 @@ export function CVSection() {
       toast.error('No se pudo generar. Inténtalo de nuevo.');
     } finally {
       setAiLoading(null);
+    }
+  }
+
+  function exportEditable() {
+    try {
+      const content = serializeCvFile({ template: template.id, fullName, profession, email, phone, address, summary, experiences, education, skills, languages });
+      const url = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'belentani-cv.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      toast.error('No se pudo exportar el CV editable. Revisa el tamaño de los campos.');
+    }
+  }
+
+  async function importEditable(file: File) {
+    setImporting(true);
+    try {
+      if (file.size > MAX_CV_FILE_BYTES) throw new Error('size');
+      const data = parseCvFile(await file.text());
+      const selected = CV_TEMPLATES.find(item => item.id === data.template);
+      if (!selected) throw new Error('template');
+      if (!window.confirm('¿Abrir este CV y sustituir el borrador actual? Descarga antes una copia si quieres conservarlo.')) return;
+      setTemplate(selected);
+      setFullName(data.fullName); setProfession(data.profession);
+      setEmail(data.email); setPhone(data.phone); setAddress(data.address); setSummary(data.summary);
+      setExperiences(data.experiences); setEducation(data.education);
+      setSkills(data.skills); setLanguages(data.languages);
+      setSavedAt(null);
+      toast.success('CV editable recuperado');
+    } catch {
+      toast.error('Archivo de CV no válido o superior a 1 MB. Tu borrador se conserva.');
+    } finally {
+      setImporting(false);
+      if (fileInput.current) fileInput.current.value = '';
     }
   }
 
@@ -553,6 +596,17 @@ export function CVSection() {
             </TabsContent>
           </Tabs>
 
+          <div className="space-y-2">
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" onClick={exportEditable} disabled={!hasContent || importing}>Guardar CV editable</Button>
+              <Button variant="outline" onClick={() => fileInput.current?.click()} disabled={importing || aiLoading !== null}>
+                {importing ? 'Abriendo…' : 'Abrir CV editable'}
+              </Button>
+              <input ref={fileInput} type="file" accept=".json,application/json" className="hidden" aria-label="Abrir archivo de CV editable"
+                onChange={event => { const file = event.target.files?.[0]; if (file) void importEditable(file); }} />
+            </div>
+            <p className="text-xs text-muted-foreground">El archivo contiene tus datos personales. Guárdalo en un lugar seguro. Se procesa en tu navegador.</p>
+          </div>
           {/* Action bar */}
           <div className="sticky bottom-4 space-y-2">
             {/* Saved indicator */}
