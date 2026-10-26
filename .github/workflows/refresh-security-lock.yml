@@ -19,13 +19,13 @@ jobs:
       - uses: actions/checkout@v5
         with:
           ref: security/nextjs-rce-20261026
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "9.15.0"
       - uses: actions/setup-node@v5
         with:
           node-version: "24.22.1"
           cache: pnpm
-      - uses: pnpm/action-setup@v4
-        with:
-          version: "9.15.0"
       - name: Regenerate the lockfile from the patched manifest
         run: pnpm install --lockfile-only --no-frozen-lockfile
       - name: Verify frozen installation
