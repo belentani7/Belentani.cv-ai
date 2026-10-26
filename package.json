@@ -2,7 +2,7 @@
   "packageManager": "pnpm@9.15.0",
   "name": "belentani-cv-studio",
   "version": "0.2.1",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "next dev -p 3000 2>&1 | tee dev.log",
     "build": "prisma generate && next build",
@@ -107,5 +107,7 @@
       "@istanbuljs/load-nyc-config>js-yaml": "4.3.2",
       "@prisma/config>deepmerge-ts": "8.0.0"
     }
-  }
+  },
+  "homepage": "https://belentani-cv-ai.vercel.app",
+  "license": "MIT"
 }
