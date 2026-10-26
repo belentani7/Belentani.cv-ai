@@ -1,3 +1,5 @@
+import { cvDraftSchema } from '@/lib/cv-file';
+
 export const CV_STORAGE_KEY = 'belentani-cv-studio:cv:v1';
 export const LEGACY_CV_STORAGE_KEY = 'manos-abiertas-cv';
 
@@ -17,7 +19,9 @@ export function readCvDraft<T = Record<string, unknown>>(storage: StorageLike | 
 
   try {
     const stored = storage.getItem(CV_STORAGE_KEY) ?? storage.getItem(LEGACY_CV_STORAGE_KEY);
-    return stored ? JSON.parse(stored) as T : null;
+    if (!stored) return null;
+    const result = cvDraftSchema.safeParse(JSON.parse(stored));
+    return result.success ? result.data as T : null;
   } catch {
     return null;
   }
