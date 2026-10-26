@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: 22
+  NODE_VERSION: 24
   PNPM_VERSION: 9
 
 jobs:
@@ -35,6 +35,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
       - name: Typecheck
         run: pnpm run typecheck
       - name: Lint
@@ -57,6 +59,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
       - name: Test
         run: pnpm exec jest --coverage --runInBand
         env:
