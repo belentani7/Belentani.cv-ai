@@ -128,14 +128,22 @@ jobs:
         run: pnpm start &
         env:
           PORT: 3000
-      - name: Wait for server
-        run: sleep 10
+      - name: Verify real pages respond successfully
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error http://localhost:3000/ >/dev/null 2>&1 && \
+               curl --fail --silent --show-error http://localhost:3000/cv >/dev/null 2>&1; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Application did not serve / and /cv successfully" >&2
+          exit 1
       - name: Run Lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
             http://localhost:3000
-            http://localhost:3000/privacy
-            http://localhost:3000/terms
+            http://localhost:3000/cv
           budgetPath: ./.github/lighthouse/budget.json
           uploadArtifacts: true
