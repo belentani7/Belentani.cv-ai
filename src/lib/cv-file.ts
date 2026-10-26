@@ -12,6 +12,10 @@ const schema = z.object({
   education: z.array(education).max(100).refine(unique),
   skills: z.array(text).max(200), languages: z.array(text).max(200),
 }).strict();
+// Browser autosave may contain only part of a CV while the user is editing.
+export const cvDraftSchema = schema.partial().extend({
+  savedAt: z.string().datetime().optional(),
+});
 export type PortableCv = z.infer<typeof schema>;
 const fileSchema = z.object({ format: z.literal('belentani-cv-studio'), version: z.literal(1), data: schema }).strict();
 function checkSize(value: string) {
