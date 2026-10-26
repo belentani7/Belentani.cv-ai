@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { clearCvDraft, readCvDraft, saveCvDraft } from '@/lib/cv-storage';
 
 import { parseCvFile, serializeCvFile, MAX_CV_FILE_BYTES } from '@/lib/cv-file';
+import { buildCvAiPayload, getCvSaveStatus, hasMeaningfulCvData } from '@/lib/cv-draft-privacy';
 
 interface Experience {
   id: string;
@@ -80,6 +81,11 @@ export function CVSection() {
   useEffect(() => {
     const data = { template: template.id, fullName, profession, email, phone, address, summary, experiences, education, skills, languages };
     const id = setTimeout(() => {
+      if (!hasMeaningfulCvData(data)) {
+        clearCvDraft();
+        setSavedAt(null);
+        return;
+      }
       const saved = saveCvDraft(data);
       if (saved) setSavedAt(saved);
     }, 800);
@@ -100,15 +106,16 @@ export function CVSection() {
         if (data.phone) setPhone(data.phone);
         if (data.address) setAddress(data.address);
         if (data.summary) setSummary(data.summary);
-        if (data.experiences?.length) setExperiences(data.experiences);
-        if (data.education?.length) setEducation(data.education);
+        if (data.experiences) setExperiences(data.experiences);
+        if (data.education) setEducation(data.education);
         if (data.skills?.length) setSkills(data.skills);
         if (data.languages?.length) setLanguages(data.languages);
         if (typeof data.savedAt === 'string') setSavedAt(new Date(data.savedAt));
     }
   }, []);
 
-  const hasContent = Boolean(fullName || profession || summary || email || experiences.some((e) => e.position || e.company) || education.some((e) => e.title) || skills.length || languages.length);
+  const hasContent = hasMeaningfulCvData({ fullName, profession, email, phone, address, summary, experiences, education, skills, languages });
+  const saveStatus = getCvSaveStatus(savedAt, hasContent);
 
   function addExperience() {
     setExperiences([...experiences, { id: Date.now().toString(), position: '', company: '', startDate: '', endDate: '', description: '' }]);
@@ -136,20 +143,24 @@ export function CVSection() {
   }
 
   async function generateWithAI(field: 'summary' | 'experience') {
+    const targetExperience = experiences.find(e => e.position.trim() || e.company.trim());
+    if (field === 'experience' && !targetExperience) {
+      toast.error('Añade un puesto o empresa antes de mejorar la experiencia.');
+      return;
+    }
+    const consent = field === 'summary'
+      ? 'Se enviarán profesión, experiencias, formación y habilidades a un proveedor de IA externo. Los campos de nombre y contacto se excluyen, pero el texto libre puede contener datos personales: revísalo antes. ¿Autorizas este envío?'
+      : 'Se enviará la primera experiencia con puesto o empresa a un proveedor de IA externo. Revisa que su texto no contenga datos personales que no quieras compartir. ¿Autorizas este envío?';
+    if (!window.confirm(consent)) return;
+    const aiPayload = buildCvAiPayload(
+      field, { fullName, profession, email, phone, address, summary, experiences, education, skills, languages }, language,
+    );
     setAiLoading(field);
     try {
       const resp = await fetch('/api/cv/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          field,
-          fullName,
-          profession,
-          experiences: experiences.filter((e) => e.position || e.company),
-          education: education.filter((e) => e.title || e.institution),
-          skills,
-          language,
-        }),
+        body: JSON.stringify(aiPayload),
       });
       if (resp.status === 503) {
         toast.error('La generación con IA no está disponible ahora. Puedes seguir editando y guardar tu CV en PDF.');
@@ -157,12 +168,13 @@ export function CVSection() {
       }
       if (!resp.ok) throw new Error('Error en la generación');
       const data = await resp.json();
+      if (typeof data.text !== 'string' || !data.text.trim()) throw new Error('Empty AI response');
       if (field === 'summary') {
         setSummary(data.text);
         toast.success('Resumen generado con IA ✨');
       } else {
         setExperiences((prev) =>
-          prev.map((e, i) => (i === 0 ? { ...e, description: data.text } : e))
+          prev.map(e => (e.id === targetExperience?.id ? { ...e, description: data.text } : e))
         );
         toast.success('Descripción mejorada con IA ✨');
       }
@@ -610,10 +622,10 @@ export function CVSection() {
           {/* Action bar */}
           <div className="sticky bottom-4 space-y-2">
             {/* Saved indicator */}
-            {savedAt && (
+            {saveStatus && (
               <div className="flex items-center justify-center gap-2 text-[11px] text-muted-foreground bg-card/80 backdrop-blur px-3 py-1.5 rounded-lg border border-border">
                 <Save className="h-3 w-3 text-emerald-500" />
-                Guardado automáticamente · {savedAt.toLocaleTimeString()}
+                {saveStatus}
                 <button
                   onClick={() => {
                     if (confirm('¿Borrar todos los datos del CV? Esta acción no se puede deshacer.')) {
@@ -622,11 +634,13 @@ export function CVSection() {
                       setExperiences([{ id: '1', position: '', company: '', startDate: '', endDate: '', description: '' }]);
                       setEducation([{ id: '1', title: '', institution: '', year: '', description: '' }]);
                       setSkills([]); setLanguages([]);
+                      setSkillInput(''); setLangInput('');
                       setSavedAt(null);
                       toast.success('CV reiniciado');
                     }
                   }}
-                  className="ml-2 text-destructive hover:underline inline-flex items-center gap-0.5"
+                  disabled={aiLoading !== null || importing}
+                  className="ml-2 text-destructive hover:underline inline-flex items-center gap-0.5 disabled:opacity-50"
                 >
                   <RotateCcw className="h-3 w-3" />
                   Reiniciar
