@@ -82,6 +82,7 @@ export function CVSection() {
     const data = { template: template.id, fullName, profession, email, phone, address, summary, experiences, education, skills, languages };
     const id = setTimeout(() => {
       if (!hasMeaningfulCvData(data)) {
+        clearCvDraft();
         setSavedAt(null);
         return;
       }
@@ -638,7 +639,8 @@ export function CVSection() {
                       toast.success('CV reiniciado');
                     }
                   }}
-                  className="ml-2 text-destructive hover:underline inline-flex items-center gap-0.5"
+                  disabled={aiLoading !== null || importing}
+                  className="ml-2 text-destructive hover:underline inline-flex items-center gap-0.5 disabled:opacity-50"
                 >
                   <RotateCcw className="h-3 w-3" />
                   Reiniciar
