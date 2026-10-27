@@ -20,6 +20,43 @@ const compare = (version, baseline) => {
   }
   return 0;
 };
+// pnpm's packages section can contain versions that the root importer does not use.
+// Verify the root importer explicitly instead of trusting a patched orphan entry.
+const rootPnpmNext = lock => {
+  let inImporters = false;
+  let inRoot = false;
+  let inDependencies = false;
+  let inNext = false;
+  for (const line of lock.split(/\r?\n/)) {
+    if (/^\S/.test(line)) {
+      inImporters = line === "importers:";
+      inRoot = inDependencies = inNext = false;
+      continue;
+    }
+    if (!inImporters) continue;
+    if (/^  \S.*:\s*$/.test(line)) {
+      inRoot = /^  \.\s*:\s*$/.test(line);
+      inDependencies = inNext = false;
+      continue;
+    }
+    if (!inRoot) continue;
+    if (/^    \S.*:\s*$/.test(line)) {
+      inDependencies = /^    (?:dependencies|devDependencies|optionalDependencies):\s*$/.test(line);
+      inNext = false;
+      continue;
+    }
+    if (!inDependencies) continue;
+    if (/^      \S.*:\s*$/.test(line)) {
+      inNext = /^      ['"]?next['"]?:\s*$/.test(line);
+      continue;
+    }
+    if (inNext) {
+      const value = /^        version:\s*(.+?)\s*$/.exec(line)?.[1]?.replace(/^['"]|['"]$/g, "");
+      if (value) return /^(\d+\.\d+\.\d+)(?=\(|$)/.exec(value)?.[1] ?? null;
+    }
+  }
+  return null;
+};
 const installedNext = () => {
   if (existsSync(join(project, "pnpm-lock.yaml"))) {
     return [...new Set([...read("pnpm-lock.yaml").matchAll(/^  next@(\d+\.\d+\.\d+):/gm)].map(x => x[1]))];
@@ -36,6 +73,12 @@ const nextRange = manifest.dependencies?.next ?? manifest.devDependencies?.next;
 if (nextRange) {
   const versions = installedNext();
   if (!versions.length) issues.push("Next.js lockfile missing/unrecognized; installed version is not verifiable.");
+  if (existsSync(join(project, "pnpm-lock.yaml"))) {
+    const rootVersion = rootPnpmNext(read("pnpm-lock.yaml"));
+    if (!rootVersion || !versions.includes(rootVersion)) {
+      issues.push("pnpm root importer Next.js version missing, invalid or absent from locked packages.");
+    }
+  }
   for (const version of versions) {
     const major = Number(version.split(".")[0]);
     const baseline = major === 16 ? "16.4.1" : major === 15 ? "15.5.28" : null;
