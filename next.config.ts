@@ -1,20 +1,29 @@
 import type { NextConfig } from "next";
 
+// Do not use "standalone": Vercel needs the standard Next.js build output.
 const nextConfig: NextConfig = {
-  // NO usar output: "standalone".
-  // El modo standalone mueve los trazados .nft.json dentro de .next/standalone/,
-  // y el paso onBuildComplete de Vercel busca .next/next-server.js.nft.json en la
-  // raiz de .next. Resultado: ENOENT y fallo de TODOS los deploys (preview y prod).
-  // Vercel construye Next.js de forma nativa y no necesita standalone.
   reactStrictMode: true,
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
-          { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+          { key: "X-DNS-Prefetch-Control", value: "off" },
+          // Do not opt into preload/includeSubDomains without auditing every subdomain.
+          { key: "Strict-Transport-Security", value: "max-age=31536000" },
+        ],
+      },
+      {
+        // Personal CV data and responses from authenticated API routes must never
+        // be retained by intermediary or browser caches.
+        source: "/api/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+          { key: "Pragma", value: "no-cache" },
         ],
       },
     ];
