@@ -4,20 +4,19 @@ import { readFileSync } from 'node:fs';
 
 const config = readFileSync(new URL('../next.config.ts', import.meta.url), 'utf8');
 
-test('all HTTP responses include baseline browser protection headers', () => {
+test('browser security headers and a scoped HSTS policy are configured', () => {
   for (const header of ['X-Frame-Options', 'X-Content-Type-Options', 'Referrer-Policy', 'Permissions-Policy']) {
-    assert.ok(config.includes(`key: "${header}"`), `Missing ${header}`);
+    assert.ok(config.includes('key: "' + header + '"'), 'Missing ' + header);
   }
-  assert.match(config, /max-age=31536000/);
-  assert.doesNotMatch(config, /includeSubDomains|preload/);
+  assert.ok(config.includes('key: "Strict-Transport-Security", value: "max-age=31536000"'));
 });
 
-test('private API routes explicitly disable browser and shared cache storage', () => {
-  assert.match(config, /source:\s*"\\/api\\/:path\\*"/);
-  assert.match(config, /private, no-store, max-age=0/);
-  assert.match(config, /Pragma/);
+test('private API responses have an explicit no-store policy', () => {
+  assert.ok(config.includes('source: "/api/:path*"'));
+  assert.ok(config.includes('private, no-store, max-age=0'));
+  assert.ok(config.includes('key: "Pragma", value: "no-cache"'));
 });
 
-test('Vercel is not forced to output standalone build artifacts', () => {
-  assert.doesNotMatch(config, /^\\s*output:\\s*["']standalone["']/m);
+test('Vercel retains its native Next.js build output', () => {
+  assert.ok(!config.includes('output: "standalone"'));
 });
