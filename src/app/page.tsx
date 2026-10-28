@@ -21,6 +21,7 @@ export default function Home() {
           </Link>
           <nav aria-label="Navegación principal" className="flex items-center gap-5">
             <a href="#funciones" className="hidden text-sm text-zinc-400 transition-colors hover:text-white sm:inline">Funciones</a>
+            <Link href="/cv/preparar" className="hidden text-sm text-zinc-400 transition-colors hover:text-white md:inline">Revisión final</Link>
             <Link href="/cv" className="inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2 text-sm font-medium transition hover:bg-white hover:text-black">Abrir estudio <ArrowUpRight size={15} aria-hidden="true" /></Link>
           </nav>
         </header>
@@ -32,6 +33,7 @@ export default function Home() {
             <div className="mt-10 flex flex-wrap items-center gap-5">
               <Link href="/cv" className="inline-flex items-center gap-3 rounded-full bg-white px-7 py-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200">Crear mi CV <ArrowUpRight size={18} aria-hidden="true" /></Link>
               <a href="#funciones" className="text-sm text-zinc-300 underline-offset-4 transition hover:underline">Explorar herramientas ↓</a>
+              <Link href="/cv/preparar" className="text-sm text-zinc-300 underline-offset-4 transition hover:underline">Revisar antes de enviar ↗</Link>
             </div>
             <p className="mt-7 flex items-center gap-2 text-xs text-zinc-500"><ShieldCheck size={14} aria-hidden="true" /> Puedes empezar sin cuenta. Guarda una copia de tu documento antes de borrar datos del navegador.</p>
           </div>
@@ -61,6 +63,7 @@ export default function Home() {
         <div className="mt-12 grid gap-4 md:grid-cols-3">
           {features.map(({ Icon, title, detail }) => <article key={title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-8"><Icon size={26} strokeWidth={1.3} className="mb-12 text-zinc-300" aria-hidden="true" /><h3 className="text-xl font-medium">{title}</h3><p className="mt-3 text-sm leading-7 text-zinc-400">{detail}</p></article>)}
         </div>
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-white/15 bg-lime-200/[0.06] p-7"><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-lime-200">Comprobación previa al envío</p><h3 className="mt-2 text-xl font-medium">¿Tu CV está realmente listo?</h3><p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">Revisa doce puntos importantes, desde los enlaces hasta el archivo final. Guía manual y privada: no sube tu documento ni promete resultados de selección.</p></div><Link href="/cv/preparar" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-lime-200/60 px-5 py-3 text-sm font-medium text-lime-200 transition hover:bg-lime-200 hover:text-zinc-950">Abrir revisión <ArrowUpRight size={16} aria-hidden="true" /></Link></div>
         <div className="mt-16 flex flex-wrap items-center justify-between gap-7 rounded-3xl border border-white/10 bg-gradient-to-r from-zinc-900 to-[#111216] p-8 sm:p-12"><div><h2 className="text-2xl font-medium tracking-tight sm:text-3xl">El siguiente paso es tuyo.</h2><p className="mt-3 text-sm text-zinc-400">Entra al estudio, elige tu plantilla y empieza a editar.</p></div><Link href="/cv" className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-zinc-200">Entrar al CV Studio ↗</Link></div>
       </section>
       <footer className="border-t border-white/10 px-6 py-8 sm:px-10"><div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4"><span className="text-xs tracking-[0.2em] text-zinc-400">BELENTANI · CV STUDIO</span><p className="text-xs text-zinc-500">Herramientas para presentar tu experiencia con rigor. No se venden CV completos ni se garantizan ofertas de empleo.</p></div></footer>
