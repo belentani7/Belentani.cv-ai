@@ -20,6 +20,6 @@ jobs:
         with:
           node-version: '24.22.1'
       - name: Regression tests for release gate
-        run: node --test tests/security-release-audit.test.mjs
+        run: node --test tests/security-release-audit.test.mjs tests/next-security-headers.test.mjs
       - name: Check locked dependencies and Node release
         run: node scripts/security-release-audit.mjs
