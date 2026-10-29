@@ -1,4 +1,4 @@
-import { cvDraftSchema } from '@/lib/cv-file';
+import { cvDraftSchema, MAX_CV_FILE_BYTES } from '@/lib/cv-file';
 
 export const CV_STORAGE_KEY = 'belentani-cv-studio:cv:v1';
 export const LEGACY_CV_STORAGE_KEY = 'manos-abiertas-cv';
@@ -35,7 +35,12 @@ export function saveCvDraft(
   if (!storage) return null;
 
   try {
-    storage.setItem(CV_STORAGE_KEY, JSON.stringify({ ...data, savedAt: savedAt.toISOString() }));
+    // Never persist a draft that the same reader will later reject.
+    const validated = cvDraftSchema.safeParse({ ...data, savedAt: savedAt.toISOString() });
+    if (!validated.success) return null;
+    const serialized = JSON.stringify(validated.data);
+    if (new TextEncoder().encode(serialized).byteLength > MAX_CV_FILE_BYTES) return null;
+    storage.setItem(CV_STORAGE_KEY, serialized);
     return savedAt;
   } catch {
     return null;
