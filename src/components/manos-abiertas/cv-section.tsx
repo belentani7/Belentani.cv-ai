@@ -87,7 +87,8 @@ export function CVSection() {
         return;
       }
       const saved = saveCvDraft(data);
-      if (saved) setSavedAt(saved);
+      // A failed write must not display a stale "saved" timestamp.
+      setSavedAt(saved);
     }, 800);
     return () => clearTimeout(id);
   }, [template, fullName, profession, email, phone, address, summary, experiences, education, skills, languages]);
