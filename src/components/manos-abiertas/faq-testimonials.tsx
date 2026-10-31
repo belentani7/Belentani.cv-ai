@@ -112,10 +112,10 @@ export function TestimonialsSection() {
       <div className="text-center mb-8">
         <Badge variant="secondary" className="mb-2 gap-1.5">
           <Heart className="h-3 w-3 text-primary fill-primary" />
-          Historias reales
+          Historias ilustrativas
         </Badge>
-        <h2 className="text-2xl md:text-3xl font-bold mb-2">Personas que cambiaron su vida</h2>
-        <p className="text-muted-foreground text-sm">Inmigrantes como tú que aprendieron IA, consiguieron empleo y conocieron sus derechos</p>
+        <h2 className="text-2xl md:text-3xl font-bold mb-2">Ejemplos de posibles trayectorias</h2>
+        <p className="text-muted-foreground text-sm">Casos ficticios para ilustrar usos posibles de la plataforma. No representan testimonios verificados ni garantizan resultados.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
