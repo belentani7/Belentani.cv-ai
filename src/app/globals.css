@@ -426,20 +426,20 @@ html[data-reading-mode='study'] {
   --card: #0A0A0A !important;
   --card-foreground: #FFFFFF !important;
   --popover: #0A0A0A !important;
-  --popover-foreground: #FFFFFF !important.
+  --popover-foreground: #FFFFFF !important;
   --primary: #FF7777 !important;
-  --primary-foreground: #050505 !important.
-  --secondary: #1A1A1A !important.
-  --secondary-foreground: #FFFFFF !important.
-  --muted: #1A1A1A !important.
-  --muted-foreground: #B3B3B3 !important.
-  --accent: #FDE047 !important.
-  --accent-foreground: #050505 !important.
-  --border: rgba(255, 119, 119, 0.28) !important.
-  --input: rgba(255, 119, 119, 0.28) !important.
-  --ring: #FF7777 !important.
-  --sidebar: #0A0A0A !important.
-  --sidebar-foreground: #FFFFFF !important.
+  --primary-foreground: #050505 !important;
+  --secondary: #1A1A1A !important;
+  --secondary-foreground: #FFFFFF !important;
+  --muted: #1A1A1A !important;
+  --muted-foreground: #B3B3B3 !important;
+  --accent: #FDE047 !important;
+  --accent-foreground: #050505 !important;
+  --border: rgba(255, 119, 119, 0.28) !important;
+  --input: rgba(255, 119, 119, 0.28) !important;
+  --ring: #FF7777 !important;
+  --sidebar: #0A0A0A !important;
+  --sidebar-foreground: #FFFFFF !important;
 }
 html[data-reading-mode='study'] body {
   background: #050505 !important;
