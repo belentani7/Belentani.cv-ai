@@ -59,7 +59,7 @@ export const FAQ_ITEMS: FAQItem[] = [
     id: 'faq-7',
     category: 'cv',
     question: '¿La IA que genera mi CV guarda mis datos?',
-    answer: 'No. La IA genera el texto solo en ese momento y no se guarda en ningún servidor. Tu información permanece en tu navegador. Cuando cierras la página, los datos se borran.',
+    answer: 'El editor puede guardar borradores en el almacenamiento local de tu navegador, incluso después de cerrar la página. Si utilizas funciones de IA, parte del contenido que envíes puede procesarse en servicios externos según su configuración. No introduzcas información sensible sin revisar antes las condiciones y la política de privacidad aplicables.',
   },
   {
     id: 'faq-8',
