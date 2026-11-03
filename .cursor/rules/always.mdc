@@ -1,0 +1,28 @@
+---
+description: Reglas globales del repositorio Belentani.cv-ai
+alwaysApply: true
+globs:
+  - "**/*"
+---
+
+# Reglas de desarrollo — Belentani.cv-ai
+
+## Seguridad (siempre)
+- No commitear secretos, API keys, tokens ni credenciales (KV_REST_API_URL/TOKEN solo en despliegue, nunca commitear).
+- Ejecutar `gitleaks` antes de cada push.
+- CODEOWNERS: `@belentani7` revisión requerida en todos los cambios.
+- Convenciones de commit: `type(scope): summary` (feat, fix, docs, chore, refactor, test, perf, style).
+
+## Next.js / TypeScript / Prisma (Microsoft rules)
+- `tsconfig.json` `"strict": true` (mantener).
+- Named exports/imports; evitar `any`.
+- Async/await para I/O; try/catch.
+- Prisma + PostgreSQL; validación con zod.
+
+## HTML (Impeccable) — ecosistema.html
+- No gradient text; no side-stripe borders; no eyebrow en cada sección; hero heading <= 6rem.
+- `focus-visible` visible (token CANON #ff073a); `lang` y `viewport` presentes.
+- Imágenes con `alt`; touch targets >= 44px.
+
+## Pruebas
+- Jest (`pnpm test`); `quality:check` ejecuta typecheck + lint + jest + build.

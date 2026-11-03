@@ -1,0 +1,39 @@
+---
+description: Contexto, stack y convenciones base del proyecto
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Proyecto: belentani7__Belentani.cv-ai
+
+Stack detectado: ci, docker, frontend, next, node, prisma, react, static-html, tailwind, tests, typescript.
+Gestores de paquetes: pnpm.
+Tests: jest.
+
+## Protocolo
+
+1. Spec-first: PRD → SRS → Design Doc → ADR → Plan → tests GWT.
+2. Cambios pequeños, reversibles y con verificación real.
+3. Conventional commits: `type(scope): summary`.
+4. No commitear secretos ni credenciales.
+5. No ejecutar TypeScript sin compilar en producción.
+
+## Comandos
+
+- `dev`: `next dev -p 3000 2>&1 | tee dev.log`
+- `build`: `prisma generate && next build`
+- `start`: `next start`
+- `lint`: `eslint .`
+- `test`: `jest`
+- `db:push`: `prisma db push`
+- `db:generate`: `prisma generate`
+- `db:migrate`: `prisma migrate dev`
+- `db:reset`: `prisma migrate reset`
+- `typecheck`: `tsc --noEmit`
+- `quality:check`: `pnpm run typecheck && pnpm run lint && pnpm exec jest --coverage --runInBand && pnpm run build`
+
+## Verificación mínima
+
+- Tests del stack en verde.
+- Build reproducible.
+- `gitleaks detect --source . --redact` limpio.
