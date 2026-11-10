@@ -1,4 +1,4 @@
-﻿# Belentani CV Studio
+# Belentani CV Studio
 
 > Tu trayectoria, bien contada.
 
