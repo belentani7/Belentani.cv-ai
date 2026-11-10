@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
     if (!success) {
       return noStoreJson(
         { ok: false, error: 'Rate limit exceeded. Try again later.' },
-        { 
+        {
           status: 429,
           headers: {
             'X-RateLimit-Limit': limit.toString(),
@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
       );
     }
     const parsedData = cvSchema.parse(body);
-    
+
     const lang = parsedData.language || 'es';
 
     const langInstruction: Record<string, string> = {
@@ -213,7 +213,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     console.error('CV generation error');
     return noStoreJson(
       { ok: false, error: 'Failed to generate content. Please try again.' },

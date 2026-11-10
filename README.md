@@ -1,4 +1,4 @@
-# Belentani CV Studio
+﻿# Belentani CV Studio
 
 > Tu trayectoria, bien contada.
 
@@ -43,3 +43,90 @@ La edición básica debe seguir disponible cuando falla el servicio de IA. Para 
 4. Promover exclusivamente el commit aprobado a producción; verificar dominios, metadata y observabilidad.
 
 © Belentani. El material histórico de Manos Abiertas conserva su propio propósito y no debe confundirse con la marca CV Studio.
+
+<!-- repo-forge:readme:inicio -->
+## Qué es
+
+**Belentani CV Studio** — estudio de CV con IA.
+
+Un artefacto editorial que respeta al lector: dato con fuente, voz con autoría, límite declarado.
+
+## Estado medido
+
+| Dato | Valor |
+|---|---|
+| Lenguajes | TypeScript, YAML, Markdown, HTML, Shell, JavaScript |
+| Archivos / líneas | 255 / 86235 |
+| Páginas HTML | 9 |
+| Tests detectados | 16 |
+| Cumplimiento de reglas | 37/37 (100.0%) |
+
+Todo lo anterior se midió en disco el 2026-11-10; no es una estimación.
+
+## Uso
+
+```bash
+npm install
+npm run dev
+```
+
+## Estructura
+
+```
+assets/
+brand/
+data/
+docs/
+download/
+examples/
+lib/
+magic/
+mini-services/
+plataforma/
+```
+
+## Diseño de plataforma
+
+- Editor
+- Adaptación por oferta
+- ATS
+- Exportar
+
+La ficha completa —máximo potencial, marca, fases de monetización y recursos— vive en
+[`plataforma/FICHA.md`](plataforma/FICHA.md). Los tokens de marca están en
+[`brand/tokens.css`](brand/tokens.css).
+
+## Reglas del proyecto
+
+Este repositorio sigue el catálogo oficial del ecosistema (`GH-*`, `WEB-*`, `ACC-*`,
+`SEO-*`, `COH-*`, `DEV-*`). El gate se ejecuta con:
+
+```bash
+python scripts/doctor.py
+```
+
+## Licencia
+
+MIT. Ver [`LICENSE`](LICENSE).
+<!-- repo-forge:readme:fin -->
+## Producto comercial
+
+Se vende un **CV adaptado a una oferta concreta**, entregado en 48 horas por 89 € con IVA:
+PDF y texto plano, carta breve, lista de comprobación de filtros y una ronda de correcciones.
+Es un servicio editorial; no incluye suscripción, ni bolsa de empleo, ni puntuaciones ATS
+inventadas.
+
+- [`producto/OFERTA.md`](producto/OFERTA.md) — qué se vende, a quién, precio y objeciones
+- [`producto/landing.html`](producto/landing.html) — página de venta autocontenida
+- [`producto/precios.json`](producto/precios.json) — planes, límites e IVA
+- [`producto/COBRO.md`](producto/COBRO.md) — cobro, entrega y reembolso
+- [`producto/ONEPAGER.md`](producto/ONEPAGER.md) — ficha de una página
+- [`producto/DEMO.md`](producto/DEMO.md) — guion de demo de 3 minutos
+- [`producto/METRICAS.md`](producto/METRICAS.md) — indicadores y objetivos a 30 días
+
+Verificación: `python tools/area_check.py producto --repo Belentani.cv-ai` desde la raíz del
+workspace.
+
+<!-- repo-forge:readme:fin -->
+<!-- repo-forge:readme:fin -->
+<!-- repo-forge:readme:fin -->

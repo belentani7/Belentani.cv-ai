@@ -1,0 +1,17 @@
+{
+  "name": "Belentani CV Studio",
+  "short_name": "Belentani CV",
+  "description": "estudio de CV con IA",
+  "lang": "es",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f4ef",
+  "theme_color": "#6a1b00",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
