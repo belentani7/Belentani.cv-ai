@@ -82,3 +82,9 @@ secrets.json
 .npmrc
 .pypirc
 .user_env
+
+# repo-forge
+__pycache__/
+*.pyc
+.venv/
+*.log

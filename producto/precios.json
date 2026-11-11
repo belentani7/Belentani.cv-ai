@@ -1,0 +1,89 @@
+{
+  "producto": "CV adaptado a una oferta — Belentani CV Studio",
+  "moneda": "EUR",
+  "iva": {
+    "tipo": 21,
+    "regimen": "IVA general España",
+    "precios_con_iva": true,
+    "nota": "Los importes de los planes ya incluyen el 21 % de IVA; la base imponible figura en cada plan y en la factura."
+  },
+  "prueba": {
+    "tipo": "revisión gratuita de encaje",
+    "duracion_minutos": 0,
+    "precio": 0,
+    "condiciones": "Antes de cobrar se lee la oferta y el CV y se dice si la adaptación tiene sentido. Si no lo tiene, no se acepta el encargo."
+  },
+  "planes": [
+    {
+      "id": "cv-adaptado",
+      "nombre": "CV adaptado",
+      "precio": 89,
+      "base_imponible": 73.55,
+      "periodo": "pago único por oferta",
+      "limites": {
+        "ofertas": 1,
+        "rondas_correccion": 1,
+        "plazo_horas": 48,
+        "formatos": ["PDF", "texto plano"],
+        "carta": "breve, una página",
+        "retencion_dias": 30
+      },
+      "incluye": [
+        "CV reescrito para la oferta concreta",
+        "Entrega en PDF y texto plano",
+        "Carta breve adaptada",
+        "Lista de comprobación de filtros automáticos",
+        "Una ronda de correcciones"
+      ],
+      "no_incluye": [
+        "Puntuación ATS garantizada",
+        "Entrevistas o contactos con empresas",
+        "Suscripción o acceso permanente a la herramienta",
+        "Experiencia o titulaciones inventadas (nunca)"
+      ]
+    },
+    {
+      "id": "tres-ofertas",
+      "nombre": "Tres ofertas",
+      "precio": 219,
+      "base_imponible": 180.99,
+      "periodo": "pago único por tres adaptaciones",
+      "limites": {
+        "ofertas": 3,
+        "rondas_correccion": 1,
+        "plazo_dias_laborables": 5,
+        "formatos": ["PDF", "texto plano"],
+        "carta": "breve, una por oferta",
+        "retencion_dias": 30
+      },
+      "incluye": [
+        "Tres adaptaciones distintas a tres ofertas",
+        "Una carta breve por oferta",
+        "Una ronda de correcciones por entrega",
+        "Entrega en 5 días laborables"
+      ],
+      "no_incluye": [
+        "Puntuación ATS garantizada",
+        "Entrevistas o contactos con empresas",
+        "Suscripción o acceso permanente a la herramienta",
+        "Experiencia o titulaciones inventadas (nunca)"
+      ]
+    }
+  ],
+  "descuentos": {
+    "segunda_adaptacion_mismo_mes": "15 % sobre la segunda",
+    "persona_derivada_por_entidad_social": "precio de 59 € con IVA, plazas limitadas"
+  },
+  "reembolso": {
+    "dias": 7,
+    "condicion": "devolución íntegra si la entrega llega fuera del plazo acordado o si el CV contiene un error imputable al servicio",
+    "via": "misma pasarela o transferencia"
+  },
+  "coherencia_paywall": {
+    "fuente": "plataforma/PAYWALL.md",
+    "quien_paga": "el cliente final por el servicio, no por mirar",
+    "fases_cubiertas": ["1 Vitrina", "2 Reserva"],
+    "fases_no_vendidas": ["3 Suscripción (sin producto recurrente)", "4 B2B (sin portafolio)"]
+  },
+  "nota_precio": "Precio de lanzamiento decidido por el propietario. No es una cifra medida: es una decisión comercial revisable."
+}

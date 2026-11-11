@@ -1,0 +1,76 @@
+{
+  "esquema": "repo-forge/ficha/1",
+  "nombre": "Belentani.cv-ai",
+  "remoto": "https://github.com/belentani7/Belentani.cv-ai",
+  "arquetipo": "web-app",
+  "stack": "Next.js + TypeScript",
+  "modelo": "estudio de CV con IA",
+  "publico": "quien busca empleo",
+  "techo": "CV que pasa filtros: adaptación por oferta, ATS y carta, con el candidato al mando",
+  "modulos": [
+    "Editor",
+    "Adaptación por oferta",
+    "ATS",
+    "Exportar"
+  ],
+  "no_go": "inventar experiencia",
+  "marca": {
+    "nombre": "Belentani CV Studio",
+    "familia": "editorial",
+    "paleta": {
+      "familia": "editorial",
+      "bg": "#f7f4ef",
+      "surface": "#f1eee9",
+      "ink": "#221f1a",
+      "muted": "#73706b",
+      "accent": "#6a1b00",
+      "accent2": "#166534",
+      "ok": "#15803d",
+      "warn": "#b45309",
+      "danger": "#b91c1c",
+      "contraste_ink_bg": 14.97,
+      "contraste_accent_bg": 10.82,
+      "accent_sobre_bg_ok": true
+    },
+    "narrativa": "Contar sin adornar"
+  },
+  "paywall": {
+    "principio": "sin muro: el visitante ve precio y resultado antes de dar datos",
+    "fases": 4
+  },
+  "medido": {
+    "archivos": 255,
+    "lineas": 86235,
+    "html": 9,
+    "tests": 16,
+    "bytes": 4299549,
+    "lenguajes": {
+      "TypeScript": 69.5,
+      "YAML": 17.5,
+      "Markdown": 5.1,
+      "HTML": 4.1,
+      "Shell": 1.4,
+      "JavaScript": 1.1
+    },
+    "fecha": "2026-11-10"
+  },
+  "gate": {
+    "pass": 37,
+    "fail": 0,
+    "skip": 12,
+    "cumplimiento": 100.0,
+    "fallos": []
+  },
+  "ajustes": {
+    "total": 64,
+    "aplicados": 55,
+    "ya_estaban": 9,
+    "fallos": 0
+  },
+  "esfuerzo_dias": 41,
+  "doctor": {
+    "ok": true,
+    "detalle": "38/38 comprobaciones en verde"
+  },
+  "huella": "424e0565b65ba89f"
+}
