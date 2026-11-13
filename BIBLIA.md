@@ -49,3 +49,51 @@ Ofrecer una herramienta de documentos impulsada por IA (CV, cartas, plantillas, 
 - Endpoints IA opcionales con validación y rate limit; sin exposición de credenciales.
 - KV_REST_API_URL/TOKEN solo en despliegue; nunca commitear tokens ni CV personales en logs.
 - Signed commits requeridos.
+
+<!-- repo-forge:biblia:inicio -->
+# BIBLIA.md — Belentani.cv-ai
+
+Doctrina del producto del repositorio `Belentani.cv-ai` del ecosistema belentani7.
+
+## Visión
+
+CV que pasa filtros: adaptación por oferta, ATS y carta, con el candidato al mando
+
+## Misión
+
+Un artefacto editorial que respeta al lector: dato con fuente, voz con autoría, límite declarado.
+
+## Público
+
+quien busca empleo
+
+## Stack
+
+aplicación web con build (Next/Vite/Expo) · TypeScript, YAML, Markdown, HTML, Shell, JavaScript
+
+## Módulos que la promesa exige
+
+- Editor
+- Adaptación por oferta
+- ATS
+- Exportar
+
+## Reglas de desarrollo
+
+- Protocolo spec-first: PRD → SRS → Design Doc → ADR → Plan → Tests.
+- Un cambio, un resultado verificable.
+- Nada se afirma sin ejecución; lo no probado se declara como no probado.
+- Escritura solo con confirmación; nada destructivo.
+- Idioma del producto: español, salvo el público del repositorio.
+- Secreto fuera de disco, logs y manifiestos.
+
+## Lo que este repositorio no va a hacer
+
+inventar experiencia
+
+## Convenciones
+
+`type(scope): resumen` — feat, fix, docs, chore, refactor, test, perf.
+
+<!-- repo-forge:biblia -->
+<!-- repo-forge:biblia:fin -->

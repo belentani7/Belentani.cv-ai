@@ -43,3 +43,7 @@ La edición básica debe seguir disponible cuando falla el servicio de IA. Para 
 4. Promover exclusivamente el commit aprobado a producción; verificar dominios, metadata y observabilidad.
 
 © Belentani. El material histórico de Manos Abiertas conserva su propio propósito y no debe confundirse con la marca CV Studio.
+
+
+## Producto
+Véase `plataforma/OFERTA.md`, `plataforma/precios.json`, `plataforma/ONEPAGER.md`.

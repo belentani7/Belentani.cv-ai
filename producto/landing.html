@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CV adaptado a una oferta en 48 horas — Belentani CV Studio</title>
+<meta name="description" content="Reescribimos tu currículum para la oferta concreta a la que te presentas. PDF y texto plano, carta breve, 48 horas, 89 € con IVA. Sin datos inventados.">
+<meta name="color-scheme" content="light">
+<style>
+  :root{
+    --bg:#f7f4ef; --surface:#f1eee9; --ink:#221f1a; --muted:#5f5c57;
+    --accent:#6a1b00; --accent-dark:#4d1400; --green:#166534; --line:#ddd7cd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:1.0625rem/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  h1,h2,h3{font-family:"Newsreader",Georgia,"Times New Roman",serif;line-height:1.15;margin:0 0 .55em;letter-spacing:-.01em}
+  h1{font-size:clamp(2rem,5.6vw,3.4rem)}
+  h2{font-size:clamp(1.35rem,3.4vw,2rem)}
+  h3{font-family:inherit;font-size:1.06rem;letter-spacing:0}
+  p{margin:0 0 1em;max-width:62ch}
+  a{color:var(--accent)}
+  a:focus-visible,button:focus-visible{outline:3px solid var(--green);outline-offset:3px;border-radius:4px}
+  .skip{position:absolute;left:-9999px;background:#000;color:#fff;padding:.6rem 1rem}
+  .skip:focus{left:1rem;top:1rem;z-index:9}
+  .wrap{max-width:63rem;margin:0 auto;padding:0 1.2rem}
+
+  header.site{border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 0;min-height:3.6rem}
+  .brand{font-family:"Newsreader",Georgia,serif;font-size:1.15rem;font-weight:700;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+  nav.top{display:none}
+  nav.top a{color:var(--ink);text-decoration:none;margin-left:1.25rem;font-size:.93rem}
+  nav.top a:hover{text-decoration:underline;text-decoration-color:var(--accent)}
+
+  .hero{padding:clamp(1.6rem,4.5vw,3.2rem) 0 clamp(2rem,5vw,3rem);border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:.78rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem;font-weight:700}
+  .lead{font-size:clamp(1.03rem,2.3vw,1.25rem);color:#3a352e}
+  .cta-row{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;margin:1.15rem 0 .55rem}
+  .btn{display:inline-block;background:var(--accent);color:#fdfbf7;text-decoration:none;font-weight:700;padding:.85rem 1.35rem;border:2px solid var(--accent);border-radius:.4rem}
+  .btn:hover{background:var(--accent-dark);border-color:var(--accent-dark)}
+  .btn.line{background:transparent;color:var(--accent);}
+  .btn.line:hover{background:#efe6dd}
+  .fine{font-size:.87rem;color:var(--muted);margin:0}
+
+  .quote{border-left:3px solid var(--accent);padding:.2rem 0 .2rem 1.1rem;margin:1.6rem 0 0;font-family:"Newsreader",Georgia,serif;font-size:clamp(1.1rem,2.6vw,1.4rem);font-style:italic;color:#3a352e;max-width:46ch}
+
+  section{padding:clamp(2rem,5.5vw,3.6rem) 0}
+  .dark{background:#221f1a;color:#f4efe8}
+  .dark h2{color:#fff}
+  .dark p{color:#ddd5c9}
+  .surface{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .grid{display:grid;gap:1rem}
+  .card{background:#fff;border:1px solid var(--line);border-radius:.45rem;padding:1.15rem}
+  .card h3{margin-bottom:.35rem}
+  .card p{margin:0;font-size:.96rem;color:#3a352e}
+
+  ol.steps{padding-left:1.2rem;margin:0;display:grid;gap:.75rem}
+  ol.steps li{padding-left:.2rem}
+  ol.steps strong{display:block}
+
+  .price{display:grid;gap:1rem;margin-top:1.1rem}
+  .plan{background:#fff;border:1px solid var(--line);border-radius:.5rem;padding:1.3rem;display:flex;flex-direction:column}
+  .plan.hi{box-shadow:0 10px 30px rgba(34,31,26,.08);border-color:var(--accent)}
+  .amount{font-family:"Newsreader",Georgia,serif;font-size:2.2rem;margin:.15rem 0 .1rem}
+  .amount small{font-size:.9rem;color:var(--muted);font-family:inherit}
+  .plan ul{padding-left:1.15rem;margin:.9rem 0 1.1rem;font-size:.95rem}
+  .plan li{margin-bottom:.35rem}
+  .plan .btn{margin-top:auto;text-align:center}
+
+  details{background:#fff;border:1px solid var(--line);border-radius:.4rem;padding:.9rem 1.1rem;margin-bottom:.7rem}
+  summary{font-weight:700;cursor:pointer}
+  details p{margin:.7rem 0 0;font-size:.96rem;color:#3a352e}
+
+  .note{border:1px solid var(--line);border-left:4px solid var(--green);background:#f2f6f1;padding:1rem 1.1rem;border-radius:.35rem;font-size:.95rem}
+  footer{border-top:1px solid var(--line);padding:2rem 0 2.6rem;font-size:.88rem;color:var(--muted)}
+  footer p{max-width:72ch}
+  @media (min-width:40rem){
+    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .price{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (min-width:54rem){nav.top{display:block}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media print{header.site,.cta-row{display:none}.dark{background:#fff;color:#000}}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:title" content="CV adaptado a una oferta en 48 horas — Belentani CV Studio">
+<meta property="og:description" content="Reescribimos tu currículum para la oferta concreta a la que te presentas. PDF y texto plano, carta breve, 48 horas, 89 € con IVA. Sin datos inventados.">
+<meta property="og:image" content="brand/og-image.svg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="#contenido">Belentani CV Studio</a>
+    <nav class="top" aria-label="Secciones">
+      <a href="#servicio">El servicio</a>
+      <a href="#proceso">Cómo va</a>
+      <a href="#precio">Precio</a>
+      <a href="#dudas">Dudas</a>
+      <a href="#pedir">Pedir</a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenido">
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Servicio de adaptación · entrega en 48 h</p>
+      <h1>Tu currículum, reescrito para la oferta a la que te presentas</h1>
+      <p class="lead">Una oferta concreta, un CV adaptado a esa oferta, en 48 horas. PDF y texto
+        plano, carta breve y la lista de lo que revisa un filtro automático. 89 € con IVA, una
+        sola vez, sin suscripción.</p>
+      <div class="cta-row">
+        <a class="btn cta" href="#pedir" data-cta="contratar">Contratar la adaptación</a>
+        <a class="btn line" href="#precio">Ver qué entra por 89 €</a>
+      </div>
+      <p class="fine">48 horas o no se cobra · sin datos inventados, nunca · el borrador se queda
+        en tu navegador</p>
+      <p class="quote">«No es un CV bonito. Es el mismo CV contando lo que ese anuncio pide, sin
+        inventarse nada.»</p>
+    </div>
+  </section>
+
+  <section id="servicio" class="surface">
+    <div class="wrap">
+      <h2>Qué se hace exactamente</h2>
+      <div class="grid three">
+        <article class="card">
+          <h3>1. Se lee la oferta</h3>
+          <p>Qué pide el anuncio, en qué orden y con qué palabras. Eso decide qué va arriba y
+            qué se queda fuera.</p>
+        </article>
+        <article class="card">
+          <h3>2. Se reescribe el CV</h3>
+          <p>Logros con número cuando existen, responsabilidades cuando no. Se recorta lo que no
+            aporta: nadie contrata por una lista de tareas.</p>
+        </article>
+        <article class="card">
+          <h3>3. Se entrega en dos formatos</h3>
+          <p>PDF para enviar y texto plano para los formularios que copian y pegan. La carta,
+            breve: cuatro párrafos que no repiten el CV.</p>
+        </article>
+      </div>
+      <div class="note" style="margin-top:1.3rem">
+        <strong>Lo que no se hace:</strong> no se inventan puestos, fechas, títulos ni
+        certificados. No se garantiza entrevista ni una «puntuación ATS», porque no existe un
+        estándar único que la justifique. Se entrega una lista de comprobación, no una nota.
+      </div>
+    </div>
+  </section>
+
+  <section id="proceso">
+    <div class="wrap">
+      <h2>Cómo va, de principio a fin</h2>
+      <ol class="steps">
+        <li><strong>Escribes con la oferta.</strong> Enlace o PDF del anuncio y tu CV actual. Sin
+          formulario y sin registro.</li>
+        <li><strong>Se revisa el encaje.</strong> Si la adaptación no va a servir —puesto de otro
+          sector, requisito que no tienes— se dice antes de cobrar.</li>
+        <li><strong>Pago y arranque.</strong> 89 € con IVA por transferencia o enlace de pago. El
+          reloj de 48 horas empieza con el pago.</li>
+        <li><strong>Entrega.</strong> PDF, texto plano, carta y lista de comprobación. Una ronda
+          de correcciones incluida.</li>
+        <li><strong>Borrado.</strong> Tus archivos se eliminan a los 30 días. No se publican, no
+          se usan como ejemplo.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="precio" class="surface">
+    <div class="wrap">
+      <h2>Precio, antes de pedirte el correo</h2>
+      <p>Los importes ya llevan el 21 % de IVA. No hay alta, ni cuota mensual, ni renovación
+        automática.</p>
+      <div class="price">
+        <article class="plan hi">
+          <h3>CV adaptado</h3>
+          <p class="amount">89 € <small>IVA incluido</small></p>
+          <p class="fine">base 73,55 € + 15,45 € de IVA</p>
+          <ul>
+            <li>Una oferta concreta</li>
+            <li>PDF + texto plano</li>
+            <li>Carta breve</li>
+            <li>Lista de comprobación de filtros</li>
+            <li>Una ronda de correcciones</li>
+            <li>Entrega en 48 horas</li>
+          </ul>
+          <a class="btn cta" href="#pedir" data-cta="contratar">Contratar por 89 €</a>
+        </article>
+        <article class="plan">
+          <h3>Tres ofertas</h3>
+          <p class="amount">219 € <small>IVA incluido</small></p>
+          <p class="fine">base 180,99 € + 38,01 € de IVA</p>
+          <ul>
+            <li>Tres adaptaciones distintas</li>
+            <li>Una carta por oferta</li>
+            <li>Una ronda de correcciones por entrega</li>
+            <li>Entrega en 5 días laborables</li>
+          </ul>
+          <a class="btn cta" href="#pedir" data-cta="contratar">Contratar por 219 €</a>
+        </article>
+      </div>
+      <p class="fine" style="margin-top:1rem">Personas derivadas por una entidad social: 59 € con
+        IVA, plazas limitadas cada mes.</p>
+    </div>
+  </section>
+
+  <section id="dudas" class="dark">
+    <div class="wrap">
+      <h2>Lo que preguntan antes de pagar</h2>
+      <details>
+        <summary>¿Me garantizáis una entrevista?</summary>
+        <p>No. Ninguna adaptación de CV decide una contratación, y quien lo prometa está
+          inventando. Lo que sí cambia es que el CV hable del puesto al que te presentas.</p>
+      </details>
+      <details>
+        <summary>¿Esto lo hace una IA sola?</summary>
+        <p>El editor del estudio es software propio y el borrador vive en tu navegador; la
+          adaptación la hace una persona leyendo el anuncio. Hay funciones de IA opcionales en el
+          repositorio, pero el criterio de qué se quita y qué se reordena no se delega.</p>
+      </details>
+      <details>
+        <summary>¿Y si no llega en 48 horas?</summary>
+        <p>No se cobra: devolución íntegra y el CV entregado se queda contigo.</p>
+      </details>
+      <details>
+        <summary>¿Qué hacéis con mis datos?</summary>
+        <p>Se trabajan en local y se borran a los 30 días. No se publican, no se usan como
+          ejemplo y no se ceden. Si no quieres enviar tu CV por correo, no hay servicio posible.</p>
+      </details>
+    </div>
+  </section>
+
+  <section id="pedir">
+    <div class="wrap">
+      <h2>Pedir la adaptación</h2>
+      <p>Escribe con el asunto «CV» e incluye: el enlace o PDF de la oferta, tu CV actual y en qué
+        idioma lo necesitas. Se responde en el mismo día laborable con el encaje y la forma de
+        pago.</p>
+      <div class="cta-row">
+        <a class="btn cta" href="mailto:cv@belentani.example?subject=CV%20adaptado" data-cta="contratar">Escribir para contratar</a>
+        <a class="btn line" href="#servicio">Repasar qué se hace</a>
+      </div>
+      <p class="fine">Página sin CDN, sin fuentes externas y sin analítica. No hay formulario: no
+        se recoge nada hasta que tú escribes.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Belentani CV Studio</strong> — estudio de currículums. Servicio editorial: se
+      adapta lo que existe, no se inventa trayectoria. Sin suscripción, sin bolsa de empleo y sin
+      promesas de contratación.</p>
+    <p>Precios en euros con IVA incluido. El editor del repositorio es software libre bajo
+      licencia MIT.</p>
+  </div>
+</footer>
+<!-- page-fix:1 -->
+</body>
+</html>
