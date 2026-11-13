@@ -1,98 +1,56 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Belentani.cv-ai · Belentani CV Studio</title>
-  <meta name="description" content="Belentani.cv-ai Repositorio Belentani.cv-ai — parte del ecosistema Belentani">
-  <link rel="stylesheet" href="hero.css">
-  <meta name="theme-color" content="#0ea5e9">
-  <link rel="manifest" href="/manifest.webmanifest">
-  <script defer src="hero.js"></script>
-
-<!-- repo-forge:head -->
-
-<meta property="og:type" content="website">
-<meta property="og:title" content="Belentani.cv-ai — Repositorio Belentani.cv-ai — parte del ecosistema Belentani">
-<meta property="og:description" content="Un artefacto editorial que respeta al lector: dato con fuente, voz con autoría, límite declarado.">
-<meta property="og:image" content="brand/og-image.svg">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/a11y.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Belentani CV Studio</title>
+  <meta name="description" content="Estudio Belentani para crear, revisar y preparar currículums profesionales.">
+  <meta name="theme-color" content="#090a0d">
+  <style>
+    :root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;background:#090a0d;color:#f5f5f5}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#25252b 0,transparent 34rem),#090a0d}
+    main{min-height:100vh;max-width:1120px;margin:auto;padding:28px 24px 72px}
+    nav{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:10px 0 70px}
+    nav a{color:#f5f5f5;text-decoration:none}nav .brand{font-weight:800;letter-spacing:.18em;font-size:.78rem}
+    nav .links{display:flex;flex-wrap:wrap;gap:18px;color:#aaa;font-size:.82rem}.links a:hover{color:#fff}
+    .eyebrow{color:#aaa;text-transform:uppercase;letter-spacing:.28em;font-size:.7rem}
+    h1{font-size:clamp(3rem,9vw,7.2rem);line-height:.94;letter-spacing:-.07em;max-width:850px;margin:18px 0}
+    .lead{max-width:620px;color:#a8a8ad;font-size:1.08rem;line-height:1.8}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin:34px 0 80px}
+    .button{display:inline-flex;align-items:center;min-height:46px;padding:0 19px;border-radius:999px;text-decoration:none;font-size:.9rem;font-weight:650}
+    .primary{background:#fff;color:#090a0d}.secondary{border:1px solid #444;color:#fff}.secondary:hover{border-color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+    article{border:1px solid #292a2f;border-radius:18px;padding:24px;background:#ffffff08}
+    article h2{font-size:1rem;margin:0 0 12px}article p{color:#9a9aa0;line-height:1.65;font-size:.9rem;margin:0}
+    footer{border-top:1px solid #292a2f;margin-top:70px;padding-top:22px;color:#74747a;font-size:.78rem}
+    @media(max-width:640px){nav{align-items:flex-start;flex-direction:column;padding-bottom:48px}.links{gap:12px!important}}
+  </style>
 </head>
 <body>
 <main>
-
-  <nav class="nav">
-    <a href="#" class="logo">Belentani.cv-ai</a>
-    <ul class="nav-links">
-      <li><a href="#features">Características</a></li>
-      <li><a href="#stack">Stack</a></li>
-      <li><a href="#about">Acerca de</a></li>
-    </ul>
-    <a href="#" class="cta">Empezar</a>
+  <nav aria-label="Navegación principal">
+    <a class="brand" href="https://www.belentani.es/">BELENTANI</a>
+    <div class="links">
+      <a href="https://www.belentani.es/">Plataforma</a>
+      <a href="https://belentani-cv-ai.vercel.app/cv">Estudio</a>
+      <a href="ecosistema.html">Ecosistema</a>
+    </div>
   </nav>
-
-  <section class="hero">
-    <div class="hero-canvas-wrapper">
-      <canvas id="hero-canvas"></canvas>
-    </div>
-    <div class="hero-overlay">
-      <h1>Belentani.cv-ai</h1>
-      <p>Repositorio Belentani.cv-ai — parte del ecosistema Belentani</p>
-      <div class="hero-actions">
-        <a href="#features" class="btn-primary">Ver características</a>
-        <a href="#stack" class="btn-secondary">Ver stack</a>
-      </div>
+  <section aria-labelledby="title">
+    <p class="eyebrow">document studio · cv ai</p>
+    <h1 id="title">Tu trayectoria.<br><span style="color:#77777f">Bien contada.</span></h1>
+    <p class="lead">Un espacio profesional para ordenar tu experiencia, diseñar tu currículum y preparar candidaturas con claridad. La plataforma principal de Belentani es el punto de entrada; este estudio resuelve la documentación.</p>
+    <div class="actions">
+      <a class="button primary" href="https://belentani-cv-ai.vercel.app/cv">Abrir el estudio ↗</a>
+      <a class="button secondary" href="https://www.belentani.es/">Volver a Belentani ↗</a>
     </div>
   </section>
-
-  <section class="section" id="features">
-    <h2>Características</h2>
-    <p>Producto completo con landing page hero, shader WebGL animado, y stack moderno listo para producción.</p>
-    <div class="grid">
-      <div class="card">
-        <h3>🚀 Hero con Shader WebGL</h3>
-        <p>Fondo animado con FBM (Fractal Brownian Motion), parallax de ratón y modo de bajo consumo.</p>
-      </div>
-      <div class="card">
-        <h3>📱 Responsive</h3>
-        <p>Diseño adaptable a móvil, tableta y desktop con Tailwind CSS.</p>
-      </div>
-      <div class="card">
-        <h3>⚡ Rápido</h3>
-        <p>Sin dependencias pesadas para el hero. Carga instantánea y DPR limitado.</p>
-      </div>
-      <div class="card">
-        <h3>🔒 Seguro</h3>
-        <p>Sin secretos hardcodeados. Variables de entorno para claves sensibles.</p>
-      </div>
-    </div>
+  <section class="grid" aria-label="Funciones">
+    <article><h2>Construcción</h2><p>Experiencia, formación, habilidades e idiomas en un editor dedicado.</p></article>
+    <article><h2>Presentación</h2><p>Plantillas y estructura para que tu recorrido se lea con precisión.</p></article>
+    <article><h2>Revisión</h2><p>Comprobación final antes de enviar una candidatura o exportar el documento.</p></article>
   </section>
-
-  <section class="section" id="stack">
-    <h2>Stack Tecnológico</h2>
-    <p>Tecnologías utilizadas en este repositorio.</p>
-    <ul class="stack-list">
-      
-    </ul>
-  </section>
-
-  <section class="section" id="about">
-    <h2>Acerca de Belentani.cv-ai</h2>
-    <p>Este repositorio forma parte del ecosistema Belentani. Código abierto bajo licencia MIT. Documentación completa y tests incluidos.</p>
-  </section>
-
-  </main>
-<footer>
-    <p>© 2026 Belentani.cv-ai — Parte del ecosistema Belentani / NOIACORE</p>
-  </footer>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      window.initHeroShader('hero-canvas', '#0ea5e9', '#7c3aed');
-    });
-  </script>
-<!-- page-fix:1 -->
+  <footer><span>Belentani CV Studio · <a href="https://github.com/belentani7/Belentani.cv-ai" style="color:#aaa">código del proyecto</a></span></footer>
+</main>
 </body>
 </html>
