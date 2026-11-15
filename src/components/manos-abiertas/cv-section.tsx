@@ -630,7 +630,10 @@ export function CVSection() {
                 <button
                   onClick={() => {
                     if (confirm('¿Borrar todos los datos del CV? Esta acción no se puede deshacer.')) {
-                      clearCvDraft();
+                      if (!clearCvDraft()) {
+                        toast.error('No se pudo borrar el borrador guardado. Revisa los permisos de almacenamiento del navegador.');
+                        return;
+                      }
                       setFullName(''); setProfession(''); setEmail(''); setPhone(''); setAddress(''); setSummary('');
                       setExperiences([{ id: '1', position: '', company: '', startDate: '', endDate: '', description: '' }]);
                       setEducation([{ id: '1', title: '', institution: '', year: '', description: '' }]);

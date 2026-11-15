@@ -19,7 +19,7 @@ export function readCvDraft<T = Record<string, unknown>>(storage: StorageLike | 
 
   try {
     const stored = storage.getItem(CV_STORAGE_KEY) ?? storage.getItem(LEGACY_CV_STORAGE_KEY);
-    if (!stored) return null;
+    if (!stored || new TextEncoder().encode(stored).byteLength > MAX_CV_FILE_BYTES) return null;
     const result = cvDraftSchema.safeParse(JSON.parse(stored));
     return result.success ? result.data as T : null;
   } catch {
@@ -47,12 +47,15 @@ export function saveCvDraft(
   }
 }
 
-export function clearCvDraft(storage: StorageLike | null = browserStorage()): void {
+export function clearCvDraft(storage: StorageLike | null = browserStorage()): boolean {
+  if (!storage) return false;
   try {
     // A tombstone prevents an old Manos Abiertas draft from reappearing after deletion.
     // It contains no personal data and can be replaced by the next save.
-    storage?.setItem(CV_STORAGE_KEY, 'null');
+    storage.setItem(CV_STORAGE_KEY, 'null');
+    return true;
   } catch {
     // Storage may be unavailable or restricted by the browser.
+    return false;
   }
 }

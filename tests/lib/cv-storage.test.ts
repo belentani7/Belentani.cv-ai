@@ -33,6 +33,29 @@ describe('CV Studio draft storage', () => {
 });
 
 describe('stored draft validation', () => {
+  it.each([CV_STORAGE_KEY, LEGACY_CV_STORAGE_KEY])('rejects oversized stored data before restoring %s', (key) => {
+    const skills = Array.from({ length: 200 }, () => 'x'.repeat(6000));
+    const stored = JSON.stringify({ skills });
+    const storage = createStorage({ [key]: stored });
+    expect(readCvDraft(storage)).toBeNull();
+    expect(storage.getItem(key)).toBe(stored);
+  });
+
+  it('reports failed clearing so the editor cannot announce a successful reset', () => {
+    const storage = createStorage({ [CV_STORAGE_KEY]: '{"fullName":"Existing"}' });
+    storage.setItem = () => { throw new Error('SecurityError'); };
+    expect(clearCvDraft(storage)).toBe(false);
+    expect(readCvDraft(storage)).toEqual({ fullName: 'Existing' });
+    expect(clearCvDraft(null)).toBe(false);
+  });
+
+  it('reports a successful reset while preserving the unrelated legacy namespace', () => {
+    const storage = createStorage({ [LEGACY_CV_STORAGE_KEY]: '{"fullName":"Legacy"}' });
+    expect(clearCvDraft(storage)).toBe(true);
+    expect(readCvDraft(storage)).toBeNull();
+    expect(storage.getItem(LEGACY_CV_STORAGE_KEY)).toBe('{"fullName":"Legacy"}');
+  });
+
   it.each([
     'null', '[]', '"text"', '42', 'true', '{',
     '{"fullName":{}}',
