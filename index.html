@@ -37,7 +37,7 @@
     <div class="hero-canvas-wrapper">
       <canvas id="hero-canvas"></canvas>
     </div>
-    <div class="hero-overlay">
+    <div class="hero-overlay" id="react-hero">
       <h1>Belentani.cv-ai</h1>
       <p>Repositorio Belentani.cv-ai — parte del ecosistema Belentani</p>
       <div class="hero-actions">
@@ -94,5 +94,18 @@
     });
   </script>
 <!-- page-fix:1 -->
+<script type="application/json" id="hero-data">
+{
+  "eyebrow": "",
+  "title": "Belentani.cv-ai",
+  "subtitle": "Belentani.cv-ai Repositorio Belentani.cv-ai — parte del ecosistema Belentani",
+  "install": "npm ci && npm run build",
+  "docsHref": "docs.html",
+  "repoHref": "https://github.com/belentani7/Belentani.cv-ai",
+  "demoHref": "",
+  "chips": []
+}
+</script>
+<script src="site-hero.js" defer></script>
 </body>
 </html>
