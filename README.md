@@ -47,3 +47,10 @@ La edición básica debe seguir disponible cuando falla el servicio de IA. Para 
 
 ## Producto
 Véase `plataforma/OFERTA.md`, `plataforma/precios.json`, `plataforma/ONEPAGER.md`.
+
+## Verificacion
+
+```bash
+npm install
+npm test
+```
