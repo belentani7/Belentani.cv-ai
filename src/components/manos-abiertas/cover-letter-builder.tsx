@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Sparkles, Loader2, Copy, RotateCcw, Printer, Building2, Briefcase, User, FileText } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -252,17 +251,18 @@ export function CoverLetterBuilder() {
               </div>
 
               <div>
-                <Label className="text-xs">Habilidades destacadas</Label>
+                <Label htmlFor="cl-skill-input" className="text-xs">Habilidades destacadas</Label>
                 <div className="flex gap-2 mt-1">
                   <Input
+                    id="cl-skill-input"
                     value={skillInput}
                     onChange={(e) => setSkillInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSkill(); } }}
                     placeholder="Ej: Empatía"
                     className="text-sm h-9"
                   />
-                  <Button size="icon" onClick={addSkill} className="h-9 w-9">
-                    <Sparkles className="h-3.5 w-3.5" />
+                  <Button type="button" size="icon" onClick={addSkill} aria-label="Añadir habilidad destacada" className="h-9 w-9">
+                    <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
                   </Button>
                 </div>
                 {skills.length > 0 && (
@@ -270,7 +270,12 @@ export function CoverLetterBuilder() {
                     {skills.map((s) => (
                       <Badge key={s} variant="secondary" className="gap-1 pr-1 text-xs">
                         {s}
-                        <button onClick={() => setSkills(skills.filter(x => x !== s))} className="hover:text-destructive">
+                        <button
+                          type="button"
+                          onClick={() => setSkills(skills.filter(x => x !== s))}
+                          aria-label={`Quitar habilidad ${s}`}
+                          className="hover:text-destructive px-1"
+                        >
                           ×
                         </button>
                       </Badge>
@@ -319,8 +324,9 @@ export function CoverLetterBuilder() {
                   {loading ? 'Generando...' : 'Generar con IA (opcional)'}
                 </Button>
                 {(letter || fullName) && (
-                  <Button variant="outline" onClick={reset} className="gap-1">
-                    <RotateCcw className="h-3.5 w-3.5" />
+                  <Button type="button" variant="outline" onClick={reset} aria-label="Reiniciar carta de presentación" className="gap-1.5">
+                    <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+                    Reiniciar carta
                   </Button>
                 )}
               </div>

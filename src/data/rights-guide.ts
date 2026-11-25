@@ -3857,7 +3857,3 @@ export const EMERGENCY_CONTACTS: EmergencyContact[] = [
   },
 ];
 
-// Verificación al cargar el módulo
-if (typeof console !== 'undefined') {
-  console.log('Rights articles:', RIGHTS_ARTICLES.length, 'Contacts:', EMERGENCY_CONTACTS.length);
-}

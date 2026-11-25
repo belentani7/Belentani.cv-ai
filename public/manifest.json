@@ -1,12 +1,12 @@
 {
   "name": "Belentani CV Studio",
-  "short_name": "CV Studio",
-  "description": "Editor profesional de currículums y cartas de presentación.",
+  "short_name": "Belentani CV",
+  "description": "Editor profesional de currículums, adaptación por oferta y cartas de presentación.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#090a0d",
-  "theme_color": "#090a0d",
+  "background_color": "#05030a",
+  "theme_color": "#05030a",
   "icons": [
     {
       "src": "/icon.svg",

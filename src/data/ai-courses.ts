@@ -3208,4 +3208,3 @@ export const AI_COURSES: AICourse[] = [
   metaAiCourse,
 ];
 
-console.log('AI courses:', AI_COURSES.length);

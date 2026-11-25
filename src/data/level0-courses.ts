@@ -506,4 +506,3 @@ export function getLevel0Stats() {
   return { courses: LEVEL0_COURSES.length, lessons: totalLessons };
 }
 
-console.log('Level 0 courses:', LEVEL0_COURSES.length, 'lessons:', getLevel0Stats().lessons);

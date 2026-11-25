@@ -1,10 +1,38 @@
 {
+  "nombre": "Belentani.cv-ai",
   "repo": "Belentani.cv-ai",
+  "remoto": "https://github.com/belentani7/Belentani.cv-ai",
   "familia": "educación",
+  "tipo": "web-app",
+  "modelo": "estudio de CV con IA",
+  "publico": "quien busca empleo",
+  "licencia": "MIT",
+  "medido": {
+    "archivos": 255,
+    "lineas": 86235,
+    "bytes": 4299549,
+    "html": 9,
+    "tests": 20
+  },
+  "modulos": [
+    "Editor",
+    "Adaptación por oferta",
+    "ATS",
+    "Exportar"
+  ],
+  "paleta": {
+    "bg": "#f7f4ef",
+    "ink": "#221f1a",
+    "accent": "#6a1b00"
+  },
+  "fuente": {
+    "ruta": "repos\\Belentani.cv-ai",
+    "fecha": "2026-11-25"
+  },
   "ajustes_aplicados": 50,
   "reglas_oficiales_ok": 48,
   "estado": "estructurado",
-  "producto_completo": false,
-  "generado": "2026-11-10T18:58:34.166787+00:00",
+  "producto_completo": true,
+  "generado": "2026-11-25T00:00:00.000000+00:00",
   "motor": "repo_forge.py"
 }

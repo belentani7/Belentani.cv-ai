@@ -28,7 +28,7 @@ export const CV_TEMPLATES: CVTemplate[] = [
     id: 'classic-europass',
     name: 'Classic Europass',
     description:
-      'Plantilla oficial europea. Estructura clara y reconocida por empresas españolas y de la UE. Ideal para primeros empleos y trámites oficiales.',
+      'Formato clásico de lectura clara inspirado en estándares europeos. Estructura reconocida por empresas españolas y de la UE.',
     color: 'from-blue-600 to-blue-800',
     layout: 'classic',
     preview: '📋',
@@ -71,9 +71,9 @@ export const CV_TEMPLATES: CVTemplate[] = [
   },
   {
     id: 'sidebar-photo',
-    name: 'Sidebar con Foto',
+    name: 'Sidebar con Monograma',
     description:
-      'Plantilla con barra lateral colored y espacio para foto. Ideal para hostelería, cuidados, comercio y atención al cliente. Destaca tu lado humano.',
+      'Plantilla con barra lateral de color e iniciales destacadas. Ideal para hostelería, cuidados, comercio y atención al cliente.',
     color: 'from-teal-600 to-cyan-700',
     layout: 'modern',
     preview: '🧑',
@@ -1681,16 +1681,3 @@ export const SKILL_SUGGESTIONS: { category: string; skills: string[] }[] = [
   },
 ];
 
-// ------------------------------------------------------------
-// EXPORT FINAL
-// ------------------------------------------------------------
-console.log(
-  'CV templates:',
-  CV_TEMPLATES.length,
-  'CV guides:',
-  CV_GUIDES.length,
-  'Action verbs categories:',
-  ACTION_VERBS.length,
-  'Skill categories:',
-  SKILL_SUGGESTIONS.length,
-);
