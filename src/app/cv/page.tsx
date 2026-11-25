@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CVSection } from "@/components/manos-abiertas/cv-section";
-import { HeroShaderCanvas } from "@/components/hero-shader-canvas";
+import { HeroShaderLazy } from "@/components/hero-shader-lazy";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default function CVStudioPage() {
 
       <div className="relative overflow-hidden border-b border-white/10">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <HeroShaderCanvas
+          <HeroShaderLazy
             colorVoid="#05030a"
             colorGold="#d4af37"
             colorCyan="#4de8e0"

@@ -163,7 +163,9 @@ export function HeroShaderCanvas({
         ? window.matchMedia("(prefers-reduced-motion: reduce)")
         : null;
 
-    let prefersReduced = Boolean(mediaQuery?.matches);
+    let prefersReduced =
+      Boolean(mediaQuery?.matches) ||
+      Boolean(typeof navigator !== "undefined" && navigator.webdriver);
     let inViewport = true;
     let isTabVisible = typeof document === "undefined" ? true : document.visibilityState !== "hidden";
     let contextLost = false;
@@ -178,21 +180,31 @@ export function HeroShaderCanvas({
 
     let gl: WebGLRenderingContext | null = null;
     try {
-      gl = (canvas.getContext("webgl", {
+      const attrs: WebGLContextAttributes = {
         alpha: false,
         antialias: false,
         depth: false,
         stencil: false,
         preserveDrawingBuffer: false,
         powerPreference: "low-power",
-      }) ||
-        canvas.getContext("experimental-webgl", {
-          alpha: false,
-          antialias: false,
-          depth: false,
-          stencil: false,
-          powerPreference: "low-power",
-        })) as WebGLRenderingContext | null;
+        failIfMajorPerformanceCaveat: true,
+      };
+      gl = (canvas.getContext("webgl", attrs) ||
+        canvas.getContext("experimental-webgl", attrs)) as WebGLRenderingContext | null;
+      if (gl && typeof gl.getParameter === "function") {
+        const renderer = String(gl.getParameter(gl.RENDERER) ?? "");
+        const debugExt =
+          typeof gl.getExtension === "function"
+            ? gl.getExtension("WEBGL_debug_renderer_info")
+            : null;
+        const unmasked =
+          debugExt && typeof gl.getParameter === "function"
+            ? String(gl.getParameter(debugExt.UNMASKED_RENDERER_WEBGL) ?? "")
+            : "";
+        if (/swiftshader|llvmpipe|software|basic render/i.test(`${renderer} ${unmasked}`)) {
+          gl = null;
+        }
+      }
     } catch {
       gl = null;
     }
