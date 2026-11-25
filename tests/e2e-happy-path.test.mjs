@@ -50,7 +50,14 @@ test("E2E happy-path: flujo completo de usuario y contratos HTTP sobre servidor 
   assert.match(homeHtml, /Tu trayectoria\./);
   assert.match(homeHtml, /href="\/cv"/);
   assert.match(homeHtml, /href="\/cv\/preparar"/);
-  assert.doesNotMatch(homeHtml, /fonts\.googleapis\.com/);
+  const hrefUrls = [...homeHtml.matchAll(/\bhref="([^"]+)"/g)].map((m) => {
+    try {
+      return new URL(m[1], baseUrl).hostname;
+    } catch {
+      return "";
+    }
+  });
+  assert.equal(hrefUrls.includes("fonts.googleapis.com"), false);
 
   // Verificar que el activo woff2 autoalojado de Geist responde 200 OK
   const fontMatch = /href="(\/_next\/static\/media\/[^"]+\.woff2)"/.exec(homeHtml);

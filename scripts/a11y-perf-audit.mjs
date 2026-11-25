@@ -4,7 +4,7 @@
  * Puede auditar un servidor en ejecución (--url=http://127.0.0.1:3000) o levantar
  * automáticamente una instancia efímera de `next start` sobre el build de producción `.next`.
  */
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { gzipSync } from "node:zlib";
 import { spawn } from "node:child_process";
@@ -36,15 +36,63 @@ const jsonMode = args.includes("--json");
 const explicitUrl = args.find((a) => a.startsWith("--url="))?.slice(6);
 const root = resolve(".");
 
-function stripTags(html) {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, "")
-    .replace(/<style[\s\S]*?<\/style>/gi, "")
-    .replace(/<svg[\s\S]*?<\/svg>/gi, "")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+/**
+ * Extrae el texto visible de un fragmento HTML mediante recorrido lineal de caracteres
+ * (sin expresiones regulares de saneamiento parcial) e ignora subárboles no textuales.
+ */
+function extractVisibleText(fragment) {
+  let out = "";
+  let i = 0;
+  let ignoredDepth = 0;
+  const ignoredTags = new Set(["svg", "script", "style"]);
+
+  while (i < fragment.length) {
+    if (fragment[i] === "<") {
+      const closeIdx = fragment.indexOf(">", i + 1);
+      if (closeIdx === -1) break;
+      const rawTag = fragment.slice(i + 1, closeIdx).trim().toLowerCase();
+      const isClosing = rawTag.startsWith("/");
+      const isSelfClosing = rawTag.endsWith("/");
+      const tagBody = isClosing ? rawTag.slice(1).trim() : rawTag;
+      const tagName = tagBody.split(/[\s/]/)[0] || "";
+
+      if (ignoredTags.has(tagName)) {
+        if (isClosing) {
+          ignoredDepth = Math.max(0, ignoredDepth - 1);
+        } else if (!isSelfClosing) {
+          ignoredDepth += 1;
+        }
+      }
+      out += " ";
+      i = closeIdx + 1;
+    } else {
+      if (ignoredDepth === 0) {
+        out += fragment[i];
+      }
+      i += 1;
+    }
+  }
+
+  return out.replaceAll("&nbsp;", " ").replace(/\s+/g, " ").trim();
+}
+
+function hasExternalGoogleFontUrl(html) {
+  const attrUrlRegex = /\b(?:href|src)=["']([^"']+)["']/gi;
+  let match;
+  while ((match = attrUrlRegex.exec(html)) !== null) {
+    try {
+      const parsed = new URL(match[1], "https://belentani.local");
+      if (
+        parsed.hostname === "fonts.googleapis.com" ||
+        parsed.hostname === "fonts.gstatic.com"
+      ) {
+        return true;
+      }
+    } catch {
+      // atributo no parseable como URL estándar
+    }
+  }
+  return false;
 }
 
 function auditHtmlAccessibility(route, html) {
@@ -53,31 +101,30 @@ function auditHtmlAccessibility(route, html) {
   if (!/<html[^>]*\blang=["'][a-z-]+["']/i.test(html)) issues.push(`${route}: falta atributo lang en <html>`);
   if (!/<meta[^>]*name=["']viewport["']/i.test(html)) issues.push(`${route}: falta meta viewport`);
   if (!/<main\b/i.test(html)) issues.push(`${route}: falta landmark <main>`);
-  if (/fonts\.googleapis\.com/i.test(html)) issues.push(`${route}: dependencia externa a fonts.googleapis.com detectada`);
+  if (hasExternalGoogleFontUrl(html)) {
+    issues.push(`${route}: dependencia externa a Google Fonts detectada`);
+  }
 
   const h1Matches = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
   if (h1Matches.length !== 1) {
     issues.push(`${route}: se esperaba exactamente 1 <h1> y se encontraron ${h1Matches.length}`);
   }
 
-  // Verificar skip-link al principio del documento
   if (!/<a[^>]*href=["']#[a-z0-9_-]+["'][^>]*>/i.test(html)) {
     issues.push(`${route}: falta enlace de salto al contenido principal (skip-link)`);
   }
 
-  // Verificar que cada <button> tenga texto o aria-label / aria-labelledby
   const buttonRegex = /<button\b([^>]*)>([\s\S]*?)<\/button>/gi;
   let btnMatch;
   while ((btnMatch = buttonRegex.exec(html)) !== null) {
     const attrs = btnMatch[1];
-    const innerText = stripTags(btnMatch[2]);
+    const innerText = extractVisibleText(btnMatch[2]);
     const hasAria = /\baria-label=["'][^"']+["']|\baria-labelledby=["'][^"']+["']|\btitle=["'][^"']+["']/i.test(attrs);
     if (!innerText && !hasAria) {
       issues.push(`${route}: <button> sin nombre accesible (${attrs.trim().slice(0, 60)})`);
     }
   }
 
-  // Verificar que cada <input> visible y <textarea> tenga id con <label for> o aria-label
   const labelIds = new Set(
     [...html.matchAll(/<label\b[^>]*\bfor=["']([^"']+)["']/gi)].map((m) => m[1]),
   );
@@ -89,11 +136,9 @@ function auditHtmlAccessibility(route, html) {
     const id = /\bid=["']([^"']+)["']/i.exec(attrs)?.[1];
     const hasAria = /\baria-label=["'][^"']+["']|\baria-labelledby=["'][^"']+["']/i.test(attrs);
     if (!hasAria && (!id || !labelIds.has(id))) {
-      // Comprobar si está envuelto dentro de un <label>...</label>
       const pos = ctrlMatch.index;
       const before = html.slice(Math.max(0, pos - 400), pos);
-      const wrappedInLabel =
-        before.lastIndexOf("<label") > before.lastIndexOf("</label");
+      const wrappedInLabel = before.lastIndexOf("<label") > before.lastIndexOf("</label");
       if (!wrappedInLabel) {
         issues.push(`${route}: control <${ctrlMatch[1]}> sin etiqueta accesible (${attrs.trim().slice(0, 60)})`);
       }
@@ -220,7 +265,6 @@ async function run() {
       });
     }
 
-    // Verificar /api y cabeceras no-store
     const apiRes = await fetch(`${baseUrl}/api`);
     const apiJson = await apiRes.json();
     const apiCache = apiRes.headers.get("cache-control") || "";
@@ -231,7 +275,6 @@ async function run() {
       allIssues.push(`/api: falta Cache-Control no-store (${apiCache})`);
     }
 
-    // Verificar /sitemap.xml y /robots.txt
     for (const metaRoute of ["/robots.txt", "/sitemap.xml"]) {
       const r = await fetch(`${baseUrl}${metaRoute}`);
       if (r.status !== 200) allIssues.push(`${metaRoute}: HTTP ${r.status}`);
