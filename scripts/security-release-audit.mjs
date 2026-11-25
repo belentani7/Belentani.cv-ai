@@ -7,6 +7,11 @@
 import { readFileSync, existsSync } from "node:fs";
 import { resolve, join } from "node:path";
 
+if (process.argv.includes("--help") || process.argv.includes("-h")) {
+  console.log("Uso: node scripts/security-release-audit.mjs [--project=<ruta>] [--json] [--help]\nVerifica versiones fijadas de Next.js en el lockfile y línea segura de Node.js.");
+  process.exit(0);
+}
+
 const project = resolve(process.argv.find(arg => arg.startsWith("--project="))?.slice(10) ?? ".");
 const jsonOutput = process.argv.includes("--json");
 const issues = [];

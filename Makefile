@@ -1,12 +1,15 @@
-# repo-forge:tareas
-.PHONY: doctor test check all
+.PHONY: doctor test validate check audit
 
 doctor:
-	python scripts/doctor.py
+	python3 scripts/doctor.py
+
+validate:
+	node scripts/validate-catalog.mjs
 
 test:
-	python -m unittest discover -s tests -v
+	node --test tests/next-security-headers.test.mjs tests/security-release-audit.test.mjs scripts/check-cv-identity.mjs
 
-check: doctor test
+audit:
+	node scripts/forge-audit.mjs
 
-all: check
+check: audit test

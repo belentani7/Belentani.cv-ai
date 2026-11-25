@@ -6,7 +6,8 @@ const file = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 
 test('root is Belentani CV Studio, not another project', () => {
   const home = file('src/app/page.tsx');
-  assert.match(home, /CVStudioPage/);
+  assert.match(home, /BELENTANI/);
+  assert.match(home, /CV STUDIO/i);
   assert.doesNotMatch(home, /ManosAbiertasApp/);
   assert.match(file('src/app/cv/page.tsx'), /CVSection/);
 });
@@ -19,9 +20,9 @@ test('Manos Abiertas features remain reachable on a dedicated path', () => {
 test('root SEO and PWA identify the actual product', () => {
   const layout = file('src/app/layout.tsx');
   const manifest = JSON.parse(file('public/manifest.json'));
-  assert.match(layout, /Belentani \| CV Studio/);
+  assert.match(layout, /Belentani CV Studio/);
   assert.doesNotMatch(layout, /manos-abiertas\.es/);
   assert.equal(manifest.short_name, 'Belentani CV');
   assert.equal(manifest.start_url, '/');
-  assert.equal(manifest.theme_color, '#08090b');
+  assert.equal(manifest.theme_color, '#05030a');
 });
