@@ -1154,4 +1154,3 @@ export function searchResources(
   });
 }
 
-console.log('Total resources:', RESOURCES.length);

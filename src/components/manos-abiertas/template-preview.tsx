@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import type { CVTemplate } from '@/data/cv-templates';
 
@@ -17,37 +16,46 @@ interface TemplatePreviewProps {
  */
 export function TemplatePreview({ template, selected, onSelect }: TemplatePreviewProps) {
   return (
-    <motion.button
-      whileHover={{ y: -2 }}
+    <button
+      type="button"
+      aria-pressed={selected}
+      aria-label={`Seleccionar plantilla ${template.name}`}
       onClick={onSelect}
       className={cn(
-        'relative p-2 rounded-lg border-2 text-left transition-all overflow-hidden',
+        'relative p-2 rounded-lg border-2 text-left transition-all duration-200 hover:-translate-y-0.5 overflow-hidden',
         selected ? 'border-primary bg-primary/5 shadow-sm' : 'border-border hover:border-primary/40'
       )}
     >
       {/* Selected checkmark */}
       {selected && (
-        <div className="absolute top-1.5 right-1.5 z-10 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
-          <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+        <div aria-hidden="true" className="absolute top-1.5 right-1.5 z-10 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+          <svg className="w-2.5 h-2.5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
       )}
 
       {/* SVG mini-layout preview */}
-      <div className="aspect-[3/4] bg-white rounded-md overflow-hidden border border-border/60 mb-1.5 relative">
+      <div aria-hidden="true" className="aspect-[3/4] bg-white rounded-md overflow-hidden border border-border/60 mb-1.5 relative">
         <TemplateLayoutSVG template={template} />
       </div>
 
       {/* Template name */}
       <div className="text-xs font-medium truncate">{template.name}</div>
       <div className="text-[10px] text-muted-foreground truncate">{template.description.split('.')[0]}.</div>
-    </motion.button>
+    </button>
   );
 }
 
 function TemplateLayoutSVG({ template }: { template: CVTemplate }) {
   const colors = getTemplateColors(template.id);
+
+  if (template.id === 'sidebar-photo') {
+    return <SidebarPhotoLayout colors={colors} />;
+  }
+  if (template.id === 'two-column-tech') {
+    return <TwoColumnTechLayout colors={colors} />;
+  }
 
   switch (template.layout) {
     case 'classic':

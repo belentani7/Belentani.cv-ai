@@ -332,4 +332,3 @@ export function getNoiaStats() {
   return { total: NOIA_COURSES.length, byModule, byLevel, premium };
 }
 
-console.log('NO.IA_CORE courses:', NOIA_COURSES.length);

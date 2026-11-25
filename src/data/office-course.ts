@@ -4531,4 +4531,3 @@ export const OFFICE_MODULES: OfficeModule[] = [
   gmailModule,
 ];
 
-console.log('Office modules:', OFFICE_MODULES.length);

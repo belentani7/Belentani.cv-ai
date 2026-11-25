@@ -220,4 +220,3 @@ export function getCourseStats() {
   return { total: EXTERNAL_COURSES.length, byCategory, byLevel, withCert, free: EXTERNAL_COURSES.filter((c) => c.free).length };
 }
 
-console.log('External courses:', EXTERNAL_COURSES.length);

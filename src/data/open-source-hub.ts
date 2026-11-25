@@ -148,4 +148,3 @@ export function getRepoStats() {
   return { total: GITHUB_REPOS.length, byCategory, apis: FREE_APIS.length };
 }
 
-console.log('GitHub repos:', GITHUB_REPOS.length, 'Free APIs:', FREE_APIS.length);
