@@ -50,14 +50,18 @@ test("E2E happy-path: flujo completo de usuario y contratos HTTP sobre servidor 
   assert.match(homeHtml, /Tu trayectoria\./);
   assert.match(homeHtml, /href="\/cv"/);
   assert.match(homeHtml, /href="\/cv\/preparar"/);
-  const hrefUrls = [...homeHtml.matchAll(/\bhref="([^"]+)"/g)].map((m) => {
+  let usesExternalGoogleFont = false;
+  for (const m of homeHtml.matchAll(/\bhref="([^"]+)"/g)) {
     try {
-      return new URL(m[1], baseUrl).hostname;
+      const parsed = new URL(m[1], baseUrl);
+      if (parsed.hostname === "fonts.googleapis.com") {
+        usesExternalGoogleFont = true;
+      }
     } catch {
-      return "";
+      // href no absoluto o ancla local
     }
-  });
-  assert.equal(hrefUrls.includes("fonts.googleapis.com"), false);
+  }
+  assert.equal(usesExternalGoogleFont, false);
 
   // Verificar que el activo woff2 autoalojado de Geist responde 200 OK
   const fontMatch = /href="(\/_next\/static\/media\/[^"]+\.woff2)"/.exec(homeHtml);
