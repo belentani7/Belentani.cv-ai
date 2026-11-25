@@ -58,7 +58,7 @@ export function CvFinalReview() {
         <div className="relative mx-auto grid max-w-6xl items-end gap-10 px-5 pb-16 pt-16 sm:px-9 sm:pb-20 sm:pt-24 lg:grid-cols-[1.3fr_0.7fr]">
           <div>
             <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-lime-200/25 bg-lime-200/[0.06] px-4 py-2 text-xs font-medium tracking-[0.18em] text-lime-200 uppercase"><ShieldCheck size={16} aria-hidden="true" /> Lista de control · Local y gratuita</p>
-            <h1 className="max-w-3xl text-5xl font-semibold leading-[1.06] tracking-[-0.055em] sm:text-7xl">Un CV listo para <span className="text-lime-200">ser leído.</span></h1>
+            <h1 className="max-w-3xl text-5xl font-semibold leading-[1.06] tracking-[-0.035em] sm:text-7xl">Un CV listo para <span className="text-lime-200">ser leído.</span></h1>
             <p className="mt-7 max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">Antes de enviar tu candidatura, revisa el contenido, la accesibilidad y los últimos detalles. Marca solo los puntos que has comprobado de verdad.</p>
             <p className="mt-5 max-w-2xl text-sm leading-7 text-zinc-400">No subimos tu CV ni analizamos tus datos. Esta es una guía de revisión personal, no una puntuación de ATS ni una promesa de selección.</p>
           </div>
@@ -105,7 +105,7 @@ export function CvFinalReview() {
           </div>
         </div>
       </section>
-      <footer className="border-t border-white/10 px-5 py-8 text-center text-xs leading-6 text-zinc-500">BELENTANI CV STUDIO · Guía manual, privada y sin validación automática de candidaturas.</footer>
+      <footer className="border-t border-white/10 px-5 py-8 text-center text-xs leading-6 text-zinc-300">BELENTANI CV STUDIO · Guía manual, privada y sin validación automática de candidaturas.</footer>
     </main>
   );
 }
