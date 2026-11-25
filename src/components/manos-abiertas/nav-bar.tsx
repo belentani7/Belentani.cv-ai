@@ -7,10 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAppStore, type SectionId } from '@/stores/app-store';
 import { useTheme } from 'next-themes';
+import dynamic from 'next/dynamic';
 import { LanguageSelector } from './language-selector';
-import { CommandPalette } from './command-palette';
 import { getTranslation } from '@/i18n/translations';
 import { cn } from '@/lib/utils';
+
+const CommandPalette = dynamic(
+  () => import('./command-palette').then((m) => m.CommandPalette),
+  { ssr: false },
+);
 
 const NAV_ITEMS: { id: SectionId; icon: typeof HomeIcon; emoji: string }[] = [
   { id: 'home', icon: HomeIcon, emoji: '🏠' },
