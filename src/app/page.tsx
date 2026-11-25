@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, FileText, LayoutTemplate, PenLine, ShieldCheck, Sparkles, Target } from "lucide-react";
-import { HeroShaderCanvas } from "@/components/hero-shader-canvas";
+import { HeroShaderLazy } from "@/components/hero-shader-lazy";
 
 const pillars = [
   {
@@ -41,7 +41,7 @@ export default function Home() {
 
       <div className="relative overflow-hidden border-b border-white/10">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <HeroShaderCanvas
+          <HeroShaderLazy
             colorVoid="#05030a"
             colorGold="#d4af37"
             colorCyan="#4de8e0"
